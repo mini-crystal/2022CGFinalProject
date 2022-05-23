@@ -110,40 +110,47 @@ void Texture2D::unbind() const {
 TextureCubemap::TextureCubemap(const std::vector<std::string>& filenames)
 	: _paths(filenames) {
 	assert(filenames.size() == 6);
-	// TODO: load 6 images and generate texture cubemap
-	// hint: you can refer to Texture2D(const std::string&) for image loading
-	// write your code here
-	// -----------------------------------------------
-	// ...
-	// load image to the memory
 	
-	/*GLuint textureID;
-	glGenTextures(1, &textureID);
-	glActiveTexture(GL_TEXTURE0);*/
+
 
 	stbi_set_flip_vertically_on_load(true);
 	int width = 0, height = 0, channels = 0;
 	unsigned char* data;
-
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _handle);
 
 	for (unsigned int i = 0; i < filenames.size(); i++)
 	{
-		data = stbi_load(filenames[i].c_str(), &width, &height, &channels, 0);
-		
 
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-			
-		
+
+		data = stbi_load(filenames[i].c_str(), &width, &height, &channels, 0);
+
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+		GLint alignment = 1;
+		size_t pitch = width * channels * sizeof(unsigned char);
+		if (pitch % 8 == 0)      alignment = 8;
+		else if (pitch % 4 == 0) alignment = 4;
+		else if (pitch % 2 == 0) alignment = 2;
+		else                     alignment = 1;
+
+		glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+
+		// 2. transfer data
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+
+		// 3. restore alignment
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
+
+		stbi_image_free(data);
 	}
-	
-	//return textureID;
+
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
 }
 

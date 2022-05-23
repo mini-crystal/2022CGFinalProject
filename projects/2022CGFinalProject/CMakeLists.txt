@@ -21,28 +21,11 @@ aux_source_directory(. PROJECT_SRC)
 set(PROJECT_HDR ./texture_mapping.h)
 
 
-set(BASE_HDR ../base/application.h
-             ../base/frame_rate_indicator.h
-             ../base/input.h
-             ../base/glsl_program.h
-             ../base/camera.h
-             ../base/frustum.h
-             ../base/plane.h
-             ../base/object3d.h
-             ../base/model.h
-             ../base/bounding_box.h
-             ../base/vertex.h
-             ../base/light.h
-             ../base/texture.h
-             ../base/skybox.h)
 
-set(BASE_SRC ../base/application.cpp 
-             ../base/glsl_program.cpp 
-             ../base/camera.cpp 
-             ../base/object3d.cpp
-             ../base/model.cpp
-             ../base/skybox.cpp
-             ../base/texture.cpp)
+file(GLOB BASE_HDR "../base/*.h")
+
+file(GLOB BASE_SRC  "../base/*.cpp")
+
 
 add_executable(2022CGFinalProject ${PROJECT_SRC} ${PROJECT_HDR} ${BASE_SRC} ${BASE_HDR})
 

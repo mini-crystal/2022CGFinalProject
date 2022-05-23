@@ -114,28 +114,26 @@ SkyBox::~SkyBox() {
     cleanup();
 }
 
-//unsigned int cubemapTexture = TextureCubemap(faces);
 
 
 void SkyBox::draw(const glm::mat4& projection, const glm::mat4& view) {
-    // TODO:: draw skybox
-    // write your code here
-    // -----------------------------------------------
-    // ...
     
 
-    glDepthMask(GL_FALSE);
-    //_shader.use();
+    glDepthFunc(GL_LEQUAL);
     _shader->use();
-    // ... 设置观察和投影矩阵
-    _shader->setMat4("view", view);
+    _shader->setInt("cubemap", 0);
+
+    glm::mat4 View = glm::mat4(glm::mat3(view));
+    _shader->setMat4("view", View);
     _shader->setMat4("projection", projection);
     glBindVertexArray(_vao);
+    glActiveTexture(GL_TEXTURE0);
     _texture->bind();
     glDrawArrays(GL_TRIANGLES, 0, 36);
+    
     glBindVertexArray(0);
-    glDepthMask(GL_TRUE);
-    // -----------------------------------------------
+    glDepthFunc(GL_LESS);
+    
 }
 
 void SkyBox::cleanup() {

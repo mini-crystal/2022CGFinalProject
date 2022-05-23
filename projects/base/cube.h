@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 
 #include <memory>
 #include <string>
@@ -11,21 +12,23 @@
 #include "glsl_program.h"
 #include "texture.h"
 
-class SkyBox {
+class Cube {
 public:
-	SkyBox(const std::vector<std::string>& textureFilenames);
+	Cube();
 
-	SkyBox(SkyBox&& rhs) noexcept;
+	Cube(Cube&& rhs) noexcept;
 
-	~SkyBox();
+	//释放借来的所有资源
+	~Cube();
 
 	void draw(const glm::mat4& projection, const glm::mat4& view);
 
-	
+
 
 private:
 	GLuint _vao = 0;
 	GLuint _vbo = 0;
+
 
 	std::unique_ptr<TextureCubemap> _texture;
 

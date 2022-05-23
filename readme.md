@@ -14,22 +14,8 @@
     ./project1.exe
     ```
 
-#### Windows Executables
-+ **Render Triangle**
-    ./demo/Debug/get_start.exe
-+ **Render Chinese National Flag**
-    ./demo/Debug/project1.exe
-+ **Transformation Matrix**
-    ./demo/Debug/project2.exe
-+ **Scene Roaming**
-    ./demo/Debug/project3.exe
-+ **Instanced Rendering**
-    ./demo/Debug/project4.exe
-+ **Shading Tutorial**
-    ./demo/Debug/project5.exe
-+ **Texture Mapping**
-    ./demo/Debug/project6.exe
-+ **Transparency Rendering**
-    ./demo/Debug/bonus1.exe
-+ **Frustum Culling**
-    ./demo/Debug/bonus2.exe
++ 目前已实现的功能
++ 面板上可以控制各个物体的材质、光照
++ 可以增加对某个物体实现拉升、旋转变换的按钮
++ 摄像机的视角可以实现改变
++ 场景物体可以增加

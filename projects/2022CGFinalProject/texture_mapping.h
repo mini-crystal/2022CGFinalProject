@@ -2,6 +2,8 @@
 
 #include <memory>
 #include <string>
+#include <vector>
+#include <imgui.h>
 
 #include "../base/application.h"
 #include "../base/model.h"
@@ -10,6 +12,30 @@
 #include "../base/texture.h"
 #include "../base/camera.h"
 #include "../base/skybox.h"
+#include "../base/cube.h"
+#include "../base/tetrahedron.h"
+
+enum class ShaderRenderMode {
+	Ambient, Lambert, Phong
+};
+
+// I = ka * Ia
+struct AmbientMaterial {
+	glm::vec3 ka;
+};
+
+// I = sum { kd * Light[i] * cos(theta[i]) }
+struct LambertMaterial {
+	glm::vec3 kd;
+};
+
+// I = ka * Ia + sum { (kd * cos(theta[i]) + ks * cos(theta[i])^ns ) * Light[i] }
+struct PhongMaterial {
+	glm::vec3 ka;
+	glm::vec3 kd;
+	glm::vec3 ks;
+	float ns;
+};
 
 enum class RenderMode {
 	Simple, Blend, Checker
@@ -37,22 +63,76 @@ public:
 	~TextureMapping();
 
 private:
-	std::unique_ptr<Model> _sphere;
 
+	//用obj导入的模型要在这里注册
+	std::unique_ptr<Model> _sphere;
+	std::unique_ptr<Model> _bunny;
+	std::unique_ptr<Model> _bunnycopy;
+
+
+	//———————————几何变换属性————————
+
+	std::unique_ptr<GLSLProgram> _transformShader;
+
+	glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 _rotateAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 _scale = glm::vec3(1.0f, 1.0f, 1.0f);
+
+	float _rotateAngles = 0.0f;
+
+	//————————————纹理属性——————————
+	
 	std::unique_ptr<SimpleMaterial> _simpleMaterial;
 	std::unique_ptr<BlendMaterial> _blendMaterial;
 	std::unique_ptr<CheckerMaterial> _checkerMaterial;
 
-	std::unique_ptr<PerspectiveCamera> _camera;
+	
+
 	std::unique_ptr<DirectionalLight> _light;
 
 	std::unique_ptr<GLSLProgram> _simpleShader;
 	std::unique_ptr<GLSLProgram> _blendShader;
 	std::unique_ptr<GLSLProgram> _checkerShader;
 
+	//顶点绘制图形
 	std::unique_ptr<SkyBox> _skybox;
+	std::unique_ptr<Cube> _cube;
+	std::unique_ptr<Tetrahedron> _tetrahedron;
 
 	enum RenderMode _renderMode = RenderMode::Simple;
+
+	//—————————————材质属性————————————
+
+	// materials
+	std::unique_ptr<AmbientMaterial> _ambientMaterial;
+	std::unique_ptr<LambertMaterial> _lambertMaterial;
+	std::unique_ptr<PhongMaterial> _phongMaterial;
+
+	// shaders
+	std::unique_ptr<GLSLProgram> _ambientShader;
+	std::unique_ptr<GLSLProgram> _lambertShader;
+	std::unique_ptr<GLSLProgram> _phongShader;
+
+	// lights
+	std::unique_ptr<AmbientLight> _ambientLight;
+	std::unique_ptr<DirectionalLight> _directionalLight;
+	std::unique_ptr<SpotLight> _spotLight;
+
+	// camera
+	std::unique_ptr<PerspectiveCamera> _camera;
+
+	ShaderRenderMode _shaderrenderMode = ShaderRenderMode::Ambient;
+
+	void initTransformShader();
+
+	// I = ka * albedo
+	void initAmbientShader();
+
+	// I = ka * albedo + kd * max(cos<I, n>, 0)
+	void initLambertShader();
+
+	// I = ka * albedo + kd * cos<I, n> + ks * (max(cos<R, V>, 0) ^ ns)
+	void initPhongShader();
 
 	void initSimpleShader();
 
@@ -63,4 +143,14 @@ private:
 	void handleInput() override;
 
 	void renderFrame() override;
+
+
 };
+
+
+
+
+
+
+
+
