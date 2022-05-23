@@ -8,8 +8,23 @@
 
 //这里可以加载多个模型
 //把模型路径放进来就好
+//现在是一楼二楼场景中的物体都已经存在
 const std::string spheremodelPath = "../../media/sphere.obj";
 const std::string bunnymodelpath = "../../media/bunny.obj";
+const std::string firstcardPath = "../../media/firstcard.obj";
+const std::string firstdengPath = "../../media/firstdeng.obj";
+const std::string firstdeskPath = "../../media/firstdesk.obj";
+const std::string firstdeskbottomPath = "../../media/firstdeskbottom.obj";
+const std::string firstdisplaybottomPath = "../../media/firstdisplaybottom.obj";
+const std::string firstfloorPath = "../../media/firstfloor.obj";
+const std::string firstupstairsPath = "../../media/firstupstairs.obj";
+const std::string firstmenuPath = "../../media/firstmenu.obj";
+const std::string seconddeskPath = "../../media/seconddesk.obj";
+const std::string seconddeskbottomPath = "../../media/seconddeskbottom.obj";
+const std::string secondfloorPath = "../../media/secondfloor.obj";
+const std::string secondscreenPath = "../../media/secondscreen.obj";
+const std::string secondsofaPath = "../../media/secondsofa.obj";
+const std::string secondchairPath = "../../media/secondchair.obj";
 
 
 const std::string earthTexturePath = "../../media/earthmap.jpg";
@@ -38,6 +53,23 @@ TextureMapping::TextureMapping(const Options& options): Application(options) {
 	_sphere.reset(new Model(spheremodelPath));
 	_bunny.reset(new Model(bunnymodelpath));
 	_bunnycopy.reset(new Model(bunnymodelpath));
+	_firstcard.reset(new Model(firstcardPath));
+	_firstdeng.reset(new Model(firstdengPath));
+	_firstdeskbottom.reset(new Model(firstdeskbottomPath));
+	_firstdisplaybottom.reset(new Model(firstdisplaybottomPath));
+	_firstfloor.reset(new Model(firstfloorPath));
+	_firstmenu.reset(new Model(firstmenuPath));
+	_firstupstairs.reset(new Model(firstupstairsPath));
+	_secondchair.reset(new Model(secondchairPath));
+	_seconddesk.reset(new Model(seconddeskPath));
+	_seconddeskbottom.reset(new Model(seconddeskbottomPath));
+	_secondfloor.reset(new Model(secondfloorPath));
+	_secondscreen.reset(new Model(secondscreenPath));
+	_secondsofa.reset(new Model(secondsofaPath));
+
+
+
+	_firstdesk.reset(new Model(firstdeskPath));
 	_sphere->scale = glm::vec3(0.3f, 0.3f, 0.3f);
 	_bunny->scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
@@ -96,7 +128,7 @@ TextureMapping::TextureMapping(const Options& options): Application(options) {
 	// 初始化摄像机
 	_camera.reset(new PerspectiveCamera(
 		glm::radians(50.0f), 1.0f * _windowWidth / _windowHeight, 0.1f, 10000.0f));
-	_camera->position.z = 10.0f;
+	_camera->position.z = 3.0f;
 
 	// 初始化灯光
 	_light.reset(new DirectionalLight());
@@ -237,6 +269,50 @@ void TextureMapping::renderFrame() {
 	const glm::mat4 projection = _camera->getProjectionMatrix();
 	const glm::mat4 view = _camera->getViewMatrix();
 
+
+
+
+	//样例  给场景中不同的物体上材质
+
+
+	_phongShader->use();
+	// 1. transfer mvp matrix to the shader
+	_phongShader->setMat4("projection", _camera->getProjectionMatrix());
+	_phongShader->setMat4("view", _camera->getViewMatrix());
+	_phongShader->setMat4("model", _sphere->getModelMatrix());
+
+	// 2. transfer view position to the shader
+
+	_phongShader->setVec3("viewPos", _camera->position);
+	// ----------------------------------------------------------------
+
+	// 3. transfer material attributes to the shader
+	_phongShader->setVec3("material.ka", _phongMaterial->ka);
+	_phongShader->setVec3("material.kd", _phongMaterial->kd);
+	_phongShader->setVec3("material.ks", _phongMaterial->ks);
+	_phongShader->setFloat("material.ns", _phongMaterial->ns);
+
+	// 4. transfer light attributes to the shader
+
+	_phongShader->setVec3("ambientLight.color", _ambientLight->color);
+	_phongShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
+	_phongShader->setVec3("spotLight.position", _spotLight->position);
+	_phongShader->setVec3("spotLight.direction", _spotLight->getFront());
+	_phongShader->setFloat("spotLight.intensity", _spotLight->intensity);
+	_phongShader->setVec3("spotLight.color", _spotLight->color);
+	_phongShader->setFloat("spotLight.angle", _spotLight->angle);
+	_phongShader->setFloat("spotLight.kc", _spotLight->kc);
+	_phongShader->setFloat("spotLight.kl", _spotLight->kl);
+	_phongShader->setFloat("spotLight.kq", _spotLight->kq);
+	_phongShader->setVec3("directionalLight.direction", _directionalLight->getFront());
+	_phongShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
+	_phongShader->setVec3("directionalLight.color", _directionalLight->color);
+
+	_firstdisplaybottom->draw();
+
+
+
+
 	float scaleAmount = static_cast<float>(sin(glfwGetTime()));
 	
 	_rotateAngles = 3.14 * scaleAmount;
@@ -256,9 +332,10 @@ void TextureMapping::renderFrame() {
 	_transformShader->setMat4("view", _camera->getViewMatrix());
 	_transformShader->setMat4("model", model);
 
-	_bunny->draw();
+	//_bunny->draw();
+	//_firstdisplaybottom->draw();
 
-
+	//_firstfloor->draw();
 
 	//shader UI
 	switch (_shaderrenderMode) {
@@ -334,6 +411,7 @@ void TextureMapping::renderFrame() {
 		break;
 	}
 
+	_firstdeskbottom->draw();
 
 
 	// texture UI
@@ -394,8 +472,10 @@ void TextureMapping::renderFrame() {
 	//_bunny->draw();
 	//_sphere->draw();
 	// draw skybox
+	_firstdesk->draw();
+
 	_skybox->draw(projection, view);
-	_tetrahedron->draw(projection, view);
+	//_tetrahedron->draw(projection, view);
 
 
 	//_cube->draw(projection, view);

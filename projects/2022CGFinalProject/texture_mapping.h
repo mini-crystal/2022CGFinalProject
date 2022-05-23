@@ -68,6 +68,25 @@ private:
 	std::unique_ptr<Model> _sphere;
 	std::unique_ptr<Model> _bunny;
 	std::unique_ptr<Model> _bunnycopy;
+	std::unique_ptr<Model> _firstcard;
+	std::unique_ptr<Model> _firstdeng;
+	std::unique_ptr<Model> _firstdesk;
+	std::unique_ptr<Model> _firstdeskbottom;
+	std::unique_ptr<Model> _firstdisplaybottom;
+	std::unique_ptr<Model> _firstmenu;
+	std::unique_ptr<Model> _firstfloor;
+	std::unique_ptr<Model> _firstupstairs;
+	std::unique_ptr<Model> _secondchair;
+	std::unique_ptr<Model> _seconddesk;
+	std::unique_ptr<Model> _seconddeskbottom;
+	std::unique_ptr<Model> _secondfloor;
+	std::unique_ptr<Model> _secondscreen;
+	std::unique_ptr<Model> _secondsofa;
+	
+
+
+
+
 
 
 	//！！！！！！！！！！！叱採延算奉來！！！！！！！！
