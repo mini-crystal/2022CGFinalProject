@@ -11,7 +11,7 @@
 + **Run**
     ```shell
     cd bin/Debug
-    ./project1.exe
+    ./2022CGFinalProject.exe
     ```
 
 + 目前已实现的功能
