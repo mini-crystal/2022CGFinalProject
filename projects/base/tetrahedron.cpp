@@ -11,16 +11,16 @@ Tetrahedron::Tetrahedron() {
         0.5f, -0.5f, 0.5f,
 
         0.0f, 0.5f, 0.0f,
-        0.5, -0.5, 0.5,
-        0.5, -0.5, -0.5,
+        0.5f, -0.5f, 0.5f,
+        0.5f, -0.5f, -0.5f,
 
-        0.0, 0.5, 0.0,
-        0.5, -0.5, -0.5,
-        -0.5, -0.5, -0.5,
+        0.0f, 0.5f, 0.0f,
+        0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
 
-        0.0, 0.5, 0.0,
-        -0.5, -0.5, -0.5,
-        -0.5, -0.5, 0.5
+        0.0f, 0.5f, 0.0f,
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, 0.5f
     };
 
 
@@ -38,8 +38,6 @@ Tetrahedron::Tetrahedron() {
     glBindVertexArray(0);
 
     try {
-       
-
         const char* vsCode =
             "#version 330 core\n"
             "layout(location = 0) in vec3 aPosition;\n"
@@ -91,12 +89,9 @@ Tetrahedron::~Tetrahedron() {
 }
 
 
-
-void Tetrahedron::draw(const glm::mat4& projection, const glm::mat4& view) {
-
+void Tetrahedron::draw(const glm::mat4& model, const glm::mat4& projection, const glm::mat4& view) {
 
     _shader->use();
-    glm::mat4 model = glm::mat4(1.0f);
     _shader->setMat4("model", model);
     _shader->setMat4("view", view);
     _shader->setMat4("projection", projection);
@@ -104,8 +99,6 @@ void Tetrahedron::draw(const glm::mat4& projection, const glm::mat4& view) {
     glDrawArrays(GL_TRIANGLES, 0, 12);
 
     // glBindVertexArray(0);
-
-
 }
 
 

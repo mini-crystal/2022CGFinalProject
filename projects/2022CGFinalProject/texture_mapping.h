@@ -14,9 +14,15 @@
 #include "../base/skybox.h"
 #include "../base/cube.h"
 #include "../base/tetrahedron.h"
+#include "../base/ground.h"
+
 
 enum class ShaderRenderMode {
 	Ambient, Lambert, Phong
+};
+
+enum class ShapeType {
+    Tetrahedron, Cube
 };
 
 // I = ka * Ia
@@ -63,49 +69,51 @@ public:
 	~TextureMapping();
 
 private:
-
-	//用obj导入的模型要在这里注册
-	std::unique_ptr<Model> _sphere;
-	std::unique_ptr<Model> _bunny;
-	std::unique_ptr<Model> _bunnycopy;
-	std::unique_ptr<Model> _firstcard;
-	std::unique_ptr<Model> _firstdeng;
-	std::unique_ptr<Model> _firstdesk;
-	std::unique_ptr<Model> _firstdeskbottom;
-	std::unique_ptr<Model> _firstdisplaybottom;
-	std::unique_ptr<Model> _firstmenu;
-	std::unique_ptr<Model> _firstfloor;
-	std::unique_ptr<Model> _firstupstairs;
-	std::unique_ptr<Model> _secondchair;
-	std::unique_ptr<Model> _seconddesk;
-	std::unique_ptr<Model> _seconddeskbottom;
-	std::unique_ptr<Model> _secondfloor;
-	std::unique_ptr<Model> _secondscreen;
-	std::unique_ptr<Model> _secondsofa;
-	
-
-
-
-
-
-
+    
+    //UNO Model Objects
+    std::unique_ptr<Model> _sphere;
+    std::unique_ptr<Model> _bunny;
+    std::unique_ptr<Model> _bunnycopy;
+    std::unique_ptr<Model> _firstcard;
+    std::unique_ptr<Model> _firstdeng;
+    std::unique_ptr<Model> _firstdesk;
+    std::unique_ptr<Model> _firstdeskbottom;
+    std::unique_ptr<Model> _firstdisplaybottom;
+    std::unique_ptr<Model> _firstmenu;
+    std::unique_ptr<Model> _firstfloor;
+    std::unique_ptr<Model> _firstupstairs;
+    std::unique_ptr<Model> _secondchair;
+    std::unique_ptr<Model> _seconddesk;
+    std::unique_ptr<Model> _seconddeskbottom;
+    std::unique_ptr<Model> _secondfloor;
+    std::unique_ptr<Model> _secondscreen;
+    std::unique_ptr<Model> _secondsofa;
+    
+    void InitializeModel();
+    void InitScale();
+    void InitMaterial();
+    void InitLight();
+    void InitTexture();
+    void InitCamera();
+    void HandleMouse();
+    void InitAllShader();
+    void InitImGui();
+    void drawUI();
 	//———————————几何变换属性————————
 
 	std::unique_ptr<GLSLProgram> _transformShader;
 
-	glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 _position = glm::vec3(0.3f, 0.296f, 0.7f);//position of Vertex Shape
 	glm::vec3 _rotateAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::vec3 _scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
 	float _rotateAngles = 0.0f;
-
+    bool _wireframe = false;// some options related to imGUI
 	//————————————纹理属性——————————
 	
 	std::unique_ptr<SimpleMaterial> _simpleMaterial;
 	std::unique_ptr<BlendMaterial> _blendMaterial;
 	std::unique_ptr<CheckerMaterial> _checkerMaterial;
-
-	
 
 	std::unique_ptr<DirectionalLight> _light;
 
@@ -117,8 +125,10 @@ private:
 	std::unique_ptr<SkyBox> _skybox;
 	std::unique_ptr<Cube> _cube;
 	std::unique_ptr<Tetrahedron> _tetrahedron;
+    std::unique_ptr<Ground> _ground;
 
-	enum RenderMode _renderMode = RenderMode::Simple;
+	enum RenderMode _renderMode = RenderMode::Blend;
+    enum ShapeType _shapeType = ShapeType::Tetrahedron;
 
 	//—————————————材质属性————————————
 
@@ -140,7 +150,7 @@ private:
 	// camera
 	std::unique_ptr<PerspectiveCamera> _camera;
 
-	ShaderRenderMode _shaderrenderMode = ShaderRenderMode::Ambient;
+	ShaderRenderMode _shaderrenderMode = ShaderRenderMode::Phong;
 
 	void initTransformShader();
 

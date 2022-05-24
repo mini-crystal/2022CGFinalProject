@@ -21,7 +21,7 @@ public:
 	//释放借来的所有资源
 	~Cube();
 
-	void draw(const glm::mat4& projection, const glm::mat4& view);
+	void draw(const glm::mat4& model, const glm::mat4& projection, const glm::mat4& view);
 
 
 

@@ -120,11 +120,10 @@ Cube::~Cube() {
 
 
 
-void Cube::draw(const glm::mat4& projection, const glm::mat4& view) {
+void Cube::draw(const glm::mat4& model, const glm::mat4& projection, const glm::mat4& view) {
 
 
     _shader->use();
-    glm::mat4 model = glm::mat4(1.0f);
     _shader->setMat4("model", model);
     _shader->setMat4("view", view);
     _shader->setMat4("projection", projection);
