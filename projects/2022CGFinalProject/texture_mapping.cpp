@@ -3,6 +3,7 @@
 #include <imgui_impl_opengl3.h>
 #include "texture_mapping.h"
 
+<<<<<<< HEAD
 const std::string spheremodelPath = "../../media/sphere.obj";
 const std::string bunnymodelpath = "../../media/bunny.obj";
 const std::string firstcardPath = "../../media/firstcard.obj";
@@ -34,6 +35,8 @@ const std::vector<std::string> skyboxTexturePaths = {
 	"../../media/starfield/Back_Tex.jpg"
 };
 
+=======
+>>>>>>> 891822545b054c7a9ab8798b6fb97f00647d08b5
 TextureMapping::TextureMapping(const Options& options): Application(options) {
     HandleMouse();
     InitializeModel();
@@ -106,24 +109,28 @@ void TextureMapping::InitLight(){
 
     _spotLight.reset(new SpotLight);
     _spotLight->position = glm::vec3(0.0f, 0.0f, 5.0f);
-    _spotLight->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+    _spotLight->rotation = glm::vec3(-1.0f, 0.0f, 0.1f);
     
     _light.reset(new DirectionalLight());
     _light->rotation = glm::angleAxis(glm::radians(45.0f), -glm::vec3(1.0f, 1.0f, 1.0f));
 }
 void TextureMapping::InitTexture(){
+<<<<<<< HEAD
     // 初始化纹理贴图
     std::shared_ptr<Texture2D> earthTexture = std::make_shared<Texture2D>(earthTexturePath);
     std::shared_ptr<Texture2D> planetTexture = std::make_shared<Texture2D>(woodTexturePath);
 
     // 初始化材?
+=======
+    // 初始化材?
+>>>>>>> 891822545b054c7a9ab8798b6fb97f00647d08b5
     _simpleMaterial.reset(new SimpleMaterial);
-    _simpleMaterial->mapKd = planetTexture;
+    _simpleMaterial->mapKd = wallTexture;
 
     _blendMaterial.reset(new BlendMaterial);
     _blendMaterial->kds[0] = glm::vec3(1.0f, 1.0f, 1.0f);
     _blendMaterial->kds[1] = glm::vec3(1.0f, 1.0f, 1.0f);
-    _blendMaterial->mapKds[0] = planetTexture;
+    _blendMaterial->mapKds[0] = woodTexture;
     _blendMaterial->mapKds[1] = earthTexture;
     _blendMaterial->blend = 0.0f;
 
@@ -131,6 +138,10 @@ void TextureMapping::InitTexture(){
     _checkerMaterial->repeat = 10;
     _checkerMaterial->colors[0] = glm::vec3(1.0f, 1.0f, 1.0f);
     _checkerMaterial->colors[1] = glm::vec3(0.0f, 0.0f, 0.0f);
+    
+    //objects
+    _groundMaterial.reset(new SimpleMaterial);
+    _groundMaterial->mapKd = groundTexture;
 }
 void TextureMapping::InitCamera(){
     // 初始化摄像机
@@ -158,7 +169,11 @@ void TextureMapping::InitAllShader(){
     initAmbientShader();
     initLambertShader();
     initPhongShader();
-
+    
+    //init shader for objects
+    initGroundShader();
+    initWallShader();
+    
     //纹理shader
     initSimpleShader();
     initBlendShader();
@@ -271,12 +286,12 @@ void TextureMapping::drawUI(){
 
         //纹理shader选择面板
         
-        ImGui::Text("Adjust texture:");
-        ImGui::Separator();
-        ImGui::ColorEdit3("kd1", (float*)&_blendMaterial->kds[0]);
-        ImGui::ColorEdit3("kd2", (float*)&_blendMaterial->kds[1]);
-        ImGui::SliderFloat("blend", &_blendMaterial->blend, 0.0f, 1.0f);
-        ImGui::NewLine();
+//        ImGui::Text("Adjust texture:");
+//        ImGui::Separator();
+//        ImGui::ColorEdit3("kd1", (float*)&_blendMaterial->kds[0]);
+//        ImGui::ColorEdit3("kd2", (float*)&_blendMaterial->kds[1]);
+//        ImGui::SliderFloat("blend", &_blendMaterial->blend, 0.0f, 1.0f);
+//        ImGui::NewLine();
 
         //Choose shape
         ImGui::Text("Choose shape:");
@@ -398,19 +413,18 @@ void TextureMapping::renderFrame() {
 
     _firstdisplaybottom->draw();
     _firstcard->draw();
-    _firstdeng->draw();
     _firstmenu->draw();
-    _firstfloor->draw();
-    _firstupstairs->draw();
-    
+    _secondfloor->draw();
     //_secondchair->draw();
     _secondsofa->draw();
-    _secondfloor->draw();
     _secondscreen->draw();
+<<<<<<< HEAD
     _seconddeskbottom->draw();
     _scale = glm::vec3(_scale.x / 100.0f, _scale.y / 100.0f, _scale.z / 100.0f);
     model = glm::scale(model, glm::vec3(_scale.x / 100.0f, _scale.y / 100.0f, _scale.z / 100.0f));
     //_men->draw();
+=======
+>>>>>>> 891822545b054c7a9ab8798b6fb97f00647d08b5
 
 
     {;
@@ -433,61 +447,121 @@ void TextureMapping::renderFrame() {
     }//test for rotation by time
 
 
-	// draw with texture
-	switch (_renderMode) {
-	case RenderMode::Simple:
-		// 1. use the shader
-		_simpleShader->use();
-		// 2. transfer mvp matrices to gpu 
-		_simpleShader->setMat4("projection", projection);
-		_simpleShader->setMat4("view", view);
-		_simpleShader->setMat4("model", _sphere->getModelMatrix());
-		// 3. enable textures and transform textures to gpu
-		glActiveTexture(GL_TEXTURE0);
-		_simpleMaterial->mapKd->bind();
-		break;
-	case RenderMode::Blend:
-		// 1. use the shader
-		_blendShader->use();
-		// 2. transfer mvp matrices to gpu 
-		_blendShader->setMat4("projection", projection);
-		_blendShader->setMat4("view", view);
-		_blendShader->setMat4("model", _sphere->getModelMatrix());
-		// 3. transfer light attributes to gpu
-		_blendShader->setVec3("light.direction", _directionalLight->getFront());
-		_blendShader->setVec3("light.color", _directionalLight->color);
-		_blendShader->setFloat("light.intensity", _directionalLight->intensity);
-		// 4. transfer materials to gpu
-		// 4.1 transfer simple material attributes
-		_blendShader->setVec3("material.kds[0]", _blendMaterial->kds[0]);
-		_blendShader->setVec3("material.kds[1]", _blendMaterial->kds[1]);
-		// 4.2 transfer blend cofficient to gpu
-		_blendShader->setFloat("material.blend", _blendMaterial->blend);
-		// 4.3 enable textures and transform textures to gpu
-		_blendShader->setInt("mapKds[1]", 1);
-		glActiveTexture(GL_TEXTURE0);
-		_blendMaterial->mapKds[0]->bind();
-		glActiveTexture(GL_TEXTURE1);
-		_blendMaterial->mapKds[1]->bind();
-		break;
-	case RenderMode::Checker:
-		// 1. use the shader
-		_checkerShader->use();
-		// 2. transfer mvp matrices to gpu 
-		_checkerShader->setMat4("projection", projection);
-		_checkerShader->setMat4("view", view);
-		_checkerShader->setMat4("model", _sphere->getModelMatrix());
-		// 3. transfer material attributes to gpu
-		_checkerShader->setInt("material.repeat", _checkerMaterial->repeat);
-		_checkerShader->setVec3("material.colors[0]", _checkerMaterial->colors[0]);
-		_checkerShader->setVec3("material.colors[1]", _checkerMaterial->colors[1]);
-		break;
-	}
-	_firstdesk->draw();
-    _seconddesk->draw();
+    {// draw with texture
+//	switch (_renderMode) {
+//	case RenderMode::Simple:
+//		// 1. use the shader
+//		_simpleShader->use();
+//		// 2. transfer mvp matrices to gpu
+//		_simpleShader->setMat4("projection", projection);
+//		_simpleShader->setMat4("view", view);
+//		_simpleShader->setMat4("model", _sphere->getModelMatrix());
+//		// 3. enable textures and transform textures to gpu
+//		glActiveTexture(GL_TEXTURE0);
+//		_simpleMaterial->mapKd->bind();
+//		break;
+//	case RenderMode::Blend:
+//		// 1. use the shader
+//		_blendShader->use();
+//		// 2. transfer mvp matrices to gpu
+//		_blendShader->setMat4("projection", projection);
+//		_blendShader->setMat4("view", view);
+//		_blendShader->setMat4("model", _sphere->getModelMatrix());
+//		// 3. transfer light attributes to gpu
+//		_blendShader->setVec3("light.direction", _directionalLight->getFront());
+//		_blendShader->setVec3("light.color", _directionalLight->color);
+//		_blendShader->setFloat("light.intensity", _directionalLight->intensity);
+//		// 4. transfer materials to gpu
+//		// 4.1 transfer simple material attributes
+//		_blendShader->setVec3("material.kds[0]", _blendMaterial->kds[0]);
+//		_blendShader->setVec3("material.kds[1]", _blendMaterial->kds[1]);
+//		// 4.2 transfer blend cofficient to gpu
+//		_blendShader->setFloat("material.blend", _blendMaterial->blend);
+//		// 4.3 enable textures and transform textures to gpu
+//		_blendShader->setInt("mapKds[1]", 1);
+//		glActiveTexture(GL_TEXTURE0);
+//		_blendMaterial->mapKds[0]->bind();
+//		glActiveTexture(GL_TEXTURE1);
+//		_blendMaterial->mapKds[1]->bind();
+//		break;
+//	case RenderMode::Checker:
+//		// 1. use the shader
+//		_checkerShader->use();
+//		// 2. transfer mvp matrices to gpu
+//		_checkerShader->setMat4("projection", projection);
+//		_checkerShader->setMat4("view", view);
+//		_checkerShader->setMat4("model", _sphere->getModelMatrix());
+//		// 3. transfer material attributes to gpu
+//		_checkerShader->setInt("material.repeat", _checkerMaterial->repeat);
+//		_checkerShader->setVec3("material.colors[0]", _checkerMaterial->colors[0]);
+//		_checkerShader->setVec3("material.colors[1]", _checkerMaterial->colors[1]);
+//		break;
+//    }}
+    }
     
-    // draw sky and ground
+    
+    //    _simpleShader->use();
+    //    _simpleShader->setMat4("projection", projection);
+    //    _simpleShader->setMat4("view", view);
+    //    _simpleShader->setMat4("model", _sphere->getModelMatrix());
+    //    glActiveTexture(GL_TEXTURE0);
+    //    _simpleMaterial->mapKd->bind();
+    
+    
+    //draw desks
+    _blendShader->use();
+    _blendShader->setMat4("projection", projection);
+    _blendShader->setMat4("view", view);
+    _blendShader->setMat4("model", _sphere->getModelMatrix());
+    _blendShader->setVec3("light.direction", _directionalLight->getFront());
+    _blendShader->setVec3("light.color", _directionalLight->color);
+    _blendShader->setFloat("light.intensity", _directionalLight->intensity);
+    _blendShader->setVec3("material.kds[0]", _blendMaterial->kds[0]);
+    _blendShader->setVec3("material.kds[1]", _blendMaterial->kds[1]);
+    _blendShader->setFloat("material.blend", _blendMaterial->blend);
+    _blendShader->setInt("mapKds[1]", 1);
+    glActiveTexture(GL_TEXTURE0);
+    _blendMaterial->mapKds[0]->bind();
+    glActiveTexture(GL_TEXTURE1);
+    _blendMaterial->mapKds[1]->bind();
+        
+	_firstdesk->draw();
+    _firstdeng->draw();
+    _seconddesk->draw();
+    _seconddeskbottom->draw();
+    
+    //draw floor and stairs
+    _wallShader->use();
+    _wallShader->setMat4("projection", _camera->getProjectionMatrix());
+    _wallShader->setMat4("view", _camera->getViewMatrix());
+    _wallShader->setMat4("model", _sphere->getModelMatrix());
+    _wallShader->setVec3("viewPos", _camera->position);
+    _wallShader->setVec3("material.ka", glm::vec3(0.21f,0.21f,0.21f));
+    _wallShader->setVec3("material.kd", glm::vec3(0.75f,0.70f,0.44f));
+    _wallShader->setVec3("material.ks", glm::vec3(0.76f,0.69f,0.55f));
+    _wallShader->setFloat("material.ns", _phongMaterial->ns);
+    _wallShader->setVec3("ambientLight.color", _ambientLight->color);
+    _wallShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
+    _wallShader->setVec3("spotLight.position", _spotLight->position);
+    _wallShader->setVec3("spotLight.direction", _spotLight->getFront());
+    _wallShader->setFloat("spotLight.intensity", _spotLight->intensity);
+    _wallShader->setVec3("spotLight.color", _spotLight->color);
+    _wallShader->setFloat("spotLight.angle", _spotLight->angle);
+    _wallShader->setFloat("spotLight.kc", _spotLight->kc);
+    _wallShader->setFloat("spotLight.kl", _spotLight->kl);
+    _wallShader->setFloat("spotLight.kq", _spotLight->kq);
+    _wallShader->setVec3("directionalLight.direction", _directionalLight->getFront());
+    _wallShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
+    _wallShader->setVec3("directionalLight.color", _directionalLight->color);
+    
+    _firstfloor->draw();
+    _firstupstairs->draw();
+    
+    // draw sky box
 	_skybox->draw(projection, view);
+    
+    //draw ground
+    _groundMaterial->mapKd->bind();
     _ground->draw(projection, view);
     
     // draw Vertex Shape
