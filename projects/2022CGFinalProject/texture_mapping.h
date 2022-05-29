@@ -16,6 +16,37 @@
 #include "../base/tetrahedron.h"
 #include "../base/ground.h"
 
+const std::string spheremodelPath = "../../media/sphere.obj";
+const std::string bunnymodelpath = "../../media/bunny.obj";
+const std::string firstcardPath = "../../media/firstcard.obj";
+const std::string firstdengPath = "../../media/firstdeng.obj";
+const std::string firstdeskPath = "../../media/firstdesk.obj";
+const std::string firstdeskbottomPath = "../../media/firstdeskbottom.obj";
+const std::string firstdisplaybottomPath = "../../media/firstdisplaybottom.obj";
+const std::string firstfloorPath = "../../media/firstfloor.obj";
+const std::string firstupstairsPath = "../../media/firstupstairs.obj";
+const std::string firstmenuPath = "../../media/firstmenu.obj";
+const std::string seconddeskPath = "../../media/seconddesk.obj";
+const std::string seconddeskbottomPath = "../../media/seconddeskbottom.obj";
+const std::string secondfloorPath = "../../media/secondfloor.obj";
+const std::string secondscreenPath = "../../media/secondscreen.obj";
+const std::string secondsofaPath = "../../media/secondsofa.obj";
+const std::string secondchairPath = "../../media/secondchair.obj";
+
+const std::string earthTexturePath = "../../media/earthmap.jpg";
+const std::string woodTexturePath = "../../media/wood.jpg";
+const std::string planetTexturePath = "../../media/planet_Quom1200.png";
+const std::string groundTexturePath="../../media/ground.jpg";
+const std::string wallTexturePath="../../media/wall.png";
+
+const std::vector<std::string> skyboxTexturePaths = {
+    "../../media/starfield/Right_Tex.jpg",
+    "../../media/starfield/Left_Tex.jpg",
+    "../../media/starfield/Down_Tex.jpg",
+    "../../media/starfield/Up_Tex.jpg",
+    "../../media/starfield/Front_Tex.jpg",
+    "../../media/starfield/Back_Tex.jpg"
+};
 
 enum class ShaderRenderMode {
 	Ambient, Lambert, Phong
@@ -114,6 +145,7 @@ private:
 	std::unique_ptr<SimpleMaterial> _simpleMaterial;
 	std::unique_ptr<BlendMaterial> _blendMaterial;
 	std::unique_ptr<CheckerMaterial> _checkerMaterial;
+    std::unique_ptr<SimpleMaterial> _groundMaterial;
 
 	std::unique_ptr<DirectionalLight> _light;
 
@@ -131,16 +163,25 @@ private:
     enum ShapeType _shapeType = ShapeType::Tetrahedron;
 
 	//—————————————材质属性————————————
-
+    // 初始化纹理贴图
+    std::shared_ptr<Texture2D> earthTexture = std::make_shared<Texture2D>(earthTexturePath);
+    std::shared_ptr<Texture2D> woodTexture = std::make_shared<Texture2D>(woodTexturePath);
+    std::shared_ptr<Texture2D> groundTexture = std::make_shared<Texture2D>(groundTexturePath);
+    std::shared_ptr<Texture2D> wallTexture = std::make_shared<Texture2D>(wallTexturePath);
+    
 	// materials
 	std::unique_ptr<AmbientMaterial> _ambientMaterial;
 	std::unique_ptr<LambertMaterial> _lambertMaterial;
 	std::unique_ptr<PhongMaterial> _phongMaterial;
 
-	// shaders
+	// shaders for mode
 	std::unique_ptr<GLSLProgram> _ambientShader;
 	std::unique_ptr<GLSLProgram> _lambertShader;
 	std::unique_ptr<GLSLProgram> _phongShader;
+    
+    //shaders for objects
+    std::unique_ptr<GLSLProgram> _groundShader;
+    std::unique_ptr<GLSLProgram> _wallShader;
 
 	// lights
 	std::unique_ptr<AmbientLight> _ambientLight;
@@ -168,6 +209,11 @@ private:
 	void initBlendShader();
 
 	void initCheckerShader();
+    
+    void initGroundShader();
+    
+    void initWallShader();
+    
 
 	void handleInput() override;
 
