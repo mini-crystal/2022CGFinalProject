@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/86135/Desktop/CGFinalProject/external/stb
+# Install script for directory: C:/Users/user/Desktop/CGproject/2022CGFinalProject/external/stb
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

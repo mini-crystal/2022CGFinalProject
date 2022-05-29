@@ -88,6 +88,7 @@ private:
     std::unique_ptr<Model> _secondfloor;
     std::unique_ptr<Model> _secondscreen;
     std::unique_ptr<Model> _secondsofa;
+	std::unique_ptr<Model> _men;
     
     void InitializeModel();
     void InitScale();

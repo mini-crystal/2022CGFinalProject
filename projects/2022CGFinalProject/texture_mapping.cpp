@@ -19,6 +19,7 @@ const std::string secondfloorPath = "../../media/secondfloor.obj";
 const std::string secondscreenPath = "../../media/secondscreen.obj";
 const std::string secondsofaPath = "../../media/secondsofa.obj";
 const std::string secondchairPath = "../../media/secondchair.obj";
+//const std::string menPath = "../../media/FinalBaseMesh.obj";
 
 const std::string earthTexturePath = "../../media/earthmap.jpg";
 const std::string woodTexturePath = "../../media/wood.jpg";
@@ -69,6 +70,7 @@ void TextureMapping::InitializeModel(){
     _secondscreen.reset(new Model(secondscreenPath));
     _secondsofa.reset(new Model(secondsofaPath));
     _firstdesk.reset(new Model(firstdeskPath));
+    //_men.reset(new Model(menPath));
     
     // ¶¥µãÄ£ÐÍ³õÊ¼»¯
     _skybox.reset(new SkyBox(skyboxTexturePaths));
@@ -114,7 +116,7 @@ void TextureMapping::InitTexture(){
     std::shared_ptr<Texture2D> earthTexture = std::make_shared<Texture2D>(earthTexturePath);
     std::shared_ptr<Texture2D> planetTexture = std::make_shared<Texture2D>(woodTexturePath);
 
-    // ³õÊ¼»¯²ÄÖ
+    // ³õÊ¼»¯²Ä?
     _simpleMaterial.reset(new SimpleMaterial);
     _simpleMaterial->mapKd = planetTexture;
 
@@ -406,6 +408,9 @@ void TextureMapping::renderFrame() {
     _secondfloor->draw();
     _secondscreen->draw();
     _seconddeskbottom->draw();
+    _scale = glm::vec3(_scale.x / 100.0f, _scale.y / 100.0f, _scale.z / 100.0f);
+    model = glm::scale(model, glm::vec3(_scale.x / 100.0f, _scale.y / 100.0f, _scale.z / 100.0f));
+    //_men->draw();
 
 
     {;
