@@ -439,10 +439,10 @@ void TextureMapping::initCheckerShader() {
 	_checkerShader->link();
 }
 
-void TextureMapping::initGroundShader(){
-    _groundShader.reset(new GLSLProgram);
-    _groundShader->link();
-}
+//void TextureMapping::initGroundShader(){
+//    _groundShader.reset(new GLSLProgram);
+//    _groundShader->link();
+//}
 
 void TextureMapping::initWallShader(){
     const char* vsCode =

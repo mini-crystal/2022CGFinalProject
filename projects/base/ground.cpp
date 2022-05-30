@@ -5,6 +5,7 @@
 #include "ground.h"
 
 
+
 Ground::Ground() {
     GLfloat vertices[] = {
         -1.0f,  1.0f, -1.0f,     1.0f, 0.0f, 0.0f,   0.0f, 0.0f,
@@ -14,7 +15,7 @@ Ground::Ground() {
         -1.0f,  1.0f,  1.0f,     1.0f, 0.0f, 0.0f,   0.0f, 1.0f,
         -1.0f,  1.0f, -1.0f,     1.0f, 0.0f, 0.0f,   0.0f, 0.0f,
     };
-
+    
     // create vao and vbo
     glGenVertexArrays(1, &_vao);
     glGenBuffers(1, &_vbo);
@@ -33,6 +34,11 @@ Ground::Ground() {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
+    
+    //create texture
+
+    groundTexture->bind();
+    
     try {
         const char* vsCode =
             "#version 330 core\n"
@@ -80,7 +86,7 @@ Ground::Ground() {
     GLenum error = glGetError();
     if (error != GL_NO_ERROR) {
         std::stringstream ss;
-        ss << "Cube creation failure, (code " << error << ")";
+        ss << "Ground creation failure, (code " << error << ")";
         cleanup();
         throw std::runtime_error(ss.str());
     }
@@ -102,7 +108,7 @@ Ground::~Ground() {
 
 
 void Ground::draw(const glm::mat4& projection, const glm::mat4& view) {
-
+    groundTexture->bind();
     _shader->use();
     glm::mat4 model=glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, -10.03f, 0.0f));

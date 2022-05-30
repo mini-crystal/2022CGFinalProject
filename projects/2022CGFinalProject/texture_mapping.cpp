@@ -97,8 +97,8 @@ void TextureMapping::InitTexture(){
     _checkerMaterial->colors[1] = glm::vec3(0.0f, 0.0f, 0.0f);
     
     //objects
-    _groundMaterial.reset(new SimpleMaterial);
-    _groundMaterial->mapKd = groundTexture;
+    //_groundMaterial.reset(new SimpleMaterial);
+    //_groundMaterial->mapKd = groundTexture;
 }
 void TextureMapping::InitCamera(){
     // 初始化摄像机
@@ -128,7 +128,7 @@ void TextureMapping::InitAllShader(){
     initPhongShader();
     
     //init shader for objects
-    initGroundShader();
+    //initGroundShader();
     initWallShader();
     
     //纹理shader
@@ -511,7 +511,7 @@ void TextureMapping::renderFrame() {
 	_skybox->draw(projection, view);
     
     //draw ground
-    _groundMaterial->mapKd->bind();
+    //_groundMaterial->mapKd->bind();
     _ground->draw(projection, view);
     
     // draw Vertex Shape

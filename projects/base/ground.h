@@ -25,6 +25,9 @@ public:
 
 
 private:
+    const std::string groundTexturePath="../../media/ground.jpg";
+    std::shared_ptr<Texture2D> groundTexture = std::make_shared<Texture2D>(groundTexturePath);
+    
     GLuint _vao = 0;
     GLuint _vbo = 0;
 

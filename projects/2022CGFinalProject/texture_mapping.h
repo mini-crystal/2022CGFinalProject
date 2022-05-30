@@ -36,7 +36,7 @@ const std::string secondchairPath = "../../media/secondchair.obj";
 const std::string earthTexturePath = "../../media/earthmap.jpg";
 const std::string woodTexturePath = "../../media/wood.jpg";
 const std::string planetTexturePath = "../../media/planet_Quom1200.png";
-const std::string groundTexturePath="../../media/ground.jpg";
+//const std::string groundTexturePath="../../media/ground.jpg";
 const std::string wallTexturePath="../../media/wall.png";
 
 const std::vector<std::string> skyboxTexturePaths = {
@@ -166,7 +166,7 @@ private:
     // ≥ı ºªØŒ∆¿ÌÃ˘Õº
     std::shared_ptr<Texture2D> earthTexture = std::make_shared<Texture2D>(earthTexturePath);
     std::shared_ptr<Texture2D> woodTexture = std::make_shared<Texture2D>(woodTexturePath);
-    std::shared_ptr<Texture2D> groundTexture = std::make_shared<Texture2D>(groundTexturePath);
+    //std::shared_ptr<Texture2D> groundTexture = std::make_shared<Texture2D>(groundTexturePath);
     std::shared_ptr<Texture2D> wallTexture = std::make_shared<Texture2D>(wallTexturePath);
     
 	// materials
@@ -210,7 +210,7 @@ private:
 
 	void initCheckerShader();
     
-    void initGroundShader();
+//    void initGroundShader();
     
     void initWallShader();
     
