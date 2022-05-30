@@ -16,9 +16,8 @@ Options getOptions(int argc, char* argv) {
 	return options;
 }
 
-int main(int argc, char* argv) {
-	Options options = getOptions(argc, argv);
-
+int main(int argc, char* argv[]) {
+	Options options = getOptions(argc, *argv);
 	try {
 		TextureMapping app(options);
 		app.run();
