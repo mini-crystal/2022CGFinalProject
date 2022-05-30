@@ -22,7 +22,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D6824B0D-86A5-334D-9DC1-45A4C755E2BC}</ProjectGuid>
+    <ProjectGuid>{89EED7D7-18C2-33B3-BC49-EA1869E1375A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -59,25 +59,25 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\86135\Desktop\CGFinalProject\build\bin\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\user\Desktop\CGproject\2022CGFinalProject\build\bin\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2022CGFinalProject.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2022CGFinalProject</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\86135\Desktop\CGFinalProject\build\bin\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\user\Desktop\CGproject\2022CGFinalProject\build\bin\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2022CGFinalProject.dir\Release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2022CGFinalProject</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\86135\Desktop\CGFinalProject\build\bin\MinSizeRel\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\user\Desktop\CGproject\2022CGFinalProject\build\bin\MinSizeRel\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">2022CGFinalProject.dir\MinSizeRel\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">2022CGFinalProject</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\86135\Desktop\CGFinalProject\build\bin\RelWithDebInfo\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\user\Desktop\CGproject\2022CGFinalProject\build\bin\RelWithDebInfo\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">2022CGFinalProject.dir\RelWithDebInfo\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">2022CGFinalProject</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.exe</TargetExt>
@@ -86,7 +86,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\86135\Desktop\CGFinalProject\external\glm;C:\Users\86135\Desktop\CGFinalProject\external\glad\include;C:\Users\86135\Desktop\CGFinalProject\external\glfw\include;C:\Users\86135\Desktop\CGFinalProject\external\tiny_obj_loader;C:\Users\86135\Desktop\CGFinalProject\external\imgui;C:\Users\86135\Desktop\CGFinalProject\external\stb;C:\Users\86135\Desktop\CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glad\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glfw\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\tiny_obj_loader;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\imgui;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\stb;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -104,10 +104,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\86135\Desktop\CGFinalProject\external\glm;C:\Users\86135\Desktop\CGFinalProject\external\glad\include;C:\Users\86135\Desktop\CGFinalProject\external\glfw\include;C:\Users\86135\Desktop\CGFinalProject\external\tiny_obj_loader;C:\Users\86135\Desktop\CGFinalProject\external\imgui;C:\Users\86135\Desktop\CGFinalProject\external\stb;C:\Users\86135\Desktop\CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glad\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glfw\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\tiny_obj_loader;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\imgui;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\stb;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\86135\Desktop\CGFinalProject\external\glm;C:\Users\86135\Desktop\CGFinalProject\external\glad\include;C:\Users\86135\Desktop\CGFinalProject\external\glfw\include;C:\Users\86135\Desktop\CGFinalProject\external\tiny_obj_loader;C:\Users\86135\Desktop\CGFinalProject\external\imgui;C:\Users\86135\Desktop\CGFinalProject\external\stb;C:\Users\86135\Desktop\CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glad\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glfw\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\tiny_obj_loader;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\imgui;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\stb;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -120,8 +120,8 @@
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/86135/Desktop/CGFinalProject/build/projects/2022CGFinalProject/Debug/2022CGFinalProject.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/86135/Desktop/CGFinalProject/build/bin/Debug/2022CGFinalProject.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/user/Desktop/CGproject/2022CGFinalProject/build/projects/2022CGFinalProject/Debug/2022CGFinalProject.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/user/Desktop/CGproject/2022CGFinalProject/build/bin/Debug/2022CGFinalProject.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -130,7 +130,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\86135\Desktop\CGFinalProject\external\glm;C:\Users\86135\Desktop\CGFinalProject\external\glad\include;C:\Users\86135\Desktop\CGFinalProject\external\glfw\include;C:\Users\86135\Desktop\CGFinalProject\external\tiny_obj_loader;C:\Users\86135\Desktop\CGFinalProject\external\imgui;C:\Users\86135\Desktop\CGFinalProject\external\stb;C:\Users\86135\Desktop\CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glad\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glfw\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\tiny_obj_loader;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\imgui;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\stb;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ExceptionHandling>Sync</ExceptionHandling>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
@@ -148,10 +148,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\86135\Desktop\CGFinalProject\external\glm;C:\Users\86135\Desktop\CGFinalProject\external\glad\include;C:\Users\86135\Desktop\CGFinalProject\external\glfw\include;C:\Users\86135\Desktop\CGFinalProject\external\tiny_obj_loader;C:\Users\86135\Desktop\CGFinalProject\external\imgui;C:\Users\86135\Desktop\CGFinalProject\external\stb;C:\Users\86135\Desktop\CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glad\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glfw\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\tiny_obj_loader;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\imgui;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\stb;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\86135\Desktop\CGFinalProject\external\glm;C:\Users\86135\Desktop\CGFinalProject\external\glad\include;C:\Users\86135\Desktop\CGFinalProject\external\glfw\include;C:\Users\86135\Desktop\CGFinalProject\external\tiny_obj_loader;C:\Users\86135\Desktop\CGFinalProject\external\imgui;C:\Users\86135\Desktop\CGFinalProject\external\stb;C:\Users\86135\Desktop\CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glad\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glfw\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\tiny_obj_loader;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\imgui;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\stb;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -164,8 +164,8 @@
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/86135/Desktop/CGFinalProject/build/projects/2022CGFinalProject/Release/2022CGFinalProject.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/86135/Desktop/CGFinalProject/build/bin/Release/2022CGFinalProject.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/user/Desktop/CGproject/2022CGFinalProject/build/projects/2022CGFinalProject/Release/2022CGFinalProject.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/user/Desktop/CGproject/2022CGFinalProject/build/bin/Release/2022CGFinalProject.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -174,7 +174,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\86135\Desktop\CGFinalProject\external\glm;C:\Users\86135\Desktop\CGFinalProject\external\glad\include;C:\Users\86135\Desktop\CGFinalProject\external\glfw\include;C:\Users\86135\Desktop\CGFinalProject\external\tiny_obj_loader;C:\Users\86135\Desktop\CGFinalProject\external\imgui;C:\Users\86135\Desktop\CGFinalProject\external\stb;C:\Users\86135\Desktop\CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glad\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glfw\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\tiny_obj_loader;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\imgui;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\stb;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ExceptionHandling>Sync</ExceptionHandling>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
@@ -192,10 +192,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\86135\Desktop\CGFinalProject\external\glm;C:\Users\86135\Desktop\CGFinalProject\external\glad\include;C:\Users\86135\Desktop\CGFinalProject\external\glfw\include;C:\Users\86135\Desktop\CGFinalProject\external\tiny_obj_loader;C:\Users\86135\Desktop\CGFinalProject\external\imgui;C:\Users\86135\Desktop\CGFinalProject\external\stb;C:\Users\86135\Desktop\CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glad\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glfw\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\tiny_obj_loader;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\imgui;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\stb;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\86135\Desktop\CGFinalProject\external\glm;C:\Users\86135\Desktop\CGFinalProject\external\glad\include;C:\Users\86135\Desktop\CGFinalProject\external\glfw\include;C:\Users\86135\Desktop\CGFinalProject\external\tiny_obj_loader;C:\Users\86135\Desktop\CGFinalProject\external\imgui;C:\Users\86135\Desktop\CGFinalProject\external\stb;C:\Users\86135\Desktop\CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glad\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glfw\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\tiny_obj_loader;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\imgui;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\stb;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -208,8 +208,8 @@
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/86135/Desktop/CGFinalProject/build/projects/2022CGFinalProject/MinSizeRel/2022CGFinalProject.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/86135/Desktop/CGFinalProject/build/bin/MinSizeRel/2022CGFinalProject.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/user/Desktop/CGproject/2022CGFinalProject/build/projects/2022CGFinalProject/MinSizeRel/2022CGFinalProject.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/user/Desktop/CGproject/2022CGFinalProject/build/bin/MinSizeRel/2022CGFinalProject.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -218,7 +218,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\86135\Desktop\CGFinalProject\external\glm;C:\Users\86135\Desktop\CGFinalProject\external\glad\include;C:\Users\86135\Desktop\CGFinalProject\external\glfw\include;C:\Users\86135\Desktop\CGFinalProject\external\tiny_obj_loader;C:\Users\86135\Desktop\CGFinalProject\external\imgui;C:\Users\86135\Desktop\CGFinalProject\external\stb;C:\Users\86135\Desktop\CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glad\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glfw\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\tiny_obj_loader;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\imgui;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\stb;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -235,10 +235,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\86135\Desktop\CGFinalProject\external\glm;C:\Users\86135\Desktop\CGFinalProject\external\glad\include;C:\Users\86135\Desktop\CGFinalProject\external\glfw\include;C:\Users\86135\Desktop\CGFinalProject\external\tiny_obj_loader;C:\Users\86135\Desktop\CGFinalProject\external\imgui;C:\Users\86135\Desktop\CGFinalProject\external\stb;C:\Users\86135\Desktop\CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glad\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glfw\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\tiny_obj_loader;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\imgui;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\stb;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\86135\Desktop\CGFinalProject\external\glm;C:\Users\86135\Desktop\CGFinalProject\external\glad\include;C:\Users\86135\Desktop\CGFinalProject\external\glfw\include;C:\Users\86135\Desktop\CGFinalProject\external\tiny_obj_loader;C:\Users\86135\Desktop\CGFinalProject\external\imgui;C:\Users\86135\Desktop\CGFinalProject\external\stb;C:\Users\86135\Desktop\CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glad\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glfw\include;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\tiny_obj_loader;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\imgui;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\stb;C:\Users\user\Desktop\CGproject\2022CGFinalProject\external\glm\glm\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -251,8 +251,8 @@
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/86135/Desktop/CGFinalProject/build/projects/2022CGFinalProject/RelWithDebInfo/2022CGFinalProject.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/86135/Desktop/CGFinalProject/build/bin/RelWithDebInfo/2022CGFinalProject.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/user/Desktop/CGproject/2022CGFinalProject/build/projects/2022CGFinalProject/RelWithDebInfo/2022CGFinalProject.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/user/Desktop/CGproject/2022CGFinalProject/build/bin/RelWithDebInfo/2022CGFinalProject.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -260,11 +260,11 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Users\86135\Desktop\CGFinalProject\projects\2022CGFinalProject\CMakeLists.txt">
+    <CustomBuild Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\2022CGFinalProject\CMakeLists.txt">
       <UseUtf8Encoding>Always</UseUtf8Encoding>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/86135/Desktop/CGFinalProject/projects/2022CGFinalProject/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/user/Desktop/CGproject/2022CGFinalProject/projects/2022CGFinalProject/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-D:\software\Cmake\bin\cmake.exe -SC:/Users/86135/Desktop/CGFinalProject -BC:/Users/86135/Desktop/CGFinalProject/build --check-stamp-file C:/Users/86135/Desktop/CGFinalProject/build/projects/2022CGFinalProject/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/user/Desktop/CGproject/2022CGFinalProject -BC:/Users/user/Desktop/CGproject/2022CGFinalProject/build --check-stamp-file C:/Users/user/Desktop/CGproject/2022CGFinalProject/build/projects/2022CGFinalProject/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -273,11 +273,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\86135\Desktop\CGFinalProject\build\projects\2022CGFinalProject\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\user\Desktop\CGproject\2022CGFinalProject\build\projects\2022CGFinalProject\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/86135/Desktop/CGFinalProject/projects/2022CGFinalProject/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/user/Desktop/CGproject/2022CGFinalProject/projects/2022CGFinalProject/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-D:\software\Cmake\bin\cmake.exe -SC:/Users/86135/Desktop/CGFinalProject -BC:/Users/86135/Desktop/CGFinalProject/build --check-stamp-file C:/Users/86135/Desktop/CGFinalProject/build/projects/2022CGFinalProject/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/user/Desktop/CGproject/2022CGFinalProject -BC:/Users/user/Desktop/CGproject/2022CGFinalProject/build --check-stamp-file C:/Users/user/Desktop/CGproject/2022CGFinalProject/build/projects/2022CGFinalProject/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -286,11 +286,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\86135\Desktop\CGFinalProject\build\projects\2022CGFinalProject\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\user\Desktop\CGproject\2022CGFinalProject\build\projects\2022CGFinalProject\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/86135/Desktop/CGFinalProject/projects/2022CGFinalProject/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/user/Desktop/CGproject/2022CGFinalProject/projects/2022CGFinalProject/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-D:\software\Cmake\bin\cmake.exe -SC:/Users/86135/Desktop/CGFinalProject -BC:/Users/86135/Desktop/CGFinalProject/build --check-stamp-file C:/Users/86135/Desktop/CGFinalProject/build/projects/2022CGFinalProject/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/user/Desktop/CGproject/2022CGFinalProject -BC:/Users/user/Desktop/CGproject/2022CGFinalProject/build --check-stamp-file C:/Users/user/Desktop/CGproject/2022CGFinalProject/build/projects/2022CGFinalProject/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -299,11 +299,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\86135\Desktop\CGFinalProject\build\projects\2022CGFinalProject\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\user\Desktop\CGproject\2022CGFinalProject\build\projects\2022CGFinalProject\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/86135/Desktop/CGFinalProject/projects/2022CGFinalProject/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/user/Desktop/CGproject/2022CGFinalProject/projects/2022CGFinalProject/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-D:\software\Cmake\bin\cmake.exe -SC:/Users/86135/Desktop/CGFinalProject -BC:/Users/86135/Desktop/CGFinalProject/build --check-stamp-file C:/Users/86135/Desktop/CGFinalProject/build/projects/2022CGFinalProject/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/user/Desktop/CGproject/2022CGFinalProject -BC:/Users/user/Desktop/CGproject/2022CGFinalProject/build --check-stamp-file C:/Users/user/Desktop/CGproject/2022CGFinalProject/build/projects/2022CGFinalProject/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -312,70 +312,72 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\86135\Desktop\CGFinalProject\build\projects\2022CGFinalProject\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\user\Desktop\CGproject\2022CGFinalProject\build\projects\2022CGFinalProject\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\projects\base\tetrahedron.cpp" />
-    <ClCompile Include="C:\Users\86135\Desktop\CGFinalProject\projects\2022CGFinalProject\main.cpp" />
-    <ClCompile Include="C:\Users\86135\Desktop\CGFinalProject\projects\2022CGFinalProject\texture_mapping.cpp" />
-    <ClInclude Include="..\..\..\projects\base\tetrahedron.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\2022CGFinalProject\texture_mapping.h" />
-    <ClCompile Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\application.cpp" />
-    <ClCompile Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\camera.cpp" />
-    <ClCompile Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\glsl_program.cpp" />
-    <ClCompile Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\instanced_model.cpp" />
-    <ClCompile Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\model.cpp" />
-    <ClCompile Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\object.cpp" />
-    <ClCompile Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\object3d.cpp" />
-    <ClCompile Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\shading.cpp" />
-    <ClCompile Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\skybox.cpp" />
-    <ClCompile Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\texture.cpp" />
-    <ClCompile Include="..\..\..\projects\base\cube.cpp" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\application.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\bounding_box.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\camera.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\frame_rate_indicator.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\framebuffer.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\frustum.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\glsl_program.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\input.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\instanced_model.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\light.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\model.h" />
-    <ClInclude Include="..\..\..\projects\base\cube.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\object3d.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\plane.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\skybox.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\texture.h" />
-    <ClInclude Include="C:\Users\86135\Desktop\CGFinalProject\projects\base\vertex.h" />
+    <ClCompile Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\2022CGFinalProject\main.cpp" />
+    <ClCompile Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\2022CGFinalProject\texture_mapping.cpp" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\2022CGFinalProject\texture_mapping.h" />
+    <ClCompile Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\application.cpp" />
+    <ClCompile Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\camera.cpp" />
+    <ClCompile Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\cube.cpp" />
+    <ClCompile Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\glsl_program.cpp" />
+    <ClCompile Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\ground.cpp" />
+    <ClCompile Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\instanced_model.cpp" />
+    <ClCompile Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\model.cpp" />
+    <ClCompile Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\object3d.cpp" />
+    <ClCompile Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\shading.cpp" />
+    <ClCompile Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\skybox.cpp" />
+    <ClCompile Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\tetrahedron.cpp" />
+    <ClCompile Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\texture.cpp" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\application.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\bounding_box.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\camera.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\cube.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\frame_rate_indicator.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\framebuffer.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\frustum.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\glsl_program.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\ground.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\input.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\instanced_model.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\light.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\model.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\object3d.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\plane.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\shading.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\skybox.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\tetrahedron.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\texture.h" />
+    <ClInclude Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\projects\base\vertex.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="C:\Users\86135\Desktop\CGFinalProject\build\ZERO_CHECK.vcxproj">
-      <Project>{965BE23A-AE69-341B-95CF-D11B0A096373}</Project>
+    <ProjectReference Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\build\ZERO_CHECK.vcxproj">
+      <Project>{8D8A8323-D1DB-3759-88D9-79628D2EB4D8}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\86135\Desktop\CGFinalProject\build\external\glad\src\glad.vcxproj">
-      <Project>{87ED496C-7B5A-3C02-B551-D3BD002E95E6}</Project>
+    <ProjectReference Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\build\external\glad\src\glad.vcxproj">
+      <Project>{A5DBB3B6-90C4-3F00-96E3-68E6A812089D}</Project>
       <Name>glad</Name>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\86135\Desktop\CGFinalProject\build\external\glfw\src\glfw.vcxproj">
-      <Project>{862AF1AE-E00E-3189-A873-AFD3755DE431}</Project>
+    <ProjectReference Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\build\external\glfw\src\glfw.vcxproj">
+      <Project>{5C497B2A-6338-32D7-8EF4-0CF73C4642F1}</Project>
       <Name>glfw</Name>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\86135\Desktop\CGFinalProject\build\external\imgui\imgui.vcxproj">
-      <Project>{A7FDD90C-EFEE-3F25-BA2C-DD53772EFD5C}</Project>
+    <ProjectReference Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\build\external\imgui\imgui.vcxproj">
+      <Project>{D10944E7-F6CA-333E-A091-C56644F4947F}</Project>
       <Name>imgui</Name>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\86135\Desktop\CGFinalProject\build\external\stb\stb.vcxproj">
-      <Project>{DA09D157-B0C9-38E1-9DFB-37877B5624EA}</Project>
+    <ProjectReference Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\build\external\stb\stb.vcxproj">
+      <Project>{5A709C60-DD54-3596-A8C5-BC0DB367123E}</Project>
       <Name>stb</Name>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\86135\Desktop\CGFinalProject\build\external\tiny_obj_loader\tiny_obj_loader.vcxproj">
-      <Project>{8EA68461-8232-35BA-81EF-0905B7AAA345}</Project>
+    <ProjectReference Include="C:\Users\user\Desktop\CGproject\2022CGFinalProject\build\external\tiny_obj_loader\tiny_obj_loader.vcxproj">
+      <Project>{21B50ABC-D8D7-357E-B12B-73F549F46B98}</Project>
       <Name>tiny_obj_loader</Name>
     </ProjectReference>
   </ItemGroup>
