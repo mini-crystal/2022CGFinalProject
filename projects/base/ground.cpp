@@ -6,14 +6,13 @@
 
 
 Ground::Ground() {
-    std::string groundTexturePath="../../media/ground.png";
     GLfloat vertices[] = {
-        -50.0f,  50.0f, -50.0f,     1.0f, 0.0f, 0.0f,   0.0f, 0.0f,
-         50.0f,  50.0f, -50.0f,     1.0f, 0.0f, 0.0f,   1.0f, 0.0f,
-         50.0f,  50.0f,  50.0f,     1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
-         50.0f,  50.0f,  50.0f,     1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
-        -50.0f,  50.0f,  50.0f,     1.0f, 0.0f, 0.0f,   0.0f, 1.0f,
-        -50.0f,  50.0f, -50.0f,     1.0f, 0.0f, 0.0f,   0.0f, 0.0f,
+        -1.0f,  1.0f, -1.0f,     1.0f, 0.0f, 0.0f,   0.0f, 0.0f,
+         1.0f,  1.0f, -1.0f,     1.0f, 0.0f, 0.0f,   1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f,     1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+         1.0f,  1.0f,  1.0f,     1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+        -1.0f,  1.0f,  1.0f,     1.0f, 0.0f, 0.0f,   0.0f, 1.0f,
+        -1.0f,  1.0f, -1.0f,     1.0f, 0.0f, 0.0f,   0.0f, 0.0f,
     };
 
     // create vao and vbo
@@ -33,10 +32,6 @@ Ground::Ground() {
     // texture coord attribute
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
-    
-    std::shared_ptr<Texture2D> groundTexture = std::make_shared<Texture2D>(groundTexturePath);
-    glActiveTexture(GL_TEXTURE0);
-    groundTexture->bind();
 
     try {
         const char* vsCode =
@@ -110,7 +105,8 @@ void Ground::draw(const glm::mat4& projection, const glm::mat4& view) {
 
     _shader->use();
     glm::mat4 model=glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, -50.19f, 0.0f));
+    model = glm::translate(model, glm::vec3(0.0f, -10.03f, 0.0f));
+    model = glm::scale(model, glm::vec3(10, 10, 10));
     _shader->setMat4("model", model);
     _shader->setMat4("view", view);
     _shader->setMat4("projection", projection);

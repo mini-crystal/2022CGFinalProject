@@ -181,102 +181,100 @@ void TextureMapping::initPhongShader() {
 		"}\n";
 
 
-	const char* fsCode =
-		"#version 330 core\n"
-		"out vec4 color;\n"
-		"in vec3 fPosition;\n"
-		"in vec3 fNormal;\n"
+    const char* fsCode =
+        "#version 330 core\n"
+        "in vec3 fPosition;\n"
+        "in vec3 fNormal;\n"
+        "out vec4 color;\n"
+    
+        // material data structure declaration
+        "struct Material {\n"
+        "    vec3 ka;\n"
+        "    vec3 kd;\n"
+        "    vec3 ks;\n"
+        "    float ns;\n"
+        "};\n"
 
-		//varials for ambient
-		"// material data structure declaration\n"
-		"struct Material {\n"
-		"	vec3 ka;\n"
-		"	vec3 kd;\n"
-		"	vec3 ks;\n"
-		"	float ns;\n"
-		"};\n"
+        // ambient light data structure declaration
+        "struct AmbientLight {\n"
+        "    vec3 color;\n"
+        "    float intensity;\n"
+        "};\n"
+        
+        // directional light data structure declaration
+        "struct DirectionalLight {\n"
+        "    vec3 direction;\n"
+        "    float intensity;\n"
+        "    vec3 color;\n"
+        "};\n"
+        
+        // spot light data structure declaration
+        "struct SpotLight {\n"
+        "    vec3 position;\n"
+        "    vec3 direction;\n"
+        "    float intensity;\n"
+        "    vec3 color;\n"
+        "    float angle;\n"
+        "    float kc;\n"
+        "    float kl;\n"
+        "    float kq;\n"
+        "};\n"
 
-		"// ambient light data structure declaration\n"
-		"struct AmbientLight {\n"
-		"	vec3 color;\n"
-		"	float intensity;\n"
-		"};\n"
+        // uniform variables
+        "uniform Material material;\n"
+        "uniform AmbientLight ambientLight;\n"
+        "uniform DirectionalLight directionalLight;\n"
+        "uniform SpotLight spotLight;\n"
+        "uniform vec3 viewPos;\n"
 
-		"// uniform variables\n"
-		"uniform AmbientLight ambientLight;\n"
-		"uniform vec3 viewPos;\n"
+        "vec3 calcDirectionalLight(vec3 normal) {\n"
+        "    vec3 lightDir = normalize(-directionalLight.direction);\n"
+        "    vec3 diffuse = directionalLight.color * max(dot(lightDir, normal), 0.0f) * material.kd;\n"
+        "    return directionalLight.intensity * diffuse ;\n"
+        "}\n"
 
-		//variables for diffuse
-
-		"// directional light data structure declaration\n"
-		"struct DirectionalLight {\n"
-		"	vec3 direction;\n"
-		"	float intensity;\n"
-		"	vec3 color;\n"
-		"};\n"
-
-		"// spot light data structure declaration\n"
-		"struct SpotLight {\n"
-		"	vec3 position;\n"
-		"	vec3 direction;\n"
-		"	float intensity;\n"
-		"	vec3 color;\n"
-		"	float angle;\n"
-		"	float kc;\n"
-		"	float kl;\n"
-		"	float kq;\n"
-		"};\n"
-
-		"// uniform variables\n"
-		"uniform Material material;\n"
-		"uniform DirectionalLight directionalLight;\n"
-		"uniform SpotLight spotLight;\n"
-
-		"vec3 calcDirectionalLight(vec3 normal) {\n"
-		"	vec3 lightDir = normalize(-directionalLight.direction);\n"
-		"	vec3 diffuse = directionalLight.color * max(dot(lightDir, normal), 0.0f) * material.kd;\n"
-		"	return directionalLight.intensity * diffuse ;\n"
-		"}\n"
-
-		"vec3 calcSpotLight(vec3 normal) {\n"
-		"	vec3 lightDir = normalize(spotLight.position - fPosition);\n"
-		"	float theta = acos(-dot(lightDir, normalize(spotLight.direction)));\n"
-		"	if (theta > spotLight.angle) {\n"
-		"		return vec3(0.0f, 0.0f, 0.0f);\n"
-		"	}\n"
-		"	vec3 diffuse = spotLight.color * max(dot(lightDir, normal), 0.0f) * material.kd;\n"
-		"	float distance = length(spotLight.position - fPosition);\n"
-		"	float attenuation = 1.0f / (spotLight.kc + spotLight.kl * distance + spotLight.kq * distance * distance);\n"
-		"	return spotLight.intensity * attenuation * diffuse;\n"
-		"}\n"
-
-
-		"vec3 calcDirectionalLightSpecular(vec3 normal) {\n"
-		"	float specularStrength = 0.5;\n"
-		"	vec3 viewDir = normalize(viewPos - fPosition);\n"
-
-		"	vec3 reflectDir = reflect(directionalLight.direction, normal);\n"
-		"	vec3 specular = directionalLight.color * pow(max(dot(reflectDir, viewDir), 0.0), material.ns) * material.ks;\n"
-		"	return specularStrength * specular * directionalLight.intensity ;\n"
-		"	}\n"
-
-		"vec3 calcSpotLightSpecular(vec3 normal) {\n"
-		"	float specularStrength = 0.5;\n"
-		"	vec3 viewDir = normalize(viewPos - fPosition);\n"
-
-		"	vec3 reflectDir = reflect(spotLight.direction, normal);\n"
-		"	vec3 specular = directionalLight.color * pow(max(dot(reflectDir, viewDir), 0.0), material.ns) * material.ks;\n"
-		"	return specularStrength * specular * spotLight.intensity ;\n"
-		"}\n"
-
-		"void main() {\n"
-		"	vec3 ambient = material.ka * ambientLight.color * ambientLight.intensity;\n"
-
-		"	vec3 normal = normalize(fNormal); \n"
-		"	vec3 diffuse = calcDirectionalLight(normal) + calcSpotLight(normal);\n"
-		"   vec3 specular = calcDirectionalLightSpecular(normal) +  calcSpotLightSpecular(normal);\n"
-		"	color = vec4(diffuse, 1.0f) + vec4(ambient, 1.0f) + vec4(specular, 1.0f);\n"
-		"}\n";
+        "vec3 calcSpotLight(vec3 normal) {\n"
+        "    vec3 lightDir = normalize(spotLight.position - fPosition);\n"
+        "    float theta = acos(-dot(lightDir, normalize(spotLight.direction)));\n"
+        "    if (theta > spotLight.angle) {\n"
+        "        return vec3(0.0f, 0.0f, 0.0f);\n"
+        "    }\n"
+        "    vec3 diffuse = spotLight.color * max(dot(lightDir, normal), 0.0f) * material.kd;\n"
+        "    float distance = length(spotLight.position - fPosition);\n"
+        "    float attenuation = 1.0f / (spotLight.kc + spotLight.kl * distance + spotLight.kq * distance * distance);\n"
+        "    return spotLight.intensity * attenuation * diffuse;\n"
+        "}\n"
+    
+        "vec3 calcSpotSpecular(vec3 normal) {\n"
+        "    vec3 viewDir = normalize(viewPos - fPosition);\n"
+        "    vec3 lightDir = normalize(spotLight.position - fPosition);\n"
+        "    float theta = acos(-dot(lightDir, normalize(spotLight.direction)));\n"
+        "    if (theta > spotLight.angle) {\n"
+        "        return vec3(0.0f, 0.0f, 0.0f);\n"
+        "    }\n"
+        "    vec3 reflectDir = reflect(-lightDir,normal);\n"
+        "    float distance = length(spotLight.position - fPosition);\n"
+        "    float attenuation = 1.0f / (spotLight.kc + spotLight.kl * distance + spotLight.kq * distance * distance);\n"
+        "    vec3 specular = pow(max(dot(viewDir, reflectDir), 0),material.ns) * spotLight.color * material.ks;\n"
+        "    return specular * spotLight.intensity * attenuation;\n"
+        "}\n"
+    
+        "vec3 calcDirectionalSpecular(vec3 normal) {\n"
+        "    vec3 viewDir = normalize(viewPos - fPosition);\n"
+        "    vec3 lightDir = normalize(-directionalLight.direction);\n"
+        "    vec3 reflectDir = reflect(-lightDir,normal);\n"
+        "    vec3 specular = pow(max(dot(viewDir, reflectDir), 0.0f),material.ns) * directionalLight.color * material.ks;\n"
+        "    return specular * directionalLight.intensity;\n"
+        "}\n"
+        
+        "void main() {\n"
+        "    vec3 ambient = material.ka * ambientLight.color * ambientLight.intensity;\n"
+        "    vec3 normal = normalize(fNormal);\n"
+        "    vec3 diffuse = calcDirectionalLight(normal) + calcSpotLight(normal);\n"
+        "    vec3 specular = calcSpotSpecular(normal)+calcDirectionalSpecular(normal);\n"
+    
+        "    color = vec4(ambient+diffuse+specular, 1.0f);\n"
+        "}\n";
 
 	_phongShader.reset(new GLSLProgram);
 	_phongShader->attachVertexShader(vsCode);
@@ -439,6 +437,134 @@ void TextureMapping::initCheckerShader() {
 	_checkerShader->attachVertexShader(vsCode);
 	_checkerShader->attachFragmentShader(fsCode);
 	_checkerShader->link();
+}
+
+void TextureMapping::initGroundShader(){
+    _groundShader.reset(new GLSLProgram);
+    _groundShader->link();
+}
+
+void TextureMapping::initWallShader(){
+    const char* vsCode =
+        "#version 330 core\n"
+        "layout(location = 0) in vec3 aPosition;\n"
+        "layout(location = 1) in vec3 aNormal;\n"
+        "layout(location = 2) in vec2 aTexCoord;\n"
+
+        "out vec3 fPosition;\n"
+        "out vec3 fNormal;\n"
+
+        "uniform mat4 model;\n"
+        "uniform mat4 view;\n"
+        "uniform mat4 projection;\n"
+
+
+        "void main() {\n"
+        "    fPosition = vec3(model * vec4(aPosition, 1.0f));\n"
+        "    fNormal = mat3(transpose(inverse(model))) * aNormal;\n"
+        "    gl_Position = projection * view * model * vec4(aPosition, 1.0f);\n"
+        "}\n";
+
+
+    const char* fsCode =
+        "#version 330 core\n"
+        "in vec3 fPosition;\n"
+        "in vec3 fNormal;\n"
+        "out vec4 color;\n"
+    
+        // material data structure declaration
+        "struct Material {\n"
+        "    vec3 ka;\n"
+        "    vec3 kd;\n"
+        "    vec3 ks;\n"
+        "    float ns;\n"
+        "};\n"
+
+        // ambient light data structure declaration
+        "struct AmbientLight {\n"
+        "    vec3 color;\n"
+        "    float intensity;\n"
+        "};\n"
+        
+        // directional light data structure declaration
+        "struct DirectionalLight {\n"
+        "    vec3 direction;\n"
+        "    float intensity;\n"
+        "    vec3 color;\n"
+        "};\n"
+        
+        // spot light data structure declaration
+        "struct SpotLight {\n"
+        "    vec3 position;\n"
+        "    vec3 direction;\n"
+        "    float intensity;\n"
+        "    vec3 color;\n"
+        "    float angle;\n"
+        "    float kc;\n"
+        "    float kl;\n"
+        "    float kq;\n"
+        "};\n"
+
+        // uniform variables
+        "uniform Material material;\n"
+        "uniform AmbientLight ambientLight;\n"
+        "uniform DirectionalLight directionalLight;\n"
+        "uniform SpotLight spotLight;\n"
+        "uniform vec3 viewPos;\n"
+
+        "vec3 calcDirectionalLight(vec3 normal) {\n"
+        "    vec3 lightDir = normalize(-directionalLight.direction);\n"
+        "    vec3 diffuse = directionalLight.color * max(dot(lightDir, normal), 0.0f) * material.kd;\n"
+        "    return directionalLight.intensity * diffuse ;\n"
+        "}\n"
+
+        "vec3 calcSpotLight(vec3 normal) {\n"
+        "    vec3 lightDir = normalize(spotLight.position - fPosition);\n"
+        "    float theta = acos(-dot(lightDir, normalize(spotLight.direction)));\n"
+        "    if (theta > spotLight.angle) {\n"
+        "        return vec3(0.0f, 0.0f, 0.0f);\n"
+        "    }\n"
+        "    vec3 diffuse = spotLight.color * max(dot(lightDir, normal), 0.0f) * material.kd;\n"
+        "    float distance = length(spotLight.position - fPosition);\n"
+        "    float attenuation = 1.0f / (spotLight.kc + spotLight.kl * distance + spotLight.kq * distance * distance);\n"
+        "    return spotLight.intensity * attenuation * diffuse;\n"
+        "}\n"
+    
+        "vec3 calcSpotSpecular(vec3 normal) {\n"
+        "    vec3 viewDir = normalize(viewPos - fPosition);\n"
+        "    vec3 lightDir = normalize(spotLight.position - fPosition);\n"
+        "    float theta = acos(-dot(lightDir, normalize(spotLight.direction)));\n"
+        "    if (theta > spotLight.angle) {\n"
+        "        return vec3(0.0f, 0.0f, 0.0f);\n"
+        "    }\n"
+        "    vec3 reflectDir = reflect(-lightDir,normal);\n"
+        "    float distance = length(spotLight.position - fPosition);\n"
+        "    float attenuation = 1.0f / (spotLight.kc + spotLight.kl * distance + spotLight.kq * distance * distance);\n"
+        "    vec3 specular = pow(max(dot(viewDir, reflectDir), 0),material.ns) * spotLight.color * material.ks;\n"
+        "    return specular * spotLight.intensity * attenuation;\n"
+        "}\n"
+    
+        "vec3 calcDirectionalSpecular(vec3 normal) {\n"
+        "    vec3 viewDir = normalize(viewPos - fPosition);\n"
+        "    vec3 lightDir = normalize(-directionalLight.direction);\n"
+        "    vec3 reflectDir = reflect(-lightDir,normal);\n"
+        "    vec3 specular = pow(max(dot(viewDir, reflectDir), 0.0f),material.ns) * directionalLight.color * material.ks;\n"
+        "    return specular * directionalLight.intensity;\n"
+        "}\n"
+        
+        "void main() {\n"
+        "    vec3 ambient = material.ka * ambientLight.color * ambientLight.intensity;\n"
+        "    vec3 normal = normalize(fNormal);\n"
+        "    vec3 diffuse = calcDirectionalLight(normal) + calcSpotLight(normal);\n"
+        "    vec3 specular = calcSpotSpecular(normal)+calcDirectionalSpecular(normal);\n"
+    
+        "    color = vec4(ambient+diffuse+specular, 1.0f);\n"
+        "}\n";
+
+    _wallShader.reset(new GLSLProgram);
+    _wallShader->attachVertexShader(vsCode);
+    _wallShader->attachFragmentShader(fsCode);
+    _wallShader->link();
 }
 
 
