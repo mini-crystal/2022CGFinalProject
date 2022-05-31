@@ -275,6 +275,10 @@ void TextureMapping::drawUI(){
         ImGui::SliderFloat("positionX", &_position.x, -1.0, 1.0);
         ImGui::SliderFloat("positionY", &_position.y, -1.0, 2.0);
         ImGui::SliderFloat("positionZ", &_position.z, -1.0, 1.0);
+		ImGui::Text("Rotation");
+		ImGui::SliderFloat("rotationX", &_rotateAxis.x, 0.0, 180.0f);
+		ImGui::SliderFloat("rotationY", &_rotateAxis.y, 0.0, 180.0f);
+		ImGui::SliderFloat("rotationZ", &_rotateAxis.z, 0.0, 180.0f);
         ImGui::NewLine();
         //wireframe mode
         ImGui::Checkbox("wireframe", &_wireframe);
@@ -308,7 +312,9 @@ void TextureMapping::renderFrame() {
     static float scaleDivide=40.0f;
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(_position.x, _position.y, _position.z));
-    model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0, 0.0, 1.0));
+    model = glm::rotate(model, glm::radians(_rotateAxis.x), glm::vec3(1.0, 0.0, 0.0));
+	model = glm::rotate(model, glm::radians(_rotateAxis.y), glm::vec3(0.0, 1.0, 0.0));
+	model = glm::rotate(model, glm::radians(_rotateAxis.z), glm::vec3(0.0, 0.0, 1.0));
     model = glm::scale(model, glm::vec3(_scale.x/scaleDivide, _scale.y/scaleDivide, _scale.z/scaleDivide));
 
 	//draw .obj or Vertex models, but their methods are the same: 1.use shader  2.draw objects
