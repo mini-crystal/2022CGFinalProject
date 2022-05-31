@@ -45,6 +45,11 @@ void TextureMapping::InitializeModel(){
     _cube.reset(new Cube());
     _ground.reset(new Ground());
     _tetrahedron.reset(new Tetrahedron());
+	_ball.reset(new Ball());
+	_cone.reset(new Cone());
+	_cylinder.reset(new Cylinder());
+	_prism.reset(new Prism());
+	_prismatictable.reset(new Prismatictable());
 }
 
 void TextureMapping::InitScale(){
@@ -80,7 +85,7 @@ void TextureMapping::InitLight(){
     _light->rotation = glm::angleAxis(glm::radians(45.0f), -glm::vec3(1.0f, 1.0f, 1.0f));
 }
 void TextureMapping::InitTexture(){
-    // ³õÊ¼»¯²ÄÖ
+    // ³õÊ¼»¯²Ä?
     _simpleMaterial.reset(new SimpleMaterial);
     _simpleMaterial->mapKd = wallTexture;
 
@@ -255,6 +260,11 @@ void TextureMapping::drawUI(){
         ImGui::Separator();
         ImGui::RadioButton("Tetrahedron", (int*)&_shapeType, (int)(ShapeType::Tetrahedron));
         ImGui::RadioButton("Cube", (int*)&_shapeType, (int)(ShapeType::Cube));
+		ImGui::RadioButton("Ball", (int*)&_shapeType, (int)(ShapeType::Ball));
+		ImGui::RadioButton("Cone", (int*)&_shapeType, (int)(ShapeType::Cone));
+		ImGui::RadioButton("Cylinder", (int*)&_shapeType, (int)(ShapeType::Cylinder));
+		ImGui::RadioButton("Prism", (int*)&_shapeType, (int)(ShapeType::Prism));
+		ImGui::RadioButton("Prismatictable", (int*)&_shapeType, (int)(ShapeType::Prismatictable));
         
         //¼¸ºÎ±ä»»shader
         ImGui::Text("Scale");
@@ -524,6 +534,26 @@ void TextureMapping::renderFrame() {
         scaleDivide=25.0f;
         _cube->draw(model,projection, view);
         break;
+	case ShapeType::Ball:
+		scaleDivide = 25.0f;
+		_ball->draw(model, projection, view);
+		break;
+	case ShapeType::Cone:
+		scaleDivide = 25.0f;
+		_cone->draw(model, projection, view);
+		break;
+	case ShapeType::Cylinder:
+		scaleDivide = 25.0f;
+		_cylinder->draw(model, projection, view);
+		break;
+	case ShapeType::Prism:
+		scaleDivide = 25.0f;
+		_prism->draw(model, projection, view);
+		break;
+	case ShapeType::Prismatictable:
+		scaleDivide = 25.0f;
+		_prismatictable->draw(model, projection, view);
+		break;
     }
 
     drawUI();

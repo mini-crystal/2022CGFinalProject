@@ -13,6 +13,11 @@
 #include "../base/camera.h"
 #include "../base/skybox.h"
 #include "../base/cube.h"
+#include "../base/cone.h"
+#include "../base/ball.h"
+#include "../base/cylinder.h"
+#include "../base/prism.h"
+#include "../base/prismatictable.h"
 #include "../base/tetrahedron.h"
 #include "../base/ground.h"
 
@@ -53,7 +58,7 @@ enum class ShaderRenderMode {
 };
 
 enum class ShapeType {
-    Tetrahedron, Cube
+    Tetrahedron, Cube, Ball, Cone, Cylinder, Prism, Prismatictable
 };
 
 // I = ka * Ia
@@ -157,6 +162,11 @@ private:
 	std::unique_ptr<SkyBox> _skybox;
 	std::unique_ptr<Cube> _cube;
 	std::unique_ptr<Tetrahedron> _tetrahedron;
+	std::unique_ptr<Ball> _ball;
+	std::unique_ptr<Cone> _cone;
+	std::unique_ptr<Cylinder> _cylinder;
+	std::unique_ptr<Prism> _prism;
+	std::unique_ptr<Prismatictable> _prismatictable;
     std::unique_ptr<Ground> _ground;
 
 	enum RenderMode _renderMode = RenderMode::Blend;
