@@ -531,16 +531,18 @@ void TextureMapping::renderFrame() {
     double velocity = 5.0f;
     float trans = transformation * velocity;
     printf("%f\n", trans);
-    //glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.289f, 0.268f, 0.0f));
-    //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0, 0.0, 1.0));
-    model = _animation1->getModelMatrix() * glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+    
+    
+    glm::mat4 flowerModel = glm::mat4(1.0f);
+    flowerModel = glm::translate(flowerModel, glm::vec3(0.3f, 0.268f, 0.4f));
+    flowerModel = glm::scale(flowerModel, glm::vec3(_scale.x/scaleDivide, _scale.y/scaleDivide, _scale.z/scaleDivide));
+    
     _animationShader->use();
 
     // 1. transfer mvp matrix to the shader
     _animationShader->setMat4("projection", _camera->getProjectionMatrix());
     _animationShader->setMat4("view", _camera->getViewMatrix());
-    _animationShader->setMat4("model", model);
+    _animationShader->setMat4("model", flowerModel);
     // 2. transfer view position to the shader
     _animationShader->setVec3("viewPos", _camera->position);
     // 3. transfer material attributes to the shader
