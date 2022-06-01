@@ -38,6 +38,10 @@ const std::string secondscreenPath = "../../media/secondscreen.obj";
 const std::string secondsofaPath = "../../media/secondsofa.obj";
 const std::string secondchairPath = "../../media/secondchair.obj";
 
+const std::string animationPath_1 = "../../media/animation1.obj";
+const std::string animationPath_2 = "../../media/animation2.obj";
+const std::string animationPath_3 = "../../media/animation3.obj";
+
 const std::string earthTexturePath = "../../media/earthmap.jpg";
 const std::string woodTexturePath = "../../media/wood.jpg";
 const std::string planetTexturePath = "../../media/planet_Quom1200.png";
@@ -124,6 +128,9 @@ private:
     std::unique_ptr<Model> _secondfloor;
     std::unique_ptr<Model> _secondscreen;
     std::unique_ptr<Model> _secondsofa;
+	std::unique_ptr<Model> _animation1;
+	std::unique_ptr<Model> _animation2;
+	std::unique_ptr<Model> _animation3;
     
     void InitializeModel();
     void InitScale();
@@ -192,6 +199,7 @@ private:
     //shaders for objects
     std::unique_ptr<GLSLProgram> _groundShader;
     std::unique_ptr<GLSLProgram> _wallShader;
+	std::unique_ptr<GLSLProgram> _animationShader;
 
 	// lights
 	std::unique_ptr<AmbientLight> _ambientLight;
@@ -223,7 +231,7 @@ private:
 //    void initGroundShader();
     
     void initWallShader();
-    
+	void initAnimationShader();
 
 	void handleInput() override;
 

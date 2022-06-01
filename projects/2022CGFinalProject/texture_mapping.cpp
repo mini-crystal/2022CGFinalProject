@@ -50,6 +50,10 @@ void TextureMapping::InitializeModel(){
 	_cylinder.reset(new Cylinder());
 	_prism.reset(new Prism());
 	_prismatictable.reset(new Prismatictable());
+
+    _animation1.reset(new Model(animationPath_1));
+    _animation2.reset(new Model(animationPath_2));
+    _animation3.reset(new Model(animationPath_3));
 }
 
 void TextureMapping::InitScale(){
@@ -135,7 +139,7 @@ void TextureMapping::InitAllShader(){
     //init shader for objects
     //initGroundShader();
     initWallShader();
-    
+    initAnimationShader();
     //ÎÆÀíshader
     initSimpleShader();
     initBlendShader();
@@ -523,6 +527,54 @@ void TextureMapping::renderFrame() {
     _firstfloor->draw();
     _firstupstairs->draw();
     
+    float transformation = static_cast <float>(sin((double)glfwGetTime()));
+    double velocity = 5.0f;
+    float trans = transformation * velocity;
+    printf("%f\n", trans);
+    //glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.289f, 0.268f, 0.0f));
+    //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0, 0.0, 1.0));
+    model = _animation1->getModelMatrix() * glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+    _animationShader->use();
+
+    // 1. transfer mvp matrix to the shader
+    _animationShader->setMat4("projection", _camera->getProjectionMatrix());
+    _animationShader->setMat4("view", _camera->getViewMatrix());
+    _animationShader->setMat4("model", model);
+    // 2. transfer view position to the shader
+    _animationShader->setVec3("viewPos", _camera->position);
+    // 3. transfer material attributes to the shader
+    _animationShader->setVec3("material.ka", _phongMaterial->ka);
+    _animationShader->setVec3("material.kd", _phongMaterial->kd);
+    _animationShader->setVec3("material.ks", _phongMaterial->ks);
+    _animationShader->setFloat("material.ns", _phongMaterial->ns);
+    // 4. transfer light attributes to the shader
+    _animationShader->setVec3("ambientLight.color", _ambientLight->color);
+    _animationShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
+    _animationShader->setVec3("spotLight.position", _spotLight->position);
+    _animationShader->setVec3("spotLight.direction", _spotLight->getFront());
+    _animationShader->setFloat("spotLight.intensity", _spotLight->intensity);
+    _animationShader->setVec3("spotLight.color", _spotLight->color);
+    _animationShader->setFloat("spotLight.angle", _spotLight->angle);
+    _animationShader->setFloat("spotLight.kc", _spotLight->kc);
+    _animationShader->setFloat("spotLight.kl", _spotLight->kl);
+    _animationShader->setFloat("spotLight.kq", _spotLight->kq);
+    _animationShader->setVec3("directionalLight.direction", _directionalLight->getFront());
+    _animationShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
+    _animationShader->setVec3("directionalLight.color", _directionalLight->color);
+    //tzy change animation
+    //tzy
+    ;
+    if (trans <= -3) {
+        _animation1->draw();
+    }
+    else if (trans > -3 && trans < 1) {
+        _animation2->draw();
+    }
+    else {
+        _animation3->draw();
+    }
+
     // draw sky box
 	_skybox->draw(projection, view);
     
