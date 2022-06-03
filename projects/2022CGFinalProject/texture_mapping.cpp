@@ -175,8 +175,11 @@ bool TextureMapping::CheckBoundingBox(BoundingBox box,glm::mat4 ModelMatrix){
 void TextureMapping::handleInput() {
         
     static bool LockMouse=false;
+    static int onAirFrame=0;
+    static float upSpeed=0;
 	constexpr float cameraMoveSpeed = 0.5f;//change move and rotate speed
 	constexpr float cameraRotateSpeed = 0.2f;
+    constexpr float gravityFactor = 0.003f;
     Camera* camera = _camera.get();
     glm::vec3 oldPosition=camera->position;
     
@@ -193,17 +196,31 @@ void TextureMapping::handleInput() {
 	}
     if (_keyboardInput.keyStates[GLFW_KEY_SPACE] == GLFW_PRESS) {
         std::cout << "jump" << std::endl;
+        upSpeed = 0.1f;
         _keyboardInput.keyStates[GLFW_KEY_SPACE] = GLFW_RELEASE;
         return;
     }
+    
 	if (_keyboardInput.keyStates[GLFW_KEY_W] != GLFW_RELEASE) camera->position += cameraMoveSpeed * camera->getFront() *_deltaTime;
 	if (_keyboardInput.keyStates[GLFW_KEY_A] != GLFW_RELEASE) camera->position -= cameraMoveSpeed * camera->getRight() *_deltaTime;
 	if (_keyboardInput.keyStates[GLFW_KEY_S] != GLFW_RELEASE) camera->position -= cameraMoveSpeed * camera->getFront() *_deltaTime;
     if (_keyboardInput.keyStates[GLFW_KEY_D] != GLFW_RELEASE) camera->position += cameraMoveSpeed * camera->getRight() *_deltaTime;
     
+    //gravity
+    onAirFrame++;
+    if(onAirFrame)camera->position.y+=
+        (upSpeed * onAirFrame - onAirFrame * onAirFrame * gravityFactor)-
+        (upSpeed * (onAirFrame-1) - (onAirFrame-1) * (onAirFrame-1) * gravityFactor);
+    
     //check if in boundingBox
-    if(CheckBoundingBox(_firstdeng->getBoundingBox(), _sphere->getModelMatrix()))
-    camera->position=oldPosition;
+    if(CheckBoundingBox(_firstdeng->getBoundingBox(), _sphere->getModelMatrix()))camera->position=oldPosition;
+    
+    //check if touch ground
+    if(camera->position.y<=0.2f){
+        camera->position.y=0.2f;
+        onAirFrame=0;
+        upSpeed=0;
+    }
     
     //mouse
 	if (_mouseInput.move.xCurrent != _mouseInput.move.xOld) {
