@@ -213,8 +213,11 @@ void TextureMapping::handleInput() {
         (upSpeed * (onAirFrame-1) - (onAirFrame-1) * (onAirFrame-1) * gravityFactor);
     
     //check if in boundingBox
-    if(CheckBoundingBox(_firstdeng->getBoundingBox(), _sphere->getModelMatrix()))camera->position=oldPosition;
-    
+    if(CheckBoundingBox(_firstdeng->getBoundingBox(), _sphere->getModelMatrix())){
+        camera->position=oldPosition;
+        onAirFrame=0;
+        upSpeed=0;
+    }
     //check if touch ground
     if(camera->position.y<=0.2f){
         camera->position.y=0.2f;
