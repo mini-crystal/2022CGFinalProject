@@ -411,7 +411,6 @@ void TextureMapping::renderFrame() {
     _firstcard->draw();
     _firstmenu->draw();
     _secondfloor->draw();
-    _secondchair->draw();
     _secondsofa->draw();
     _secondscreen->draw();
 
@@ -461,6 +460,7 @@ void TextureMapping::renderFrame() {
 	_firstdesk->draw();
     _firstdeng->draw();
     _seconddesk->draw();
+    _secondchair->draw();
     _seconddeskbottom->draw();
     
     //draw floor and stairs
