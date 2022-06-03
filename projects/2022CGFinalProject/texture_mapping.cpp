@@ -69,21 +69,25 @@ void TextureMapping::InitMaterial(){
     _lambertMaterial->kd = glm::vec3(1.0f, 1.0f, 1.0f);
 
     _phongMaterial.reset(new PhongMaterial);
-    _phongMaterial->ka = glm::vec3(0.03f, 0.03f, 0.03f);
+    _phongMaterial->ka = glm::vec3(0.4f,0.34f,0.21f);
     _phongMaterial->kd = glm::vec3(1.0f, 1.0f, 1.0f);
     _phongMaterial->ks = glm::vec3(1.0f, 1.0f, 1.0f);
     _phongMaterial->ns = 10.0f;
+    
+    _lineMaterial.reset(new LineMaterial);
+    _lineMaterial->color = glm::vec3(0.0f, 1.0f, 0.0f);
+    _lineMaterial->width = 1.0f;
 }
 void TextureMapping::InitLight(){
     _ambientLight.reset(new AmbientLight);
-
+    
     _directionalLight.reset(new DirectionalLight);
-    _directionalLight->position = glm::vec3(10.0f, 10.0f, 10.0f);
+    _directionalLight->position = glm::vec3(10.0f, 30.0f, 10.0f);
     _directionalLight->rotation = glm::angleAxis(glm::radians(45.0f), -glm::vec3(1.0f, 1.0f, 1.0f));
 
     _spotLight.reset(new SpotLight);
     _spotLight->position = glm::vec3(0.0f, 0.0f, 5.0f);
-    _spotLight->rotation = glm::vec3(-1.0f, 0.0f, 0.1f);
+    _spotLight->rotation = glm::vec3(-0.8f, 0.0f, 0.1f);
     
     _light.reset(new DirectionalLight());
     _light->rotation = glm::angleAxis(glm::radians(45.0f), -glm::vec3(1.0f, 1.0f, 1.0f));
@@ -104,10 +108,6 @@ void TextureMapping::InitTexture(){
     _checkerMaterial->repeat = 10;
     _checkerMaterial->colors[0] = glm::vec3(1.0f, 1.0f, 1.0f);
     _checkerMaterial->colors[1] = glm::vec3(0.0f, 0.0f, 0.0f);
-    
-    //objects
-    //_groundMaterial.reset(new SimpleMaterial);
-    //_groundMaterial->mapKd = groundTexture;
 }
 void TextureMapping::InitCamera(){
     // 初始化摄像机
@@ -137,9 +137,13 @@ void TextureMapping::InitAllShader(){
     initPhongShader();
     
     //init shader for objects
-    //initGroundShader();
+    initDisplayShader();
     initWallShader();
     initAnimationShader();
+    
+    //init shader for boundingBox
+    initLineShader();
+    
     //纹理shader
     initSimpleShader();
     initBlendShader();
@@ -250,15 +254,6 @@ void TextureMapping::drawUI(){
         ImGui::SliderFloat("angle##3", (float*)&_spotLight->angle, 0.0f, glm::radians(180.0f), "%f rad");
         ImGui::NewLine();
 
-        //纹理shader选择面板
-        
-//        ImGui::Text("Adjust texture:");
-//        ImGui::Separator();
-//        ImGui::ColorEdit3("kd1", (float*)&_blendMaterial->kds[0]);
-//        ImGui::ColorEdit3("kd2", (float*)&_blendMaterial->kds[1]);
-//        ImGui::SliderFloat("blend", &_blendMaterial->blend, 0.0f, 1.0f);
-//        ImGui::NewLine();
-
         //Choose shape
         ImGui::Text("Choose shape:");
         ImGui::Separator();
@@ -286,6 +281,7 @@ void TextureMapping::drawUI(){
         ImGui::NewLine();
         //wireframe mode
         ImGui::Checkbox("wireframe", &_wireframe);
+        ImGui::Checkbox("boundingBox", &_showBoundingBox);
         ImGui::NewLine();
         
         ImGui::NewLine();
@@ -322,160 +318,90 @@ void TextureMapping::renderFrame() {
     model = glm::scale(model, glm::vec3(_scale.x/scaleDivide, _scale.y/scaleDivide, _scale.z/scaleDivide));
 
 	//draw .obj or Vertex models, but their methods are the same: 1.use shader  2.draw objects
-
-	//shader Mode
-	switch (_shaderrenderMode) {
-	case ShaderRenderMode::Ambient:
-		_ambientShader->use();
-		// 1. transfer mvp matrix to the shader
-		_ambientShader->setMat4("projection", _camera->getProjectionMatrix());
-		_ambientShader->setMat4("view", _camera->getViewMatrix());
-		_ambientShader->setMat4("model", _sphere->getModelMatrix());
-		// 2. transfer material attributes to the shader
-		_ambientShader->setVec3("material.ka", _ambientMaterial->ka);
-		// 3. transfer light attributes to the shader
-		_ambientShader->setVec3("ambientLight.color", _ambientLight->color);
-		_ambientShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
-		break;
-	case ShaderRenderMode::Lambert:
-		_lambertShader->use();
-		// 1. transfer mvp matrix to the shader
-		_lambertShader->setMat4("projection", _camera->getProjectionMatrix());
-		_lambertShader->setMat4("view", _camera->getViewMatrix());
-		_lambertShader->setMat4("model", _sphere->getModelMatrix());
-		// 2. transfer material attributes to the shader
-		_lambertShader->setVec3("material.kd", _lambertMaterial->kd);
-		// 3. transfer light attributes to the shader
-		_lambertShader->setVec3("spotLight.position", _spotLight->position);
-		_lambertShader->setVec3("spotLight.direction", _spotLight->getFront());
-		_lambertShader->setFloat("spotLight.intensity", _spotLight->intensity);
-		_lambertShader->setVec3("spotLight.color", _spotLight->color);
-		_lambertShader->setFloat("spotLight.angle", _spotLight->angle);
-		_lambertShader->setFloat("spotLight.kc", _spotLight->kc);
-		_lambertShader->setFloat("spotLight.kl", _spotLight->kl);
-		_lambertShader->setFloat("spotLight.kq", _spotLight->kq);
-		_lambertShader->setVec3("directionalLight.direction", _directionalLight->getFront());
-		_lambertShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
-		_lambertShader->setVec3("directionalLight.color", _directionalLight->color);
-		break;
-	case ShaderRenderMode::Phong:
-		_phongShader->use();
-		// 1. transfer mvp matrix to the shader
-		_phongShader->setMat4("projection", _camera->getProjectionMatrix());
-		_phongShader->setMat4("view", _camera->getViewMatrix());
-		_phongShader->setMat4("model", _sphere->getModelMatrix());
-		// 2. transfer view position to the shader
-		_phongShader->setVec3("viewPos", _camera->position);
-		// 3. transfer material attributes to the shader
-		_phongShader->setVec3("material.ka", _phongMaterial->ka);
-		_phongShader->setVec3("material.kd", _phongMaterial->kd);
-		_phongShader->setVec3("material.ks", _phongMaterial->ks);
-		_phongShader->setFloat("material.ns", _phongMaterial->ns);
-		// 4. transfer light attributes to the shader
-		_phongShader->setVec3("ambientLight.color", _ambientLight->color);
-		_phongShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
-		_phongShader->setVec3("spotLight.position", _spotLight->position);
-		_phongShader->setVec3("spotLight.direction", _spotLight->getFront());
-		_phongShader->setFloat("spotLight.intensity", _spotLight->intensity);
-		_phongShader->setVec3("spotLight.color", _spotLight->color);
-		_phongShader->setFloat("spotLight.angle", _spotLight->angle);
-		_phongShader->setFloat("spotLight.kc", _spotLight->kc);
-		_phongShader->setFloat("spotLight.kl", _spotLight->kl);
-		_phongShader->setFloat("spotLight.kq", _spotLight->kq);
-		_phongShader->setVec3("directionalLight.direction", _directionalLight->getFront());
-		_phongShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
-		_phongShader->setVec3("directionalLight.color", _directionalLight->color);
-		break;
-	}
-
-    _firstdisplaybottom->draw();
-    _firstcard->draw();
-    _firstmenu->draw();
-    _secondfloor->draw();
-    //_secondchair->draw();
-    _secondsofa->draw();
-    _secondscreen->draw();
-
-
-    {;
-        //    //------------------------------------------------
-        //
-        //    float scaleAmount = static_cast<float>(sin(glfwGetTime()));
-        //    _rotateAngles = 3.14f * scaleAmount;
-        //
-        //    glm::mat4 trans = glm::mat4(1.0f);
-        //    glm::mat4 rotation = glm::axisAngleMatrix(_rotateAxis, _rotateAngles);
-        //    glm::mat4 translation = glm::translate(trans, _position);
-        //    glm::mat4 scale = glm::scale(trans, _scale);
-        //    glm::mat4 model = translation * rotation * scale;
-        //
-        //    _transformShader->use();
-        //    _transformShader->setMat4("projection", _camera->getProjectionMatrix());
-        //    _transformShader->setMat4("view", _camera->getViewMatrix());
-        //    _transformShader->setMat4("model", model);
-        //    //------------------------------------------------
-    }//test for rotation by time
-
-
-    {// draw with texture
-//	switch (_renderMode) {
-//	case RenderMode::Simple:
-//		// 1. use the shader
-//		_simpleShader->use();
-//		// 2. transfer mvp matrices to gpu
-//		_simpleShader->setMat4("projection", projection);
-//		_simpleShader->setMat4("view", view);
-//		_simpleShader->setMat4("model", _sphere->getModelMatrix());
-//		// 3. enable textures and transform textures to gpu
-//		glActiveTexture(GL_TEXTURE0);
-//		_simpleMaterial->mapKd->bind();
-//		break;
-//	case RenderMode::Blend:
-//		// 1. use the shader
-//		_blendShader->use();
-//		// 2. transfer mvp matrices to gpu
-//		_blendShader->setMat4("projection", projection);
-//		_blendShader->setMat4("view", view);
-//		_blendShader->setMat4("model", _sphere->getModelMatrix());
-//		// 3. transfer light attributes to gpu
-//		_blendShader->setVec3("light.direction", _directionalLight->getFront());
-//		_blendShader->setVec3("light.color", _directionalLight->color);
-//		_blendShader->setFloat("light.intensity", _directionalLight->intensity);
-//		// 4. transfer materials to gpu
-//		// 4.1 transfer simple material attributes
-//		_blendShader->setVec3("material.kds[0]", _blendMaterial->kds[0]);
-//		_blendShader->setVec3("material.kds[1]", _blendMaterial->kds[1]);
-//		// 4.2 transfer blend cofficient to gpu
-//		_blendShader->setFloat("material.blend", _blendMaterial->blend);
-//		// 4.3 enable textures and transform textures to gpu
-//		_blendShader->setInt("mapKds[1]", 1);
-//		glActiveTexture(GL_TEXTURE0);
-//		_blendMaterial->mapKds[0]->bind();
-//		glActiveTexture(GL_TEXTURE1);
-//		_blendMaterial->mapKds[1]->bind();
-//		break;
-//	case RenderMode::Checker:
-//		// 1. use the shader
-//		_checkerShader->use();
-//		// 2. transfer mvp matrices to gpu
-//		_checkerShader->setMat4("projection", projection);
-//		_checkerShader->setMat4("view", view);
-//		_checkerShader->setMat4("model", _sphere->getModelMatrix());
-//		// 3. transfer material attributes to gpu
-//		_checkerShader->setInt("material.repeat", _checkerMaterial->repeat);
-//		_checkerShader->setVec3("material.colors[0]", _checkerMaterial->colors[0]);
-//		_checkerShader->setVec3("material.colors[1]", _checkerMaterial->colors[1]);
-//		break;
-//    }}
+    
+    //draw BoundingBox
+    if (_showBoundingBox) {
+        _lineShader->use();
+        _lineShader->setMat4("projection", projection);
+        _lineShader->setMat4("view", view);
+        _lineShader->setMat4("model", _sphere->getModelMatrix());
+        _lineShader->setVec3("material.color", _lineMaterial->color);
+        glLineWidth(_lineMaterial->width);
+        
+        _firstdeng->drawBoundingBox();
+        _firstmenu->drawBoundingBox();
+        _firstdeng->drawBoundingBox();
+        _firstcard->drawBoundingBox();
+        _seconddesk->drawBoundingBox();
+        _secondsofa->drawBoundingBox();
+        _firstfloor->drawBoundingBox();
+        _secondfloor->drawBoundingBox();
+        _secondchair->drawBoundingBox();
+        _secondscreen->drawBoundingBox();
+        _firstupstairs->drawBoundingBox();
+        _seconddeskbottom->drawBoundingBox();
+        
     }
     
     
-    //    _simpleShader->use();
-    //    _simpleShader->setMat4("projection", projection);
-    //    _simpleShader->setMat4("view", view);
-    //    _simpleShader->setMat4("model", _sphere->getModelMatrix());
-    //    glActiveTexture(GL_TEXTURE0);
-    //    _simpleMaterial->mapKd->bind();
+	//universal shader
+    glm::mat4 floorModel = _sphere->getModelMatrix();
+    floorModel = glm::translate(floorModel, glm::vec3(0.005f,0.005f, 0.005f));
+    _phongShader->use();
+    _phongShader->setMat4("projection", _camera->getProjectionMatrix());
+    _phongShader->setMat4("view", _camera->getViewMatrix());
+    _phongShader->setMat4("model", floorModel);
+    _phongShader->setVec3("viewPos", _camera->position);
+    _phongShader->setVec3("material.ka", _phongMaterial->ka);
+    _phongShader->setVec3("material.kd", _phongMaterial->kd);
+    _phongShader->setVec3("material.ks", _phongMaterial->ks);
+    _phongShader->setFloat("material.ns", _phongMaterial->ns);
+    _phongShader->setVec3("ambientLight.color", _ambientLight->color);
+    _phongShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
+    _phongShader->setVec3("spotLight.position", _spotLight->position);
+    _phongShader->setVec3("spotLight.direction", _spotLight->getFront());
+    _phongShader->setFloat("spotLight.intensity", _spotLight->intensity);
+    _phongShader->setVec3("spotLight.color", _spotLight->color);
+    _phongShader->setFloat("spotLight.angle", _spotLight->angle);
+    _phongShader->setFloat("spotLight.kc", _spotLight->kc);
+    _phongShader->setFloat("spotLight.kl", _spotLight->kl);
+    _phongShader->setFloat("spotLight.kq", _spotLight->kq);
+    _phongShader->setVec3("directionalLight.direction", _directionalLight->getFront());
+    _phongShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
+    _phongShader->setVec3("directionalLight.color", _directionalLight->color);
+
+    _firstcard->draw();
+    _firstmenu->draw();
+    _secondfloor->draw();
+    _secondchair->draw();
+    _secondsofa->draw();
+    _secondscreen->draw();
+
+    
+    //draw display bar
+    _displayShader->use();
+    _displayShader->setMat4("projection", _camera->getProjectionMatrix());
+    _displayShader->setMat4("view", _camera->getViewMatrix());
+    _displayShader->setMat4("model", _sphere->getModelMatrix());
+    _displayShader->setVec3("viewPos", _camera->position);
+    _displayShader->setVec3("material.ka", glm::vec3(0.07f,0.12f,0.31f));
+    _displayShader->setVec3("material.kd", glm::vec3(0.12f,0.24f,0.41f));
+    _displayShader->setVec3("material.ks", _phongMaterial->ks);
+    _displayShader->setFloat("material.ns", _phongMaterial->ns);
+    _displayShader->setVec3("ambientLight.color", _ambientLight->color);
+    _displayShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
+    _displayShader->setVec3("spotLight.position", _spotLight->position);
+    _displayShader->setVec3("spotLight.direction", _spotLight->getFront());
+    _displayShader->setFloat("spotLight.intensity", _spotLight->intensity);
+    _displayShader->setVec3("spotLight.color", _spotLight->color);
+    _displayShader->setFloat("spotLight.angle", _spotLight->angle);
+    _displayShader->setFloat("spotLight.kc", _spotLight->kc);
+    _displayShader->setFloat("spotLight.kl", _spotLight->kl);
+    _displayShader->setFloat("spotLight.kq", _spotLight->kq);
+    _displayShader->setVec3("directionalLight.direction", _directionalLight->getFront());
+    _displayShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
+    _displayShader->setVec3("directionalLight.color", _directionalLight->color);
+    _firstdisplaybottom->draw();
     
     
     //draw desks
@@ -494,7 +420,6 @@ void TextureMapping::renderFrame() {
     _blendMaterial->mapKds[0]->bind();
     glActiveTexture(GL_TEXTURE1);
     _blendMaterial->mapKds[1]->bind();
-        
 	_firstdesk->draw();
     _firstdeng->draw();
     _seconddesk->draw();
@@ -527,30 +452,24 @@ void TextureMapping::renderFrame() {
     _firstfloor->draw();
     _firstupstairs->draw();
     
+    
+    //draw animation
     float transformation = static_cast <float>(sin((double)glfwGetTime()));
     double velocity = 5.0f;
     float trans = transformation * velocity;
-    printf("%f\n", trans);
-    
-    
     glm::mat4 flowerModel = glm::mat4(1.0f);
     flowerModel = glm::translate(flowerModel, glm::vec3(0.3f, 0.268f, 0.4f));
     flowerModel = glm::scale(flowerModel, glm::vec3(_scale.x/scaleDivide, _scale.y/scaleDivide, _scale.z/scaleDivide));
     
     _animationShader->use();
-
-    // 1. transfer mvp matrix to the shader
     _animationShader->setMat4("projection", _camera->getProjectionMatrix());
     _animationShader->setMat4("view", _camera->getViewMatrix());
     _animationShader->setMat4("model", flowerModel);
-    // 2. transfer view position to the shader
     _animationShader->setVec3("viewPos", _camera->position);
-    // 3. transfer material attributes to the shader
     _animationShader->setVec3("material.ka", _phongMaterial->ka);
     _animationShader->setVec3("material.kd", _phongMaterial->kd);
     _animationShader->setVec3("material.ks", _phongMaterial->ks);
     _animationShader->setFloat("material.ns", _phongMaterial->ns);
-    // 4. transfer light attributes to the shader
     _animationShader->setVec3("ambientLight.color", _ambientLight->color);
     _animationShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
     _animationShader->setVec3("spotLight.position", _spotLight->position);
@@ -564,9 +483,8 @@ void TextureMapping::renderFrame() {
     _animationShader->setVec3("directionalLight.direction", _directionalLight->getFront());
     _animationShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
     _animationShader->setVec3("directionalLight.color", _directionalLight->color);
+    
     //tzy change animation
-    //tzy
-    ;
     if (trans <= -3) {
         _animation1->draw();
     }
@@ -581,7 +499,6 @@ void TextureMapping::renderFrame() {
 	_skybox->draw(projection, view);
     
     //draw ground
-    //_groundMaterial->mapKd->bind();
     _ground->draw(projection, view);
     
     // draw Vertex Shape

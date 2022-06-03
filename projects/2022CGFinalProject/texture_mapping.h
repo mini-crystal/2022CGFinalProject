@@ -83,6 +83,11 @@ struct PhongMaterial {
 	float ns;
 };
 
+struct LineMaterial {
+    glm::vec3 color;
+    float width;
+};
+
 enum class RenderMode {
 	Simple, Blend, Checker
 };
@@ -152,6 +157,8 @@ private:
 
 	float _rotateAngles = 0.0f;
     bool _wireframe = false;// some options related to imGUI
+    bool _showBoundingBox = false;
+    
 	//————————————纹理属性——————————
 	
 	std::unique_ptr<SimpleMaterial> _simpleMaterial;
@@ -183,24 +190,27 @@ private:
     // 初始化纹理贴图
     std::shared_ptr<Texture2D> earthTexture = std::make_shared<Texture2D>(earthTexturePath);
     std::shared_ptr<Texture2D> woodTexture = std::make_shared<Texture2D>(woodTexturePath);
-    //std::shared_ptr<Texture2D> groundTexture = std::make_shared<Texture2D>(groundTexturePath);
     std::shared_ptr<Texture2D> wallTexture = std::make_shared<Texture2D>(wallTexturePath);
     
 	// materials
 	std::unique_ptr<AmbientMaterial> _ambientMaterial;
 	std::unique_ptr<LambertMaterial> _lambertMaterial;
 	std::unique_ptr<PhongMaterial> _phongMaterial;
+    std::unique_ptr<LineMaterial> _lineMaterial;
 
 	// shaders for mode
 	std::unique_ptr<GLSLProgram> _ambientShader;
 	std::unique_ptr<GLSLProgram> _lambertShader;
 	std::unique_ptr<GLSLProgram> _phongShader;
     
+    //shader for boundingBox
+    std::unique_ptr<GLSLProgram> _lineShader;
+    
     //shaders for objects
     std::unique_ptr<GLSLProgram> _groundShader;
     std::unique_ptr<GLSLProgram> _wallShader;
 	std::unique_ptr<GLSLProgram> _animationShader;
-
+    std::unique_ptr<GLSLProgram> _displayShader;
 	// lights
 	std::unique_ptr<AmbientLight> _ambientLight;
 	std::unique_ptr<DirectionalLight> _directionalLight;
@@ -228,11 +238,14 @@ private:
 
 	void initCheckerShader();
     
-//    void initGroundShader();
+    void initDisplayShader();
     
     void initWallShader();
+    
 	void initAnimationShader();
 
+    void initLineShader();
+    
 	void handleInput() override;
 
 	void renderFrame() override;
