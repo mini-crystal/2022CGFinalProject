@@ -45,7 +45,6 @@ const std::string animationPath_3 = "../../media/animation3.obj";
 const std::string earthTexturePath = "../../media/earthmap.jpg";
 const std::string woodTexturePath = "../../media/wood.jpg";
 const std::string planetTexturePath = "../../media/planet_Quom1200.png";
-//const std::string groundTexturePath="../../media/ground.jpg";
 const std::string wallTexturePath="../../media/wall.png";
 
 const std::vector<std::string> skyboxTexturePaths = {
@@ -245,6 +244,8 @@ private:
 	void initAnimationShader();
 
     void initLineShader();
+    
+    bool CheckBoundingBox(BoundingBox box,glm::mat4 ModelMatrix);
     
 	void handleInput() override;
 

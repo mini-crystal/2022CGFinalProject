@@ -24,7 +24,7 @@ TextureMapping::~TextureMapping() {
 void TextureMapping::InitializeModel(){
     // 加载模型
     _sphere.reset(new Model(spheremodelPath));
-    //_bunny.reset(new Model(bunnymodelpath));
+
     _firstcard.reset(new Model(firstcardPath));
     _firstdeng.reset(new Model(firstdengPath));
     _firstdeskbottom.reset(new Model(firstdeskbottomPath));
@@ -58,7 +58,6 @@ void TextureMapping::InitializeModel(){
 
 void TextureMapping::InitScale(){
     _sphere->scale = glm::vec3(0.3f, 0.3f, 0.3f);
-    //_bunny->scale = glm::vec3(1.0f, 1.0f, 1.0f);
 }
 
 void TextureMapping::InitMaterial(){
@@ -78,6 +77,7 @@ void TextureMapping::InitMaterial(){
     _lineMaterial->color = glm::vec3(0.0f, 1.0f, 0.0f);
     _lineMaterial->width = 1.0f;
 }
+
 void TextureMapping::InitLight(){
     _ambientLight.reset(new AmbientLight);
     
@@ -92,6 +92,7 @@ void TextureMapping::InitLight(){
     _light.reset(new DirectionalLight());
     _light->rotation = glm::angleAxis(glm::radians(45.0f), -glm::vec3(1.0f, 1.0f, 1.0f));
 }
+
 void TextureMapping::InitTexture(){
     // 初始化材?
     _simpleMaterial.reset(new SimpleMaterial);
@@ -109,6 +110,7 @@ void TextureMapping::InitTexture(){
     _checkerMaterial->colors[0] = glm::vec3(1.0f, 1.0f, 1.0f);
     _checkerMaterial->colors[1] = glm::vec3(0.0f, 0.0f, 0.0f);
 }
+
 void TextureMapping::InitCamera(){
     // 初始化摄像机
     _camera.reset(new PerspectiveCamera(
@@ -159,6 +161,16 @@ void TextureMapping::InitImGui(){
     ImGui_ImplOpenGL3_Init();
 }
 
+bool TextureMapping::CheckBoundingBox(BoundingBox box,glm::mat4 ModelMatrix){
+    Camera* camera = _camera.get();
+    glm::vec3 BoxMaxPosition=ModelMatrix * glm::vec4(box.max, 0.0f);
+    glm::vec3 BoxMinPosition=ModelMatrix * glm::vec4(box.min, 0.0f);
+    if(camera->position.x>BoxMaxPosition.x || camera->position.x<BoxMinPosition.x)return false;
+    if(camera->position.y>BoxMaxPosition.y || camera->position.y<BoxMinPosition.y)return false;
+    if(camera->position.z>BoxMaxPosition.z || camera->position.z<BoxMinPosition.z)return false;
+    return true;
+}
+
 //接收输入：比如键盘wasd输入
 void TextureMapping::handleInput() {
         
@@ -166,6 +178,7 @@ void TextureMapping::handleInput() {
 	constexpr float cameraMoveSpeed = 0.5f;//change move and rotate speed
 	constexpr float cameraRotateSpeed = 0.2f;
     Camera* camera = _camera.get();
+    glm::vec3 oldPosition=camera->position;
     
     //keyboard
 	if (_keyboardInput.keyStates[GLFW_KEY_ESCAPE] != GLFW_RELEASE) {
@@ -187,6 +200,10 @@ void TextureMapping::handleInput() {
 	if (_keyboardInput.keyStates[GLFW_KEY_A] != GLFW_RELEASE) camera->position -= cameraMoveSpeed * camera->getRight() *_deltaTime;
 	if (_keyboardInput.keyStates[GLFW_KEY_S] != GLFW_RELEASE) camera->position -= cameraMoveSpeed * camera->getFront() *_deltaTime;
     if (_keyboardInput.keyStates[GLFW_KEY_D] != GLFW_RELEASE) camera->position += cameraMoveSpeed * camera->getRight() *_deltaTime;
+    
+    //check if in boundingBox
+    if(CheckBoundingBox(_firstdeng->getBoundingBox(), _sphere->getModelMatrix()))
+    camera->position=oldPosition;
     
     //mouse
 	if (_mouseInput.move.xCurrent != _mouseInput.move.xOld) {
@@ -294,6 +311,7 @@ void TextureMapping::drawUI(){
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
+
 void TextureMapping::renderFrame() {
 
 	showFpsInWindowTitle();
