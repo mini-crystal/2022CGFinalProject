@@ -284,11 +284,15 @@ void TextureMapping::drawUI(){
         ImGui::Text("directional light");
         ImGui::SliderFloat("intensity##2", &_directionalLight->intensity, 0.0f, 1.5f);
         ImGui::ColorEdit3("color##2", (float*)&_directionalLight->color);
-
+        
+        
         ImGui::Text("spot light");
         ImGui::SliderFloat("intensity##3", &_spotLight->intensity, 0.0f, 1.5f);
         ImGui::ColorEdit3("color##3", (float*)&_spotLight->color);
         ImGui::SliderFloat("angle##3", (float*)&_spotLight->angle, 0.0f, glm::radians(180.0f), "%f rad");
+        ImGui::SliderFloat("positionX##3", &_spotLight->position.x, -10.0, 10.0);
+        ImGui::SliderFloat("positionY##3", &_spotLight->position.y, -10.0, 10.0);
+        ImGui::SliderFloat("positionZ##3", &_spotLight->position.z, -10.0, 10.0);
         ImGui::NewLine();
 
         //Choose shape
