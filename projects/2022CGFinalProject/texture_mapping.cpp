@@ -4,13 +4,13 @@
 #include "texture_mapping.h"
 
 TextureMapping::TextureMapping(const Options& options): Application(options) {
-    HandleMouse();
     InitializeModel();
     InitScale();
     InitMaterial();
     InitLight();
     InitTexture();
     InitCamera();
+    HandleMouse();
     InitAllShader();
     InitImGui();
 }
@@ -116,7 +116,7 @@ void TextureMapping::InitTexture(){
 void TextureMapping::InitCamera(){
     // 初始化摄像机
     _camera.reset(new PerspectiveCamera(
-        glm::radians(50.0f), 1.0f * _windowWidth / _windowHeight, 0.1f, 10000.0f));
+        glm::radians(45.0f), 1.0f * _windowWidth / _windowHeight, 0.1f, 10000.0f));
     _camera->position.y = 0.3f;
     _camera->position.z = 3.0f;
 }
@@ -177,13 +177,51 @@ bool TextureMapping::CheckBoundingBox(BoundingBox box,glm::mat4 ModelMatrix){
 void TextureMapping::handleInput() {
         
     static bool LockMouse=false;
+    static bool zoomFitState=false;
     static int onAirFrame=0;
     static float upSpeed=0;
-	constexpr float cameraMoveSpeed = 0.5f;//change move and rotate speed
+	constexpr float cameraMoveSpeed = 0.5f;
 	constexpr float cameraRotateSpeed = 0.2f;
+    constexpr float cameraFovySpeed = 0.01f;
     constexpr float gravityFactor = 0.003f;
     Camera* camera = _camera.get();
     glm::vec3 oldPosition=camera->position;
+    
+    //Zoom-Fit
+    if(_zoomFit){
+        zoomFitState=true;
+        _camera.reset(new PerspectiveCamera(
+            glm::radians(80.0f), 1.0f * _windowWidth / _windowHeight, 0.1f, 10000.0f));
+        _camera->position.y = 1.7f;
+        _camera->position.z = 3.0f;
+                
+        glm::vec3 RotationAxis= glm::vec3(_AxisX,_AxisY,_AxisZ);
+        float x = RotationAxis.x * sin(glm::radians(_cameraRotateAngles / 2));
+        float y = RotationAxis.y * sin(glm::radians(_cameraRotateAngles / 2));
+        float z = RotationAxis.z * sin(glm::radians(_cameraRotateAngles / 2));
+        float w = cos(glm::radians(_cameraRotateAngles / 2));
+        
+        _camera->rotation = glm::quat { x,y,z,w };
+        return;
+    }
+    if(!_zoomFit && zoomFitState){
+        _cameraRotateAngles = 155.0f;
+        _AxisX=0.0f;
+        _AxisY=0.0f;
+        _AxisZ=0.47f;
+        _camera->rotation = glm::quat { 1.0f,0.0f,0.0f,0.0f };
+        zoomFitState=false;
+    }
+    
+    //camera fovy
+    static float oldScroll = 0.0f;
+    float scrollDelta=_mouseInput.scroll.y - oldScroll;
+    if(!LockMouse){
+        if(_camera->fovy >= glm::radians(20.0f) && _camera->fovy <= glm::radians(70.0f))_camera->fovy -= scrollDelta * cameraFovySpeed;
+        if(_camera->fovy <= glm::radians(20.0f))_camera->fovy = glm::radians(20.0f);
+        if(_camera->fovy >= glm::radians(70.0f))_camera->fovy = glm::radians(70.0f);
+        oldScroll = _mouseInput.scroll.y;
+    }
     
     //keyboard
 	if (_keyboardInput.keyStates[GLFW_KEY_ESCAPE] != GLFW_RELEASE) {
@@ -307,8 +345,6 @@ void TextureMapping::drawUI(){
 		ImGui::RadioButton("Cylinder", (int*)&_shapeType, (int)(ShapeType::Cylinder));
 		ImGui::RadioButton("Prism", (int*)&_shapeType, (int)(ShapeType::Prism));
 		ImGui::RadioButton("Prismatictable", (int*)&_shapeType, (int)(ShapeType::Prismatictable));
-        
-        //几何变换shader
         ImGui::Text("Scale");
         ImGui::SliderFloat("transformX", &_scale.x, 0.0, 2.0);
         ImGui::SliderFloat("transformY", &_scale.y, 0.0, 2.0);
@@ -322,11 +358,24 @@ void TextureMapping::drawUI(){
 		ImGui::SliderFloat("rotationY", &_rotateAxis.y, 0.0, 180.0f);
 		ImGui::SliderFloat("rotationZ", &_rotateAxis.z, 0.0, 180.0f);
         ImGui::NewLine();
+        
+        //camera
+        ImGui::Checkbox("ZoomFitMode", &_zoomFit);
+        if(_zoomFit){
+            ImGui::Text("Camera:");
+            ImGui::Separator();
+            ImGui::SliderFloat("Rotate", &_cameraRotateAngles, -180.0, 180.0f);
+            ImGui::SliderFloat("X", &_AxisX, -1.0f, 1.0f);
+            ImGui::SliderFloat("Y", &_AxisY, -1.0f, 1.0f);
+            ImGui::SliderFloat("Z", &_AxisZ, -1.0f, 1.0f);
+            ImGui::NewLine();
+        }
+
         //wireframe mode
         ImGui::Checkbox("wireframe", &_wireframe);
         ImGui::Checkbox("boundingBox", &_showBoundingBox);
+
         ImGui::NewLine();
-        
         ImGui::NewLine();
         ImGui::NewLine();
         ImGui::NewLine();

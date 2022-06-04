@@ -163,7 +163,11 @@ private:
 	float _rotateAngles = 0.0f;
     bool _wireframe = false;// some options related to imGUI
     bool _showBoundingBox = false;
-    
+    bool _zoomFit = false;
+    float _cameraRotateAngles = 155.0f;
+    float _AxisX=0.0f;
+    float _AxisY=0.0f;
+    float _AxisZ=0.47f;
 	//！！！！！！！！！！！！瞭尖奉來！！！！！！！！！！
 	
 	std::unique_ptr<SimpleMaterial> _simpleMaterial;
