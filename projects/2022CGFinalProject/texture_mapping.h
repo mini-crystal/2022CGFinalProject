@@ -7,6 +7,7 @@
 
 #include "../base/application.h"
 #include "../base/model.h"
+#include "../base/objmodel.h"
 #include "../base/light.h"
 #include "../base/glsl_program.h"
 #include "../base/texture.h"
@@ -41,6 +42,9 @@ const std::string secondchairPath = "../../media/secondchair.obj";
 const std::string animationPath_1 = "../../media/animation1.obj";
 const std::string animationPath_2 = "../../media/animation2.obj";
 const std::string animationPath_3 = "../../media/animation3.obj";
+
+//自建加载库加载UNO COFFEE
+const std::string unoPath = "../../media/UNOtitle.obj";
 
 const std::string earthTexturePath = "../../media/earthmap.jpg";
 const std::string woodTexturePath = "../../media/wood.jpg";
@@ -135,6 +139,8 @@ private:
 	std::unique_ptr<Model> _animation1;
 	std::unique_ptr<Model> _animation2;
 	std::unique_ptr<Model> _animation3;
+
+	std::unique_ptr<ObjModel> _unotitle;
     
     void InitializeModel();
     void InitScale();

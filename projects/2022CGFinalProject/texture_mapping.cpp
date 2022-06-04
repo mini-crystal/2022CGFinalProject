@@ -54,6 +54,8 @@ void TextureMapping::InitializeModel(){
     _animation1.reset(new Model(animationPath_1));
     _animation2.reset(new Model(animationPath_2));
     _animation3.reset(new Model(animationPath_3));
+
+    _unotitle.reset(new ObjModel(unoPath));
 }
 
 void TextureMapping::InitScale(){
@@ -417,6 +419,7 @@ void TextureMapping::renderFrame() {
     _secondfloor->draw();
     _secondsofa->draw();
     _secondscreen->draw();
+    _unotitle->draw();
 
     
     //draw display bar

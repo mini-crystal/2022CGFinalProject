@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/user/Desktop/CGproject/2022CGFinalProject/external/glad/src
+# Install script for directory: C:/Users/86135/Desktop/CGFinalProject/external/glad/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
