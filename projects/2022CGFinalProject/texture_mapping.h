@@ -152,6 +152,7 @@ private:
     void InitAllShader();
     void InitImGui();
     void drawUI();
+	void capture();
 	//！！！！！！！！！！！叱採延算奉來！！！！！！！！
 
 	std::unique_ptr<GLSLProgram> _transformShader;
@@ -168,6 +169,7 @@ private:
     float _AxisX=0.0f;
     float _AxisY=0.0f;
     float _AxisZ=0.47f;
+	int count = 0;
 	//！！！！！！！！！！！！瞭尖奉來！！！！！！！！！！
 	
 	std::unique_ptr<SimpleMaterial> _simpleMaterial;

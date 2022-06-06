@@ -246,6 +246,12 @@ void TextureMapping::handleInput() {
 	if (_keyboardInput.keyStates[GLFW_KEY_S] != GLFW_RELEASE) camera->position -= cameraMoveSpeed * camera->getFront() *_deltaTime;
     if (_keyboardInput.keyStates[GLFW_KEY_D] != GLFW_RELEASE) camera->position += cameraMoveSpeed * camera->getRight() *_deltaTime;
     
+    if (_keyboardInput.keyStates[GLFW_KEY_M] != GLFW_RELEASE) {
+        printf("MMM");
+        capture();
+
+    }
+
     //gravity
     onAirFrame++;
     if(onAirFrame)camera->position.y+=
@@ -629,4 +635,57 @@ void TextureMapping::renderFrame() {
 
     drawUI();
 
+}
+
+void TextureMapping::capture() {
+    FILE* pDummyFile;
+    FILE* pWritingFile;
+    GLubyte* pPixelData;
+    GLubyte  BMP_Header[54];
+    GLint    i, j;
+    GLint    PixelDataLength;
+
+    std::string filename = "uno" + std::to_string(count) + ".bmp";
+    count++;
+    i = _windowWidth * 3;
+    while (i % 4 != 0)
+        ++i;
+    PixelDataLength = i * _windowHeight;
+
+    pPixelData = (GLubyte*)malloc(PixelDataLength);
+    if (pPixelData == 0)
+        exit(0);
+
+    pDummyFile = fopen("uno1111.bmp", "rb");
+    if (pDummyFile == 0)
+        exit(0);
+
+    char* file = (char*)filename.data();
+    //printf("%s\n", file);
+    pWritingFile = fopen(file, "wb");
+    if (pWritingFile == 0)
+        exit(0);
+    //printf("load new pic\n");
+    fread(BMP_Header, sizeof(BMP_Header), 1, pDummyFile);
+    fwrite(BMP_Header, sizeof(BMP_Header), 1, pWritingFile);
+    fseek(pWritingFile, 0x0012, SEEK_SET);
+    i = _windowWidth;
+    j = _windowHeight;
+    fwrite(&i, sizeof(i), 1, pWritingFile);
+    fwrite(&j, sizeof(j), 1, pWritingFile);
+
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    glReadPixels(0, 0, _windowWidth, _windowHeight,
+        GL_BGR, GL_UNSIGNED_BYTE, pPixelData);
+
+    fseek(pWritingFile, 0, SEEK_END);
+
+    fwrite(pPixelData, PixelDataLength, 1, pWritingFile);
+
+    fclose(pDummyFile);
+    fclose(pWritingFile);
+    free(pPixelData);
+
+    printf("save");
 }
