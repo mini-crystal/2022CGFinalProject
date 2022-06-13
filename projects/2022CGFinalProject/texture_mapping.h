@@ -20,6 +20,7 @@
 #include "../base/prism.h"
 #include "../base/prismatictable.h"
 #include "../base/tetrahedron.h"
+#include "../base/bezier_face.h"
 #include "../base/ground.h"
 
 const std::string spheremodelPath = "../../media/sphere.obj";
@@ -65,7 +66,7 @@ enum class ShaderRenderMode {
 };
 
 enum class ShapeType {
-    Tetrahedron, Cube, Ball, Cone, Cylinder, Prism, Prismatictable
+    Tetrahedron, Cube, Ball, Cone, Cylinder, Prism, Prismatictable, BezierFace
 };
 
 // I = ka * Ia
@@ -192,6 +193,7 @@ private:
 	std::unique_ptr<Cylinder> _cylinder;
 	std::unique_ptr<Prism> _prism;
 	std::unique_ptr<Prismatictable> _prismatictable;
+	std::unique_ptr<BezierFace> _bezierFace;
     std::unique_ptr<Ground> _ground;
 
 	enum RenderMode _renderMode = RenderMode::Blend;

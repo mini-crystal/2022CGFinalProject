@@ -1,7 +1,7 @@
 #include <iostream>
 #include <limits>
 #include <unordered_map>
-
+#include <algorithm>
 
 #include "objmodel.h"
 

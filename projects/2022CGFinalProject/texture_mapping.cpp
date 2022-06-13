@@ -50,6 +50,7 @@ void TextureMapping::InitializeModel(){
 	_cylinder.reset(new Cylinder());
 	_prism.reset(new Prism());
 	_prismatictable.reset(new Prismatictable());
+	_bezierFace.reset(new BezierFace());
 
     _animation1.reset(new Model(animationPath_1));
     _animation2.reset(new Model(animationPath_2));
@@ -351,6 +352,7 @@ void TextureMapping::drawUI(){
 		ImGui::RadioButton("Cylinder", (int*)&_shapeType, (int)(ShapeType::Cylinder));
 		ImGui::RadioButton("Prism", (int*)&_shapeType, (int)(ShapeType::Prism));
 		ImGui::RadioButton("Prismatictable", (int*)&_shapeType, (int)(ShapeType::Prismatictable));
+		ImGui::RadioButton("BezierFace", (int*)&_shapeType, (int)(ShapeType::BezierFace));
         ImGui::Text("Scale");
         ImGui::SliderFloat("transformX", &_scale.x, 0.0, 2.0);
         ImGui::SliderFloat("transformY", &_scale.y, 0.0, 2.0);
@@ -630,6 +632,10 @@ void TextureMapping::renderFrame() {
 	case ShapeType::Prismatictable:
 		scaleDivide = 25.0f;
 		_prismatictable->draw(model, projection, view);
+		break;
+	case ShapeType::BezierFace:
+		scaleDivide = 25.0f;
+		_bezierFace->draw(model, projection, view);
 		break;
     }
 
