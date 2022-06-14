@@ -40,9 +40,19 @@ const std::string secondscreenPath = "../../media/secondscreen.obj";
 const std::string secondsofaPath = "../../media/secondsofa.obj";
 const std::string secondchairPath = "../../media/secondchair.obj";
 
-const std::string animationPath_1 = "../../media/animation1.obj";
-const std::string animationPath_2 = "../../media/animation2.obj";
-const std::string animationPath_3 = "../../media/animation3.obj";
+const std::string animationPath_1 = "../../media/Moonwalk_0000.obj";
+const std::string animationPath_2 = "../../media/Moonwalk_0003.obj";
+const std::string animationPath_3 = "../../media/Moonwalk_0006.obj";
+const std::string animationPath_4 = "../../media/Moonwalk_0009.obj";
+const std::string animationPath_5 = "../../media/Moonwalk_0012.obj";
+const std::string animationPath_6 = "../../media/Moonwalk_0015.obj";
+const std::string animationPath_7 = "../../media/Moonwalk_0018.obj";
+const std::string animationPath_8 = "../../media/Moonwalk_0021.obj";
+const std::string animationPath_9 = "../../media/Moonwalk_0024.obj";
+const std::string animationPath_10 = "../../media/Moonwalk_0027.obj";
+const std::string animationPath_11 = "../../media/Moonwalk_0030.obj";
+
+const std::string door = "../../media/door.obj";
 
 //自建加载库加载UNO COFFEE
 const std::string unoPath = "../../media/UNOtitle.obj";
@@ -140,6 +150,15 @@ private:
 	std::unique_ptr<Model> _animation1;
 	std::unique_ptr<Model> _animation2;
 	std::unique_ptr<Model> _animation3;
+	std::unique_ptr<Model> _animation4;
+	std::unique_ptr<Model> _animation5;
+	std::unique_ptr<Model> _animation6;
+	std::unique_ptr<Model> _animation7;
+	std::unique_ptr<Model> _animation8;
+	std::unique_ptr<Model> _animation9;
+	std::unique_ptr<Model> _animation10;
+	std::unique_ptr<Model> _animation11;
+	std::unique_ptr<Model> _door;
 
 	std::unique_ptr<ObjModel> _unotitle;
     
@@ -161,6 +180,13 @@ private:
 	glm::vec3 _position = glm::vec3(0.3f, 0.296f, 0.7f);//position of Vertex Shape
 	glm::vec3 _rotateAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::vec3 _scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	//about door
+	glm::vec3 doorPosition = glm::vec3(0.0f, 0.0f, 0.05f);//1.5f, 0.0f, 0.05f
+	int flag_O_press = 0;
+	int flag_O_release = 0;
+	float dx = 0.0f;
+	int doorOpen = 0;
+	int animationSwitch = 1;
 
 	float _rotateAngles = 0.0f;
     bool _wireframe = false;// some options related to imGUI
@@ -224,6 +250,7 @@ private:
     std::unique_ptr<GLSLProgram> _wallShader;
 	std::unique_ptr<GLSLProgram> _animationShader;
     std::unique_ptr<GLSLProgram> _displayShader;
+	std::unique_ptr<GLSLProgram> _doorShader;
 	// lights
 	std::unique_ptr<AmbientLight> _ambientLight;
 	std::unique_ptr<DirectionalLight> _directionalLight;
@@ -256,6 +283,7 @@ private:
     void initWallShader();
     
 	void initAnimationShader();
+	void initDoorShader();
 
     void initLineShader();
     

@@ -55,6 +55,16 @@ void TextureMapping::InitializeModel(){
     _animation1.reset(new Model(animationPath_1));
     _animation2.reset(new Model(animationPath_2));
     _animation3.reset(new Model(animationPath_3));
+    _animation4.reset(new Model(animationPath_4));
+    _animation5.reset(new Model(animationPath_5));
+    _animation6.reset(new Model(animationPath_6));
+    _animation7.reset(new Model(animationPath_7));
+    _animation8.reset(new Model(animationPath_8));
+    _animation9.reset(new Model(animationPath_9));
+    _animation10.reset(new Model(animationPath_10));
+    _animation11.reset(new Model(animationPath_11));
+
+    _door.reset(new Model(door));
 
     _unotitle.reset(new ObjModel(unoPath));
 }
@@ -145,7 +155,7 @@ void TextureMapping::InitAllShader(){
     initDisplayShader();
     initWallShader();
     initAnimationShader();
-    
+    initDoorShader();
     //init shader for boundingBox
     initLineShader();
     
@@ -251,6 +261,32 @@ void TextureMapping::handleInput() {
         printf("MMM");
         capture();
 
+    }
+    if (_keyboardInput.keyStates[GLFW_KEY_O] == GLFW_PRESS) flag_O_press = 1;
+    if (_keyboardInput.keyStates[GLFW_KEY_O] == GLFW_RELEASE) flag_O_release = 1;
+    if (flag_O_press && flag_O_release) {
+        if (doorOpen == 0) {
+            dx += 0.01f;
+            doorPosition.x = dx;
+            printf("%lf\n", dx);
+            if (dx >= 1.5f) {
+                flag_O_press = 0;
+                flag_O_release = 0;
+                dx = 1.5f;
+                doorOpen = 1;
+            }
+        }
+        else {
+            dx -= 0.01f;
+            doorPosition.x = dx;
+            printf("%lf\n", dx);
+            if (dx <= 0.0f) {
+                flag_O_press = 0;
+                flag_O_release = 0;
+                dx = 0.0f;
+                doorOpen = 0;
+            }
+        }
     }
 
     //gravity
@@ -441,7 +477,7 @@ void TextureMapping::renderFrame() {
         _secondscreen->drawBoundingBox();
         _firstupstairs->drawBoundingBox();
         _seconddeskbottom->drawBoundingBox();
-        
+        _door->drawBoundingBox();
     }
     
     
@@ -556,13 +592,11 @@ void TextureMapping::renderFrame() {
     
     
     //draw animation
-    float transformation = static_cast <float>(sin((double)glfwGetTime()));
-    double velocity = 5.0f;
-    float trans = transformation * velocity;
+
     glm::mat4 flowerModel = glm::mat4(1.0f);
-    flowerModel = glm::translate(flowerModel, glm::vec3(0.3f, 0.268f, 0.4f));
-    flowerModel = glm::scale(flowerModel, glm::vec3(_scale.x/scaleDivide, _scale.y/scaleDivide, _scale.z/scaleDivide));
-    
+    flowerModel = glm::translate(flowerModel, glm::vec3(1.5f, 0.0f, 1.0f));
+    flowerModel = glm::scale(flowerModel, glm::vec3(0.005f, 0.005f, 0.005f));
+
     _animationShader->use();
     _animationShader->setMat4("projection", _camera->getProjectionMatrix());
     _animationShader->setMat4("view", _camera->getViewMatrix());
@@ -585,8 +619,11 @@ void TextureMapping::renderFrame() {
     _animationShader->setVec3("directionalLight.direction", _directionalLight->getFront());
     _animationShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
     _animationShader->setVec3("directionalLight.color", _directionalLight->color);
-    
+
     //tzy change animation
+    /*float transformation = static_cast <float>(sin((double)glfwGetTime()));
+    double velocity = 5.0f;
+    float trans = transformation * velocity;
     if (trans <= -3) {
         _animation1->draw();
     }
@@ -595,7 +632,52 @@ void TextureMapping::renderFrame() {
     }
     else {
         _animation3->draw();
+    }*/
+    if (animationSwitch > 0) {
+        printf("%d\n", animationSwitch);
+        if (animationSwitch == 120)
+            animationSwitch = 1;
+        if (animationSwitch >= 1 && animationSwitch < 10) _animation1->draw();
+        if (animationSwitch >= 10 && animationSwitch < 20) _animation2->draw();
+        if (animationSwitch >= 30 && animationSwitch < 40) _animation3->draw();
+        if (animationSwitch >= 40 && animationSwitch < 50) _animation4->draw();
+        if (animationSwitch >= 50 && animationSwitch < 60) _animation5->draw();
+        if (animationSwitch >= 60 && animationSwitch < 70) _animation6->draw();
+        if (animationSwitch >= 70 && animationSwitch < 80) _animation7->draw();
+        if (animationSwitch >= 80 && animationSwitch < 90) _animation8->draw();
+        if (animationSwitch >= 90 && animationSwitch < 100) _animation9->draw();
+        if (animationSwitch >= 100 && animationSwitch < 110) _animation10->draw();
+        if (animationSwitch >= 110) _animation11->draw();
+        animationSwitch++;
     }
+
+
+    glm::mat4 doorModel = glm::mat4(1.0f);
+    doorModel = glm::translate(doorModel, glm::vec3(doorPosition.x, doorPosition.y, doorPosition.z));
+    doorModel = glm::scale(doorModel, glm::vec3(0.005f, 0.005f, 0.005f));
+    _doorShader->use();
+    _doorShader->setMat4("projection", _camera->getProjectionMatrix());
+    _doorShader->setMat4("view", _camera->getViewMatrix());
+    _doorShader->setMat4("model", doorModel);
+    _doorShader->setVec3("viewPos", _camera->position);
+    _doorShader->setVec3("material.ka", _phongMaterial->ka);
+    _doorShader->setVec3("material.kd", _phongMaterial->kd);
+    _doorShader->setVec3("material.ks", _phongMaterial->ks);
+    _doorShader->setFloat("material.ns", _phongMaterial->ns);
+    _doorShader->setVec3("ambientLight.color", _ambientLight->color);
+    _doorShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
+    _doorShader->setVec3("spotLight.position", _spotLight->position);
+    _doorShader->setVec3("spotLight.direction", _spotLight->getFront());
+    _doorShader->setFloat("spotLight.intensity", _spotLight->intensity);
+    _doorShader->setVec3("spotLight.color", _spotLight->color);
+    _doorShader->setFloat("spotLight.angle", _spotLight->angle);
+    _doorShader->setFloat("spotLight.kc", _spotLight->kc);
+    _doorShader->setFloat("spotLight.kl", _spotLight->kl);
+    _doorShader->setFloat("spotLight.kq", _spotLight->kq);
+    _doorShader->setVec3("directionalLight.direction", _directionalLight->getFront());
+    _doorShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
+    _doorShader->setVec3("directionalLight.color", _directionalLight->color);
+    _door->draw();
 
     // draw sky box
 	_skybox->draw(projection, view);

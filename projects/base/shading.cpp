@@ -458,6 +458,12 @@ void TextureMapping::initAnimationShader() {
     _animationShader->attachFragmentShader(fsCodeBase);
     _animationShader->link();
 }
+void TextureMapping::initDoorShader() {
+	_doorShader.reset(new GLSLProgram);
+	_doorShader->attachVertexShader(vsCodeBase);
+	_doorShader->attachFragmentShader(fsCodeBase);
+	_doorShader->link();
+}
 
 void TextureMapping::initDisplayShader(){
     _displayShader.reset(new GLSLProgram);
