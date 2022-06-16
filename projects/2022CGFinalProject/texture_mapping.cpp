@@ -258,7 +258,7 @@ void TextureMapping::handleInput() {
     if (_keyboardInput.keyStates[GLFW_KEY_D] != GLFW_RELEASE) camera->position += cameraMoveSpeed * camera->getRight() *_deltaTime;
     
     if (_keyboardInput.keyStates[GLFW_KEY_M] != GLFW_RELEASE) {
-        printf("MMM");
+        //printf("MMM");
         capture();
 
     }
@@ -268,7 +268,7 @@ void TextureMapping::handleInput() {
         if (doorOpen == 0) {
             dx += 0.01f;
             doorPosition.x = dx;
-            printf("%lf\n", dx);
+            //printf("%lf\n", dx);
             if (dx >= 1.5f) {
                 flag_O_press = 0;
                 flag_O_release = 0;
@@ -279,7 +279,7 @@ void TextureMapping::handleInput() {
         else {
             dx -= 0.01f;
             doorPosition.x = dx;
-            printf("%lf\n", dx);
+            //printf("%lf\n", dx);
             if (dx <= 0.0f) {
                 flag_O_press = 0;
                 flag_O_release = 0;
@@ -296,7 +296,7 @@ void TextureMapping::handleInput() {
         (upSpeed * (onAirFrame-1) - (onAirFrame-1) * (onAirFrame-1) * gravityFactor);
     
     //check if in boundingBox
-    if(CheckBoundingBox(_firstdeng->getBoundingBox(), _sphere->getModelMatrix())){
+    if(CheckBoundingBox(_firstdeng->getBoundingBox(), _sphere->getModelMatrix())||CheckBoundingBox(_door->getBoundingBox(), _sphere->getModelMatrix())){
         camera->position=oldPosition;
         onAirFrame=0;
         upSpeed=0;
@@ -467,7 +467,7 @@ void TextureMapping::renderFrame() {
         
         _firstdeng->drawBoundingBox();
         _firstmenu->drawBoundingBox();
-        _firstdeng->drawBoundingBox();
+        _firstdesk->drawBoundingBox();
         _firstcard->drawBoundingBox();
         _seconddesk->drawBoundingBox();
         _secondsofa->drawBoundingBox();
@@ -620,21 +620,9 @@ void TextureMapping::renderFrame() {
     _animationShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
     _animationShader->setVec3("directionalLight.color", _directionalLight->color);
 
-    //tzy change animation
-    /*float transformation = static_cast <float>(sin((double)glfwGetTime()));
-    double velocity = 5.0f;
-    float trans = transformation * velocity;
-    if (trans <= -3) {
-        _animation1->draw();
-    }
-    else if (trans > -3 && trans < 1) {
-        _animation2->draw();
-    }
-    else {
-        _animation3->draw();
-    }*/
+    //animation
     if (animationSwitch > 0) {
-        printf("%d\n", animationSwitch);
+        //printf("%d\n", animationSwitch);
         if (animationSwitch == 120)
             animationSwitch = 1;
         if (animationSwitch >= 1 && animationSwitch < 10) _animation1->draw();
@@ -651,7 +639,7 @@ void TextureMapping::renderFrame() {
         animationSwitch++;
     }
 
-
+    //draw door
     glm::mat4 doorModel = glm::mat4(1.0f);
     doorModel = glm::translate(doorModel, glm::vec3(doorPosition.x, doorPosition.y, doorPosition.z));
     doorModel = glm::scale(doorModel, glm::vec3(0.005f, 0.005f, 0.005f));
