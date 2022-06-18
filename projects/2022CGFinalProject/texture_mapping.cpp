@@ -257,27 +257,31 @@ void TextureMapping::handleInput() {
 	if (_keyboardInput.keyStates[GLFW_KEY_S] != GLFW_RELEASE) camera->position -= cameraMoveSpeed * camera->getFront() *_deltaTime;
     if (_keyboardInput.keyStates[GLFW_KEY_D] != GLFW_RELEASE) camera->position += cameraMoveSpeed * camera->getRight() *_deltaTime;
     
-    if (_keyboardInput.keyStates[GLFW_KEY_M] != GLFW_RELEASE) {
+    if (_keyboardInput.keyStates[GLFW_KEY_M] == GLFW_PRESS) flag_m_press = 1;
+    if (_keyboardInput.keyStates[GLFW_KEY_M] == GLFW_RELEASE) flag_m_release = 1;
+    if (flag_m_release && flag_m_press) {
         //printf("MMM");
         capture();
+        flag_m_press = 0;
+        flag_m_release = 0;
 
     }
     if (_keyboardInput.keyStates[GLFW_KEY_O] == GLFW_PRESS) flag_O_press = 1;
     if (_keyboardInput.keyStates[GLFW_KEY_O] == GLFW_RELEASE) flag_O_release = 1;
     if (flag_O_press && flag_O_release) {
         if (doorOpen == 0) {
-            dx += 0.01f;
+            dx += 0.1f;
             doorPosition.x = dx;
             //printf("%lf\n", dx);
-            if (dx >= 1.5f) {
+            if (dx >= 10.0f) {
                 flag_O_press = 0;
                 flag_O_release = 0;
-                dx = 1.5f;
+                dx = 1.0f;
                 doorOpen = 1;
             }
         }
         else {
-            dx -= 0.01f;
+            dx -= 0.1f;
             doorPosition.x = dx;
             //printf("%lf\n", dx);
             if (dx <= 0.0f) {
@@ -296,10 +300,17 @@ void TextureMapping::handleInput() {
         (upSpeed * (onAirFrame-1) - (onAirFrame-1) * (onAirFrame-1) * gravityFactor);
     
     //check if in boundingBox
-    if(CheckBoundingBox(_firstdeng->getBoundingBox(), _sphere->getModelMatrix())||CheckBoundingBox(_door->getBoundingBox(), _sphere->getModelMatrix())){
+    if(CheckBoundingBox(_firstdeng->getBoundingBox(), _sphere->getModelMatrix())){
         camera->position=oldPosition;
         onAirFrame=0;
         upSpeed=0;
+    }
+    if (CheckBoundingBox(_door->getBoundingBox(), _sphere->getModelMatrix())) {
+        if (doorOpen == 0) {
+            camera->position = oldPosition;
+            onAirFrame = 0;
+            upSpeed = 0;
+        }
     }
     //check if touch ground
     if(camera->position.y<=0.2f){
@@ -640,9 +651,10 @@ void TextureMapping::renderFrame() {
     }
 
     //draw door
-    glm::mat4 doorModel = glm::mat4(1.0f);
+    glm::mat4 doorModel = _sphere->getModelMatrix();
     doorModel = glm::translate(doorModel, glm::vec3(doorPosition.x, doorPosition.y, doorPosition.z));
-    doorModel = glm::scale(doorModel, glm::vec3(0.005f, 0.005f, 0.005f));
+    //doorModel = glm::scale(doorModel, glm::vec3(1.0f, 1.0f, 1.0f));
+    _door->position.x = doorPosition.x;
     _doorShader->use();
     _doorShader->setMat4("projection", _camera->getProjectionMatrix());
     _doorShader->setMat4("view", _camera->getViewMatrix());
@@ -721,7 +733,7 @@ void TextureMapping::capture() {
     GLint    i, j;
     GLint    PixelDataLength;
 
-    std::string filename = "uno" + std::to_string(count) + ".bmp";
+    std::string filename = "../../output/uno" + std::to_string(count) + ".bmp";
     count++;
     i = _windowWidth * 3;
     while (i % 4 != 0)
@@ -732,7 +744,7 @@ void TextureMapping::capture() {
     if (pPixelData == 0)
         exit(0);
 
-    pDummyFile = fopen("uno1111.bmp", "rb");
+    pDummyFile = fopen("../../media/uno1111.bmp", "rb");
     if (pDummyFile == 0)
         exit(0);
 
@@ -763,5 +775,5 @@ void TextureMapping::capture() {
     fclose(pWritingFile);
     free(pPixelData);
 
-    printf("save");
+    std::cout << "saved" << std::endl;
 }

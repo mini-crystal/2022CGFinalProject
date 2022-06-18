@@ -187,7 +187,9 @@ private:
 	float dx = 0.0f;
 	int doorOpen = 0;
 	int animationSwitch = 1;
-
+	//about capture
+	int flag_m_release = 0;
+	int flag_m_press = 0;
 	float _rotateAngles = 0.0f;
     bool _wireframe = false;// some options related to imGUI
     bool _showBoundingBox = false;
