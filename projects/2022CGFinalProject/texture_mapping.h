@@ -75,21 +75,22 @@ enum class ShaderRenderMode {
 	Ambient, Lambert, Phong
 };
 
+enum class CameraMode {
+    Pan, Orbit, ZoomToFit
+};
+
 enum class ShapeType {
     Tetrahedron, Cube, Ball, Cone, Cylinder, Prism, Prismatictable, BezierFace
 };
 
-// I = ka * Ia
 struct AmbientMaterial {
 	glm::vec3 ka;
 };
 
-// I = sum { kd * Light[i] * cos(theta[i]) }
 struct LambertMaterial {
 	glm::vec3 kd;
 };
 
-// I = ka * Ia + sum { (kd * cos(theta[i]) + ks * cos(theta[i])^ns ) * Light[i] }
 struct PhongMaterial {
 	glm::vec3 ka;
 	glm::vec3 kd;
@@ -124,11 +125,9 @@ struct CheckerMaterial {
 class TextureMapping : public Application {
 public:
 	TextureMapping(const Options& options);
-	
 	~TextureMapping();
 
 private:
-    
     //UNO Model Objects
     std::unique_ptr<Model> _sphere;
     std::unique_ptr<Model> _bunny;
@@ -160,57 +159,42 @@ private:
 	std::unique_ptr<Model> _animation11;
 	std::unique_ptr<Model> _door;
 
+    //Obj for output
 	std::unique_ptr<ObjModel> _unotitle;
-    
-    void InitializeModel();
-    void InitScale();
-    void InitMaterial();
-    void InitLight();
-    void InitTexture();
-    void InitCamera();
-    void HandleMouse();
-    void InitAllShader();
-    void InitImGui();
-    void drawUI();
-	void capture();
-	//———————————几何变换属性————————
 
-	std::unique_ptr<GLSLProgram> _transformShader;
-
-	glm::vec3 _position = glm::vec3(0.3f, 0.296f, 0.7f);//position of Vertex Shape
+    //position of Vertex Shape
+	glm::vec3 _position = glm::vec3(0.3f, 0.296f, 0.7f);
 	glm::vec3 _rotateAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::vec3 _scale = glm::vec3(1.0f, 1.0f, 1.0f);
-	//about door
-	glm::vec3 doorPosition = glm::vec3(0.0f, 0.0f, 0.05f);//1.5f, 0.0f, 0.05f
-	int flag_O_press = 0;
-	int flag_O_release = 0;
+    float _rotateAngles = 0.0f;
+    
+	//door
+	glm::vec3 doorPosition = glm::vec3(0.0f, 0.0f, 0.05f);
+	bool flag_O_press = 0;
+	bool flag_O_release = 0;
 	float dx = 0.0f;
-	int doorOpen = 0;
+	bool doorOpen = 0;
+    
+    //animation frame count
 	int animationSwitch = 1;
 
-	float _rotateAngles = 0.0f;
-    bool _wireframe = false;// some options related to imGUI
+    //draw mode
+    bool _wireframe = false;
     bool _showBoundingBox = false;
-    bool _zoomFit = false;
+    
+    //camera orbit
     float _cameraRotateAngles = 155.0f;
     float _AxisX=0.0f;
     float _AxisY=0.0f;
     float _AxisZ=0.47f;
+    
+    //capture count
 	int count = 0;
-	//————————————纹理属性——————————
-	
-	std::unique_ptr<SimpleMaterial> _simpleMaterial;
-	std::unique_ptr<BlendMaterial> _blendMaterial;
-	std::unique_ptr<CheckerMaterial> _checkerMaterial;
-    std::unique_ptr<SimpleMaterial> _groundMaterial;
-
-	std::unique_ptr<DirectionalLight> _light;
-
-	std::unique_ptr<GLSLProgram> _simpleShader;
-	std::unique_ptr<GLSLProgram> _blendShader;
-	std::unique_ptr<GLSLProgram> _checkerShader;
-
-	//顶点绘制图形
+    
+    //screen lock
+    bool _lockMouse=false;
+    
+	//ptr to Vertex Shape
 	std::unique_ptr<SkyBox> _skybox;
 	std::unique_ptr<Cube> _cube;
 	std::unique_ptr<Tetrahedron> _tetrahedron;
@@ -222,28 +206,25 @@ private:
 	std::unique_ptr<BezierFace> _bezierFace;
     std::unique_ptr<Ground> _ground;
 
-	enum RenderMode _renderMode = RenderMode::Blend;
-    enum ShapeType _shapeType = ShapeType::Tetrahedron;
-
-	//—————————————材质属性————————————
-    // 初始化纹理贴图
+    // ptr to texture
     std::shared_ptr<Texture2D> earthTexture = std::make_shared<Texture2D>(earthTexturePath);
     std::shared_ptr<Texture2D> woodTexture = std::make_shared<Texture2D>(woodTexturePath);
     std::shared_ptr<Texture2D> wallTexture = std::make_shared<Texture2D>(wallTexturePath);
     
-	// materials
+	// ptr to materials
 	std::unique_ptr<AmbientMaterial> _ambientMaterial;
 	std::unique_ptr<LambertMaterial> _lambertMaterial;
 	std::unique_ptr<PhongMaterial> _phongMaterial;
     std::unique_ptr<LineMaterial> _lineMaterial;
+    std::unique_ptr<SimpleMaterial> _simpleMaterial;
+    std::unique_ptr<BlendMaterial> _blendMaterial;
+    std::unique_ptr<CheckerMaterial> _checkerMaterial;
+    std::unique_ptr<SimpleMaterial> _groundMaterial;
 
-	// shaders for mode
+	//shaders for mode
 	std::unique_ptr<GLSLProgram> _ambientShader;
 	std::unique_ptr<GLSLProgram> _lambertShader;
 	std::unique_ptr<GLSLProgram> _phongShader;
-    
-    //shader for boundingBox
-    std::unique_ptr<GLSLProgram> _lineShader;
     
     //shaders for objects
     std::unique_ptr<GLSLProgram> _groundShader;
@@ -251,55 +232,55 @@ private:
 	std::unique_ptr<GLSLProgram> _animationShader;
     std::unique_ptr<GLSLProgram> _displayShader;
 	std::unique_ptr<GLSLProgram> _doorShader;
+    
+    //shaders for mode
+    std::unique_ptr<GLSLProgram> _simpleShader;
+    std::unique_ptr<GLSLProgram> _blendShader;
+    std::unique_ptr<GLSLProgram> _checkerShader;
+    std::unique_ptr<GLSLProgram> _transformShader;
+    std::unique_ptr<GLSLProgram> _lineShader;
+    
 	// lights
 	std::unique_ptr<AmbientLight> _ambientLight;
 	std::unique_ptr<DirectionalLight> _directionalLight;
 	std::unique_ptr<SpotLight> _spotLight;
+    std::unique_ptr<DirectionalLight> _light;
 
 	// camera
 	std::unique_ptr<PerspectiveCamera> _camera;
 
-	ShaderRenderMode _shaderrenderMode = ShaderRenderMode::Phong;
+    //mode
+	enum ShaderRenderMode _shaderrenderMode = ShaderRenderMode::Phong;
+    enum CameraMode _cameraMode = CameraMode::Pan;
+    enum RenderMode _renderMode = RenderMode::Blend;
+    enum ShapeType _shapeType = ShapeType::Tetrahedron;
 
-	void initTransformShader();
-
-	// I = ka * albedo
-	void initAmbientShader();
-
-	// I = ka * albedo + kd * max(cos<I, n>, 0)
-	void initLambertShader();
-
-	// I = ka * albedo + kd * cos<I, n> + ks * (max(cos<R, V>, 0) ^ ns)
-	void initPhongShader();
-
-	void initSimpleShader();
-
-	void initBlendShader();
-
-	void initCheckerShader();
-    
+    //initial function
+    void InitializeModel();
+    void InitScale();
+    void InitMaterial();
+    void InitLight();
+    void InitTexture();
+    void InitCamera();
+    void initTransformShader();
+    void initAmbientShader();
+    void initLambertShader();
+    void initPhongShader();
+    void initSimpleShader();
+    void initBlendShader();
+    void initCheckerShader();
     void initDisplayShader();
-    
     void initWallShader();
-    
-	void initAnimationShader();
-	void initDoorShader();
-
+    void initAnimationShader();
+    void initDoorShader();
     void initLineShader();
+    void InitAllShader();
+    void InitImGui();
     
+    void HandleMouse();
+    void drawUI();
+    void capture();
     bool CheckBoundingBox(BoundingBox box,glm::mat4 ModelMatrix);
-    
 	void handleInput() override;
-
 	void renderFrame() override;
-
-
 };
-
-
-
-
-
-
-
-

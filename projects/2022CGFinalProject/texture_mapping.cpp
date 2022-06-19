@@ -125,7 +125,6 @@ void TextureMapping::InitTexture(){
 }
 
 void TextureMapping::InitCamera(){
-    // 初始化摄像机
     _camera.reset(new PerspectiveCamera(
         glm::radians(45.0f), 1.0f * _windowWidth / _windowHeight, 0.1f, 10000.0f));
     _camera->position.y = 0.3f;
@@ -156,10 +155,11 @@ void TextureMapping::InitAllShader(){
     initWallShader();
     initAnimationShader();
     initDoorShader();
+    
     //init shader for boundingBox
     initLineShader();
     
-    //纹理shader
+    //init shader
     initSimpleShader();
     initBlendShader();
     initCheckerShader();
@@ -184,160 +184,179 @@ bool TextureMapping::CheckBoundingBox(BoundingBox box,glm::mat4 ModelMatrix){
     return true;
 }
 
-//接收输入：比如键盘wasd输入
 void TextureMapping::handleInput() {
         
-    static bool LockMouse=false;
-    static bool zoomFitState=false;
     static int onAirFrame=0;
     static float upSpeed=0;
 	constexpr float cameraMoveSpeed = 0.5f;
 	constexpr float cameraRotateSpeed = 0.2f;
-    constexpr float cameraFovySpeed = 0.01f;
     constexpr float gravityFactor = 0.003f;
+    constexpr float cameraFovySpeed = 0.01f;
+    
     Camera* camera = _camera.get();
     glm::vec3 oldPosition=camera->position;
     
-    //Zoom-Fit
-    if(_zoomFit){
-        zoomFitState=true;
-        _camera.reset(new PerspectiveCamera(
-            glm::radians(80.0f), 1.0f * _windowWidth / _windowHeight, 0.1f, 10000.0f));
-        _camera->position.y = 1.7f;
-        _camera->position.z = 3.0f;
-                
-        glm::vec3 RotationAxis= glm::vec3(_AxisX,_AxisY,_AxisZ);
-        float x = RotationAxis.x * sin(glm::radians(_cameraRotateAngles / 2));
-        float y = RotationAxis.y * sin(glm::radians(_cameraRotateAngles / 2));
-        float z = RotationAxis.z * sin(glm::radians(_cameraRotateAngles / 2));
-        float w = cos(glm::radians(_cameraRotateAngles / 2));
-        
-        _camera->rotation = glm::quat { x,y,z,w };
+    //keyboard: exit
+    if (_keyboardInput.keyStates[GLFW_KEY_ESCAPE] != GLFW_RELEASE) {
+        glfwSetWindowShouldClose(_window, true);
         return;
     }
-    if(!_zoomFit && zoomFitState){
-        _cameraRotateAngles = 155.0f;
-        _AxisX=0.0f;
-        _AxisY=0.0f;
-        _AxisZ=0.47f;
-        _camera->rotation = glm::quat { 1.0f,0.0f,0.0f,0.0f };
-        zoomFitState=false;
+    
+    //keyboard: capture
+    if (_keyboardInput.keyStates[GLFW_KEY_M] == GLFW_PRESS){
+        _keyboardInput.keyStates[GLFW_KEY_M] = GLFW_RELEASE;
+        capture();
     }
     
-    //camera fovy
+    //scroll:zoom
     static float oldScroll = 0.0f;
     float scrollDelta=_mouseInput.scroll.y - oldScroll;
-    if(!LockMouse){
+    if(!_lockMouse){
         if(_camera->fovy >= glm::radians(20.0f) && _camera->fovy <= glm::radians(70.0f))_camera->fovy -= scrollDelta * cameraFovySpeed;
         if(_camera->fovy <= glm::radians(20.0f))_camera->fovy = glm::radians(20.0f);
         if(_camera->fovy >= glm::radians(70.0f))_camera->fovy = glm::radians(70.0f);
         oldScroll = _mouseInput.scroll.y;
     }
     
-    //keyboard
-	if (_keyboardInput.keyStates[GLFW_KEY_ESCAPE] != GLFW_RELEASE) {
-		glfwSetWindowShouldClose(_window, true);
-		return;
-	}
-	if (_keyboardInput.keyStates[GLFW_KEY_L] == GLFW_PRESS) {
-		std::cout << "switch mouse lock state" << std::endl;
-        LockMouse=!LockMouse;
-		_keyboardInput.keyStates[GLFW_KEY_L] = GLFW_RELEASE;
-		return;
-	}
-    if (_keyboardInput.keyStates[GLFW_KEY_SPACE] == GLFW_PRESS) {
-        std::cout << "jump" << std::endl;
-        upSpeed = 0.1f;
-        _keyboardInput.keyStates[GLFW_KEY_SPACE] = GLFW_RELEASE;
-        return;
-    }
-    
-    //move
-	if (_keyboardInput.keyStates[GLFW_KEY_W] != GLFW_RELEASE) camera->position += cameraMoveSpeed * camera->getFront() *_deltaTime;
-	if (_keyboardInput.keyStates[GLFW_KEY_A] != GLFW_RELEASE) camera->position -= cameraMoveSpeed * camera->getRight() *_deltaTime;
-	if (_keyboardInput.keyStates[GLFW_KEY_S] != GLFW_RELEASE) camera->position -= cameraMoveSpeed * camera->getFront() *_deltaTime;
-    if (_keyboardInput.keyStates[GLFW_KEY_D] != GLFW_RELEASE) camera->position += cameraMoveSpeed * camera->getRight() *_deltaTime;
-    
-    //capture
-    if (_keyboardInput.keyStates[GLFW_KEY_M] == GLFW_PRESS){
-        _keyboardInput.keyStates[GLFW_KEY_M] = GLFW_RELEASE;
-        capture();
-    }
-    
-    //open door
-    if (_keyboardInput.keyStates[GLFW_KEY_O] == GLFW_PRESS) flag_O_press = 1;
-    if (_keyboardInput.keyStates[GLFW_KEY_O] == GLFW_RELEASE) flag_O_release = 1;
-    if (flag_O_press && flag_O_release) {
-        if (doorOpen == 0) {
-            dx += 0.1f;
-            doorPosition.x = dx;
-            if (dx >= 5.0f) {
-                flag_O_press = 0;
-                flag_O_release = 0;
-                dx = 5.0f;
-                doorOpen = 1;
-            }
-        }
-        else {
-            dx -= 0.1f;
-            doorPosition.x = dx;
-            if (dx <= 0.0f) {
-                flag_O_press = 0;
-                flag_O_release = 0;
-                dx = 0.0f;
-                doorOpen = 0;
-            }
-        }
-    }
+    //Camera Mode
+    switch (_cameraMode) {
+        case CameraMode::Pan :
+            {
+                //keyboard: lock camera
+                if (_keyboardInput.keyStates[GLFW_KEY_L] == GLFW_PRESS) {
+                    std::cout << "switch mouse lock state" << std::endl;
+                    _lockMouse=!_lockMouse;
+                    _keyboardInput.keyStates[GLFW_KEY_L] = GLFW_RELEASE;
+                    return;
+                }
+                
+                //keyboard: jump
+                if (_keyboardInput.keyStates[GLFW_KEY_SPACE] == GLFW_PRESS) {
+                    std::cout << "jump" << std::endl;
+                    upSpeed = 0.1f;
+                    _keyboardInput.keyStates[GLFW_KEY_SPACE] = GLFW_RELEASE;
+                    return;
+                }
+                
+                //keyboard: move
+                if (_keyboardInput.keyStates[GLFW_KEY_W] != GLFW_RELEASE) camera->position += cameraMoveSpeed * camera->getFront() *_deltaTime;
+                if (_keyboardInput.keyStates[GLFW_KEY_A] != GLFW_RELEASE) camera->position -= cameraMoveSpeed * camera->getRight() *_deltaTime;
+                if (_keyboardInput.keyStates[GLFW_KEY_S] != GLFW_RELEASE) camera->position -= cameraMoveSpeed * camera->getFront() *_deltaTime;
+                if (_keyboardInput.keyStates[GLFW_KEY_D] != GLFW_RELEASE) camera->position += cameraMoveSpeed * camera->getRight() *_deltaTime;
+                
+                //keyboard: open door
+                if (_keyboardInput.keyStates[GLFW_KEY_O] == GLFW_PRESS) flag_O_press = true;
+                if (_keyboardInput.keyStates[GLFW_KEY_O] == GLFW_RELEASE) flag_O_release = true;
+                if (flag_O_press && flag_O_release) {
+                    if (!doorOpen) {
+                        dx += 0.1f;
+                        doorPosition.x = dx;
+                        if (dx >= 5.0f) {
+                            flag_O_press = flag_O_release = false;
+                            dx = 5.0f;
+                            doorOpen = true;
+                        }
+                    }
+                    else {
+                        dx -= 0.1f;
+                        doorPosition.x = dx;
+                        if (dx <= 0.0f) {
+                            flag_O_press = flag_O_release = false;
+                            dx = 0.0f;
+                            doorOpen = false;
+                        }
+                    }
+                }
 
-    //gravity
-    onAirFrame++;
-    if(onAirFrame)camera->position.y+=
-        (upSpeed * onAirFrame - onAirFrame * onAirFrame * gravityFactor)-
-        (upSpeed * (onAirFrame-1) - (onAirFrame-1) * (onAirFrame-1) * gravityFactor);
-    
-    //check if in boundingBox
-    if (CheckBoundingBox(_door->getBoundingBox(), _sphere->getModelMatrix())) {
-        if (doorOpen == 0) {
-            camera->position = oldPosition;
-            onAirFrame = 0;
-            upSpeed = 0;
-        }
+                //gravity
+                onAirFrame++;
+                if(onAirFrame)camera->position.y+=
+                    (upSpeed * onAirFrame - onAirFrame * onAirFrame * gravityFactor)-
+                    (upSpeed * (onAirFrame-1) - (onAirFrame-1) * (onAirFrame-1) * gravityFactor);
+                
+                //check if in boundingBox
+                if (CheckBoundingBox(_door->getBoundingBox(), _sphere->getModelMatrix())) {
+                    if (doorOpen == 0) {
+                        camera->position = oldPosition;
+                        onAirFrame = 0;
+                        upSpeed = 0;
+                    }
+                }
+                
+                //check if touch ground
+                if(camera->position.y<=0.2f){
+                    camera->position.y=0.2f;
+                    onAirFrame=0;
+                    upSpeed=0;
+                }
+                
+                //mouse:Pan
+                if (_mouseInput.move.xCurrent != _mouseInput.move.xOld) {
+                    //std::cout << "mouse move in x direction" << std::endl;
+                    static bool firstMouse=true;
+                    if(firstMouse){
+                        _mouseInput.move.xOld = _mouseInput.move.xCurrent;
+                        _mouseInput.move.yOld = _mouseInput.move.yCurrent;
+                        firstMouse = false;
+                    }
+                    float mouse_movement_in_x_direction = (float)_mouseInput.move.xCurrent - (float)_mouseInput.move.xOld;
+                    const float theta = mouse_movement_in_x_direction * cameraRotateSpeed * _deltaTime;
+                    if(!_lockMouse)camera->rotation = glm::quat(cos(theta * 0.5f), sin(theta * 0.5f) * glm::vec3(0.0f, 1.0f, 0.0f)) * camera->rotation;
+                    _mouseInput.move.xOld = _mouseInput.move.xCurrent;
+                }
+                if (_mouseInput.move.yCurrent != _mouseInput.move.yOld) {
+                    //std::cout << "mouse move in y direction" << std::endl;
+                    static bool firstMouse=true;
+                    if(firstMouse){
+                        _mouseInput.move.xOld = _mouseInput.move.xCurrent;
+                        _mouseInput.move.yOld = _mouseInput.move.yCurrent;
+                        firstMouse = false;
+                    }
+                    float mouse_movement_in_y_direction = (float)_mouseInput.move.yCurrent - (float)_mouseInput.move.yOld;
+                    const float theta = mouse_movement_in_y_direction * cameraRotateSpeed * _deltaTime;
+                    if(!_lockMouse)camera->rotation = glm::quat(cos(theta * 0.5f), sin(theta * 0.5f) * camera->getRight()) * camera->rotation;
+                    _mouseInput.move.yOld = _mouseInput.move.yCurrent;
+                }
+            }
+            break;
+        case CameraMode::Orbit :
+            {
+
+            }
+            
+            break;
+        case CameraMode::ZoomToFit :
+            {
+
+            }
+            break;
     }
-    //check if touch ground
-    if(camera->position.y<=0.2f){
-        camera->position.y=0.2f;
-        onAirFrame=0;
-        upSpeed=0;
-    }
     
-    //mouse
-	if (_mouseInput.move.xCurrent != _mouseInput.move.xOld) {
-		//std::cout << "mouse move in x direction" << std::endl;
-        static bool firstMouse=true;
-        if(firstMouse){
-            _mouseInput.move.xOld = _mouseInput.move.xCurrent;
-            _mouseInput.move.yOld = _mouseInput.move.yCurrent;
-            firstMouse = false;
-        }
-        float mouse_movement_in_x_direction = (float)_mouseInput.move.xCurrent - (float)_mouseInput.move.xOld;
-		const float theta = mouse_movement_in_x_direction * cameraRotateSpeed * _deltaTime;
-		if(!LockMouse)camera->rotation = glm::quat(cos(theta * 0.5f), sin(theta * 0.5f) * glm::vec3(0.0f, 1.0f, 0.0f)) * camera->rotation;
-		_mouseInput.move.xOld = _mouseInput.move.xCurrent;
-	}
-	if (_mouseInput.move.yCurrent != _mouseInput.move.yOld) {
-		//std::cout << "mouse move in y direction" << std::endl;
-        static bool firstMouse=true;
-        if(firstMouse){
-            _mouseInput.move.xOld = _mouseInput.move.xCurrent;
-            _mouseInput.move.yOld = _mouseInput.move.yCurrent;
-            firstMouse = false;
-        }
-        float mouse_movement_in_y_direction = (float)_mouseInput.move.yCurrent - (float)_mouseInput.move.yOld;
-		const float theta = mouse_movement_in_y_direction * cameraRotateSpeed * _deltaTime;
-        if(!LockMouse)camera->rotation = glm::quat(cos(theta * 0.5f), sin(theta * 0.5f) * camera->getRight()) * camera->rotation;
-		_mouseInput.move.yOld = _mouseInput.move.yCurrent;
-	}
+    {
+//    if(_zoomFit){
+//        _zoomFitState=true;
+//        _camera.reset(new PerspectiveCamera(glm::radians(80.0f), 1.0f * _windowWidth / _windowHeight, 0.1f, 10000.0f));
+//        _camera->position.y = 1.7f;
+//        _camera->position.z = 3.0f;
+//
+//        glm::vec3 RotationAxis= glm::vec3(_AxisX,_AxisY,_AxisZ);
+//        float x = RotationAxis.x * sin(glm::radians(_cameraRotateAngles / 2));
+//        float y = RotationAxis.y * sin(glm::radians(_cameraRotateAngles / 2));
+//        float z = RotationAxis.z * sin(glm::radians(_cameraRotateAngles / 2));
+//        float w = cos(glm::radians(_cameraRotateAngles / 2));
+//
+//        _camera->rotation = glm::quat { x,y,z,w };
+//        return;
+//    }
+//    if(!_zoomFit && _zoomFitState){
+//        _cameraRotateAngles = 155.0f;
+//        _AxisX=0.0f;
+//        _AxisY=0.0f;
+//        _AxisZ=0.47f;
+//        _camera->rotation = glm::quat { 1.0f,0.0f,0.0f,0.0f };
+//        _zoomFitState=false;
+//    }
+    }
 }
 
 void TextureMapping::drawUI(){
@@ -382,7 +401,7 @@ void TextureMapping::drawUI(){
         ImGui::NewLine();
 
         //Choose shape
-        ImGui::Text("Choose shape:");
+        ImGui::Text("Vertex shape:");
         ImGui::Separator();
         ImGui::RadioButton("Tetrahedron", (int*)&_shapeType, (int)(ShapeType::Tetrahedron));
         ImGui::RadioButton("Cube", (int*)&_shapeType, (int)(ShapeType::Cube));
@@ -407,16 +426,18 @@ void TextureMapping::drawUI(){
         ImGui::NewLine();
         
         //camera
-        ImGui::Checkbox("ZoomFitMode", &_zoomFit);
-        if(_zoomFit){
-            ImGui::Text("Camera:");
-            ImGui::Separator();
+        ImGui::Text("Camera Mode:");
+        ImGui::Separator();
+        ImGui::RadioButton("Pan", (int*)&_cameraMode, (int)(CameraMode::Pan));
+        ImGui::RadioButton("Orbit", (int*)&_cameraMode, (int)(CameraMode::Orbit));
+        if(_cameraMode==CameraMode::Orbit){
             ImGui::SliderFloat("Rotate", &_cameraRotateAngles, -180.0, 180.0f);
             ImGui::SliderFloat("X", &_AxisX, -1.0f, 1.0f);
             ImGui::SliderFloat("Y", &_AxisY, -1.0f, 1.0f);
             ImGui::SliderFloat("Z", &_AxisZ, -1.0f, 1.0f);
-            ImGui::NewLine();
         }
+        ImGui::RadioButton("Zoom to Fit", (int*)&_cameraMode, (int)(CameraMode::ZoomToFit));
+        ImGui::NewLine();
 
         //wireframe mode
         ImGui::Checkbox("wireframe", &_wireframe);
