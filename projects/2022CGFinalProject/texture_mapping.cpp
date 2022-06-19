@@ -252,38 +252,35 @@ void TextureMapping::handleInput() {
         return;
     }
     
+    //move
 	if (_keyboardInput.keyStates[GLFW_KEY_W] != GLFW_RELEASE) camera->position += cameraMoveSpeed * camera->getFront() *_deltaTime;
 	if (_keyboardInput.keyStates[GLFW_KEY_A] != GLFW_RELEASE) camera->position -= cameraMoveSpeed * camera->getRight() *_deltaTime;
 	if (_keyboardInput.keyStates[GLFW_KEY_S] != GLFW_RELEASE) camera->position -= cameraMoveSpeed * camera->getFront() *_deltaTime;
     if (_keyboardInput.keyStates[GLFW_KEY_D] != GLFW_RELEASE) camera->position += cameraMoveSpeed * camera->getRight() *_deltaTime;
     
-    if (_keyboardInput.keyStates[GLFW_KEY_M] == GLFW_PRESS) flag_m_press = 1;
-    if (_keyboardInput.keyStates[GLFW_KEY_M] == GLFW_RELEASE) flag_m_release = 1;
-    if (flag_m_release && flag_m_press) {
-        //printf("MMM");
+    //capture
+    if (_keyboardInput.keyStates[GLFW_KEY_M] == GLFW_PRESS){
+        _keyboardInput.keyStates[GLFW_KEY_M] = GLFW_RELEASE;
         capture();
-        flag_m_press = 0;
-        flag_m_release = 0;
-
     }
+    
+    //open door
     if (_keyboardInput.keyStates[GLFW_KEY_O] == GLFW_PRESS) flag_O_press = 1;
     if (_keyboardInput.keyStates[GLFW_KEY_O] == GLFW_RELEASE) flag_O_release = 1;
     if (flag_O_press && flag_O_release) {
         if (doorOpen == 0) {
             dx += 0.1f;
             doorPosition.x = dx;
-            //printf("%lf\n", dx);
-            if (dx >= 10.0f) {
+            if (dx >= 5.0f) {
                 flag_O_press = 0;
                 flag_O_release = 0;
-                dx = 1.0f;
+                dx = 5.0f;
                 doorOpen = 1;
             }
         }
         else {
             dx -= 0.1f;
             doorPosition.x = dx;
-            //printf("%lf\n", dx);
             if (dx <= 0.0f) {
                 flag_O_press = 0;
                 flag_O_release = 0;
@@ -300,11 +297,6 @@ void TextureMapping::handleInput() {
         (upSpeed * (onAirFrame-1) - (onAirFrame-1) * (onAirFrame-1) * gravityFactor);
     
     //check if in boundingBox
-    if(CheckBoundingBox(_firstdeng->getBoundingBox(), _sphere->getModelMatrix())){
-        camera->position=oldPosition;
-        onAirFrame=0;
-        upSpeed=0;
-    }
     if (CheckBoundingBox(_door->getBoundingBox(), _sphere->getModelMatrix())) {
         if (doorOpen == 0) {
             camera->position = oldPosition;
@@ -730,50 +722,53 @@ void TextureMapping::capture() {
     FILE* pWritingFile;
     GLubyte* pPixelData;
     GLubyte  BMP_Header[54];
-    GLint    i, j;
+    GLint    width, height;
     GLint    PixelDataLength;
 
-    std::string filename = "../../output/uno" + std::to_string(count) + ".bmp";
-    count++;
-    i = _windowWidth * 3;
-    while (i % 4 != 0)
-        ++i;
-    PixelDataLength = i * _windowHeight;
+    // data align
+    width = _windowWidth * 3;
+    while (width % 4 != 0)++width;
+    PixelDataLength = width * _windowHeight;
 
+    //malloc space
     pPixelData = (GLubyte*)malloc(PixelDataLength);
-    if (pPixelData == 0)
-        exit(0);
+    if (pPixelData == 0){
+        std::cout<<"Data initialied failed"<<std::endl;
+        return;
+    };
 
+    //load file
+    std::string filename = "../../output/uno" + std::to_string(count++) + ".bmp";
     pDummyFile = fopen("../../media/uno1111.bmp", "rb");
-    if (pDummyFile == 0)
-        exit(0);
-
+    if (pDummyFile == 0){
+        std::cout<<"path found failed"<<std::endl;
+        return;
+    };
     char* file = (char*)filename.data();
-    //printf("%s\n", file);
     pWritingFile = fopen(file, "wb");
-    if (pWritingFile == 0)
-        exit(0);
-    //printf("load new pic\n");
+    if (pWritingFile == 0) {
+        std::cout<<"path found failed"<<std::endl;
+        return;
+    };
+
+    //writing picture
     fread(BMP_Header, sizeof(BMP_Header), 1, pDummyFile);
     fwrite(BMP_Header, sizeof(BMP_Header), 1, pWritingFile);
     fseek(pWritingFile, 0x0012, SEEK_SET);
-    i = _windowWidth;
-    j = _windowHeight;
-    fwrite(&i, sizeof(i), 1, pWritingFile);
-    fwrite(&j, sizeof(j), 1, pWritingFile);
-
+    width = _windowWidth;
+    height = _windowHeight;
+    fwrite(&width, sizeof(width), 1, pWritingFile);
+    fwrite(&height, sizeof(height), 1, pWritingFile);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-    glReadPixels(0, 0, _windowWidth, _windowHeight,
-        GL_BGR, GL_UNSIGNED_BYTE, pPixelData);
-
+    glReadPixels(0, 0, _windowWidth, _windowHeight,GL_BGR, GL_UNSIGNED_BYTE, pPixelData);
     fseek(pWritingFile, 0, SEEK_END);
-
     fwrite(pPixelData, PixelDataLength, 1, pWritingFile);
 
     fclose(pDummyFile);
     fclose(pWritingFile);
     free(pPixelData);
-
+    
     std::cout << "saved" << std::endl;
+    return 0;
 }
