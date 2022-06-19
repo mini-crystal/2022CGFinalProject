@@ -22,7 +22,7 @@ TextureMapping::~TextureMapping() {
 }
 
 void TextureMapping::InitializeModel(){
-    // ¼ÓÔØÄ£ÐÍ
+    // ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
     _sphere.reset(new Model(spheremodelPath));
 
     _firstcard.reset(new Model(firstcardPath));
@@ -40,7 +40,7 @@ void TextureMapping::InitializeModel(){
     _secondsofa.reset(new Model(secondsofaPath));
     _firstdesk.reset(new Model(firstdeskPath));
     
-    // ¶¥µãÄ£ÐÍ³õÊ¼»¯
+    // ï¿½ï¿½ï¿½ï¿½Ä£ï¿½Í³ï¿½Ê¼ï¿½ï¿½
     _skybox.reset(new SkyBox(skyboxTexturePaths));
     _cube.reset(new Cube());
     _ground.reset(new Ground());
@@ -107,7 +107,7 @@ void TextureMapping::InitLight(){
 }
 
 void TextureMapping::InitTexture(){
-    // ³õÊ¼»¯²Ä?
+    // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½?
     _simpleMaterial.reset(new SimpleMaterial);
     _simpleMaterial->mapKd = wallTexture;
 
@@ -133,7 +133,7 @@ void TextureMapping::InitCamera(){
 
 void TextureMapping::HandleMouse(){
     //set input mode
-    // ÕâÀïÊÇ°ÑÊó±êµÄÊäÈëµ±×÷ÊÇÊÓ½ÇµÄ¸Ä±ä£¬ËùÒÔ²»»áÓÐÖ¸Õë³öÀ´
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ëµ±ï¿½ï¿½ï¿½ï¿½ï¿½Ó½ÇµÄ¸Ä±ä£¬ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½
     //glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     _mouseInput.move.xOld = _mouseInput.move.xCurrent = 0.5 * _windowWidth;
     _mouseInput.move.yOld = _mouseInput.move.yCurrent = 0.5 * _windowHeight;
@@ -141,11 +141,11 @@ void TextureMapping::HandleMouse(){
 }
 
 void TextureMapping::InitAllShader(){
-    //³õÊ¼»¯3¸ö¿ØÖÆÃæ°åshader   ²ÄÖÊ+ÎÆÀí+¸Ä±ä´óÐ¡
-    //¼¸ºÎ±ä»»shader
+    //ï¿½ï¿½Ê¼ï¿½ï¿½3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½shader   ï¿½ï¿½ï¿½ï¿½+ï¿½ï¿½ï¿½ï¿½+ï¿½Ä±ï¿½ï¿½Ð¡
+    //ï¿½ï¿½ï¿½Î±ä»»shader
     initTransformShader();
 
-    //²ÄÖÊshader
+    //ï¿½ï¿½ï¿½ï¿½shader
     initAmbientShader();
     initLambertShader();
     initPhongShader();
@@ -166,7 +166,7 @@ void TextureMapping::InitAllShader(){
 }
 
 void TextureMapping::InitImGui(){
-    //³õÊ¼»¯imguiÃæ°å
+    //ï¿½ï¿½Ê¼ï¿½ï¿½imguiï¿½ï¿½ï¿½
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
@@ -829,5 +829,5 @@ void TextureMapping::capture() {
     free(pPixelData);
     
     std::cout << "saved" << std::endl;
-    return 0;
+    return;
 }
