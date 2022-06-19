@@ -185,14 +185,18 @@ bool TextureMapping::CheckBoundingBox(BoundingBox box,glm::mat4 ModelMatrix){
 }
 
 void TextureMapping::handleInput() {
-        
-    static int onAirFrame=0;
-    static float upSpeed=0;
-	constexpr float cameraMoveSpeed = 0.5f;
-	constexpr float cameraRotateSpeed = 0.2f;
+    
+    constexpr float cameraMoveSpeed = 0.5f;
+    constexpr float cameraRotateSpeed = 0.2f;
+    constexpr float cameraOrbitSpeed = 20.0f;
     constexpr float gravityFactor = 0.003f;
     constexpr float cameraFovySpeed = 0.01f;
+    constexpr float orbitRadius = 4.0f;
     
+    static int onAirFrame=0;
+    static float upSpeed=0;
+    static float orbitAngle=0.0f;
+    static enum CameraMode oldCameraMode=CameraMode::Pan;
     Camera* camera = _camera.get();
     glm::vec3 oldPosition=camera->position;
     
@@ -212,16 +216,25 @@ void TextureMapping::handleInput() {
     static float oldScroll = 0.0f;
     float scrollDelta=_mouseInput.scroll.y - oldScroll;
     if(!_lockMouse){
-        if(_camera->fovy >= glm::radians(20.0f) && _camera->fovy <= glm::radians(70.0f))_camera->fovy -= scrollDelta * cameraFovySpeed;
-        if(_camera->fovy <= glm::radians(20.0f))_camera->fovy = glm::radians(20.0f);
-        if(_camera->fovy >= glm::radians(70.0f))_camera->fovy = glm::radians(70.0f);
+        if(_camera->fovy >= glm::radians(5.0f) && _camera->fovy <= glm::radians(100.0f))_camera->fovy -= scrollDelta * cameraFovySpeed;
+        if(_camera->fovy <= glm::radians(5.0f))_camera->fovy = glm::radians(5.0f);
+        if(_camera->fovy >= glm::radians(100.0f))_camera->fovy = glm::radians(100.0f);
         oldScroll = _mouseInput.scroll.y;
     }
     
-    //Camera Mode
+    //keyboard:zoom to fit
+    if (_keyboardInput.keyStates[GLFW_KEY_F] == GLFW_PRESS){
+        _keyboardInput.keyStates[GLFW_KEY_F] = GLFW_RELEASE;
+        _camera->fovy=glm::radians(45.0f);
+    }
+    
+    //Camera Mode:Pan/Orbit/FreeRotation
     switch (_cameraMode) {
         case CameraMode::Pan :
             {
+                if(oldCameraMode!=CameraMode::Pan){
+                    InitCamera();
+                }
                 //keyboard: lock camera
                 if (_keyboardInput.keyStates[GLFW_KEY_L] == GLFW_PRESS) {
                     std::cout << "switch mouse lock state" << std::endl;
@@ -317,45 +330,51 @@ void TextureMapping::handleInput() {
                     if(!_lockMouse)camera->rotation = glm::quat(cos(theta * 0.5f), sin(theta * 0.5f) * camera->getRight()) * camera->rotation;
                     _mouseInput.move.yOld = _mouseInput.move.yCurrent;
                 }
+                oldCameraMode=CameraMode::Pan;
             }
             break;
         case CameraMode::Orbit :
             {
-
+                if(oldCameraMode!=CameraMode::Orbit){
+                    camera->position.y=2.5f;
+                    _camera->fovy=glm::radians(45.0f);
+                }
+                
+                camera->position.x=orbitRadius * cos(glm::radians(_orbitAngle));
+                camera->position.z=orbitRadius * sin(glm::radians(_orbitAngle));
+                
+                //keyboard: orbit
+                if (_keyboardInput.keyStates[GLFW_KEY_A] != GLFW_RELEASE) _orbitAngle+= cameraOrbitSpeed * _deltaTime;
+                if (_keyboardInput.keyStates[GLFW_KEY_D] != GLFW_RELEASE) _orbitAngle-= cameraOrbitSpeed * _deltaTime;
+                if (_orbitAngle<0.0f)_orbitAngle+=360.0f;
+                if (_orbitAngle>360.0f)_orbitAngle-=360.0f;
+                
+                oldCameraMode=CameraMode::Orbit;
             }
-            
             break;
-        case CameraMode::ZoomToFit :
+        case CameraMode::FreeRotation :
             {
+                if(oldCameraMode!=CameraMode::FreeRotation){
+                    _camera->fovy=glm::radians(80.0f);
+                    _camera->position.x = 0.0f;
+                    _camera->position.y = 1.7f;
+                    _camera->position.z = 3.0f;
+                    _cameraRotateAngles = 155.0f;
+                    _AxisX=0.0f;
+                    _AxisY=0.0f;
+                    _AxisZ=0.47f;
+                }
 
+                glm::vec3 RotationAxis= glm::vec3(_AxisX,_AxisY,_AxisZ);
+                float x = RotationAxis.x * sin(glm::radians(_cameraRotateAngles / 2));
+                float y = RotationAxis.y * sin(glm::radians(_cameraRotateAngles / 2));
+                float z = RotationAxis.z * sin(glm::radians(_cameraRotateAngles / 2));
+                float w = cos(glm::radians(_cameraRotateAngles / 2));
+                camera->rotation = glm::quat { x,y,z,w };
+                
+                oldCameraMode=CameraMode::FreeRotation;
             }
             break;
-    }
-    
-    {
-//    if(_zoomFit){
-//        _zoomFitState=true;
-//        _camera.reset(new PerspectiveCamera(glm::radians(80.0f), 1.0f * _windowWidth / _windowHeight, 0.1f, 10000.0f));
-//        _camera->position.y = 1.7f;
-//        _camera->position.z = 3.0f;
-//
-//        glm::vec3 RotationAxis= glm::vec3(_AxisX,_AxisY,_AxisZ);
-//        float x = RotationAxis.x * sin(glm::radians(_cameraRotateAngles / 2));
-//        float y = RotationAxis.y * sin(glm::radians(_cameraRotateAngles / 2));
-//        float z = RotationAxis.z * sin(glm::radians(_cameraRotateAngles / 2));
-//        float w = cos(glm::radians(_cameraRotateAngles / 2));
-//
-//        _camera->rotation = glm::quat { x,y,z,w };
-//        return;
-//    }
-//    if(!_zoomFit && _zoomFitState){
-//        _cameraRotateAngles = 155.0f;
-//        _AxisX=0.0f;
-//        _AxisY=0.0f;
-//        _AxisZ=0.47f;
-//        _camera->rotation = glm::quat { 1.0f,0.0f,0.0f,0.0f };
-//        _zoomFitState=false;
-//    }
     }
 }
 
@@ -372,6 +391,24 @@ void TextureMapping::drawUI(){
     }
     else {
         
+        //camera mode
+        ImGui::Text("Camera Mode:");
+        ImGui::Separator();
+        ImGui::RadioButton("Pan", (int*)&_cameraMode, (int)(CameraMode::Pan));
+        ImGui::RadioButton("Orbit", (int*)&_cameraMode, (int)(CameraMode::Orbit));
+        if(_cameraMode==CameraMode::Orbit){
+            ImGui::SliderFloat("Orbit Angle", &_orbitAngle, 0.0f, 360.0f);
+        }
+        ImGui::RadioButton("Free Rotation", (int*)&_cameraMode, (int)(CameraMode::FreeRotation));
+        if(_cameraMode==CameraMode::FreeRotation){
+            ImGui::SliderFloat("Rotate", &_cameraRotateAngles, -180.0, 180.0f);
+            ImGui::SliderFloat("X", &_AxisX, -1.0f, 1.0f);
+            ImGui::SliderFloat("Y", &_AxisY, -1.0f, 1.0f);
+            ImGui::SliderFloat("Z", &_AxisZ, -1.0f, 1.0f);
+        }
+        ImGui::NewLine();
+        
+        //Phong render
         ImGui::Text("Adjust Phong rendering:");
         ImGui::Separator();
         ImGui::ColorEdit3("ka##3", (float*)&_phongMaterial->ka);
@@ -400,7 +437,7 @@ void TextureMapping::drawUI(){
         ImGui::SliderFloat("positionZ##3", &_spotLight->position.z, -10.0, 10.0);
         ImGui::NewLine();
 
-        //Choose shape
+        //Vertex shape
         ImGui::Text("Vertex shape:");
         ImGui::Separator();
         ImGui::RadioButton("Tetrahedron", (int*)&_shapeType, (int)(ShapeType::Tetrahedron));
@@ -425,20 +462,6 @@ void TextureMapping::drawUI(){
 		ImGui::SliderFloat("rotationZ", &_rotateAxis.z, 0.0, 180.0f);
         ImGui::NewLine();
         
-        //camera
-        ImGui::Text("Camera Mode:");
-        ImGui::Separator();
-        ImGui::RadioButton("Pan", (int*)&_cameraMode, (int)(CameraMode::Pan));
-        ImGui::RadioButton("Orbit", (int*)&_cameraMode, (int)(CameraMode::Orbit));
-        if(_cameraMode==CameraMode::Orbit){
-            ImGui::SliderFloat("Rotate", &_cameraRotateAngles, -180.0, 180.0f);
-            ImGui::SliderFloat("X", &_AxisX, -1.0f, 1.0f);
-            ImGui::SliderFloat("Y", &_AxisY, -1.0f, 1.0f);
-            ImGui::SliderFloat("Z", &_AxisZ, -1.0f, 1.0f);
-        }
-        ImGui::RadioButton("Zoom to Fit", (int*)&_cameraMode, (int)(CameraMode::ZoomToFit));
-        ImGui::NewLine();
-
         //wireframe mode
         ImGui::Checkbox("wireframe", &_wireframe);
         ImGui::Checkbox("boundingBox", &_showBoundingBox);
@@ -467,9 +490,24 @@ void TextureMapping::renderFrame() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-	//Only PerspectiveCamera available now
+
     const glm::mat4 projection = _camera->getProjectionMatrix();
-    const glm::mat4 view = _camera->getViewMatrix();
+    glm::mat4 view;
+    
+    switch (_cameraMode) {
+        case CameraMode::Pan:
+            view = _camera->getViewMatrix();
+            break;
+            
+        case CameraMode::Orbit:
+            view = glm::lookAt(_camera->position, glm::vec3(0.0f,0.5f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
+            break;
+            
+        case CameraMode::FreeRotation:
+            view = _camera->getViewMatrix();
+            break;
+    }
+
     static float scaleDivide=40.0f;
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(_position.x, _position.y, _position.z));
@@ -510,7 +548,7 @@ void TextureMapping::renderFrame() {
     floorModel = glm::translate(floorModel, glm::vec3(0.005f,0.005f, 0.005f));
     _phongShader->use();
     _phongShader->setMat4("projection", _camera->getProjectionMatrix());
-    _phongShader->setMat4("view", _camera->getViewMatrix());
+    _phongShader->setMat4("view", view);
     _phongShader->setMat4("model", floorModel);
     _phongShader->setVec3("viewPos", _camera->position);
     _phongShader->setVec3("material.ka", _phongMaterial->ka);
@@ -542,7 +580,7 @@ void TextureMapping::renderFrame() {
     //draw display bar
     _displayShader->use();
     _displayShader->setMat4("projection", _camera->getProjectionMatrix());
-    _displayShader->setMat4("view", _camera->getViewMatrix());
+    _displayShader->setMat4("view", view);
     _displayShader->setMat4("model", _sphere->getModelMatrix());
     _displayShader->setVec3("viewPos", _camera->position);
     _displayShader->setVec3("material.ka", glm::vec3(0.07f,0.12f,0.31f));
@@ -590,7 +628,7 @@ void TextureMapping::renderFrame() {
     //draw floor and stairs
     _wallShader->use();
     _wallShader->setMat4("projection", _camera->getProjectionMatrix());
-    _wallShader->setMat4("view", _camera->getViewMatrix());
+    _wallShader->setMat4("view", view);
     _wallShader->setMat4("model", _sphere->getModelMatrix());
     _wallShader->setVec3("viewPos", _camera->position);
     _wallShader->setVec3("material.ka", glm::vec3(0.21f,0.21f,0.21f));
@@ -623,7 +661,7 @@ void TextureMapping::renderFrame() {
 
     _animationShader->use();
     _animationShader->setMat4("projection", _camera->getProjectionMatrix());
-    _animationShader->setMat4("view", _camera->getViewMatrix());
+    _animationShader->setMat4("view", view);
     _animationShader->setMat4("model", flowerModel);
     _animationShader->setVec3("viewPos", _camera->position);
     _animationShader->setVec3("material.ka", _phongMaterial->ka);
@@ -670,7 +708,7 @@ void TextureMapping::renderFrame() {
     _door->position.x = doorPosition.x;
     _doorShader->use();
     _doorShader->setMat4("projection", _camera->getProjectionMatrix());
-    _doorShader->setMat4("view", _camera->getViewMatrix());
+    _doorShader->setMat4("view", view);
     _doorShader->setMat4("model", doorModel);
     _doorShader->setVec3("viewPos", _camera->position);
     _doorShader->setVec3("material.ka", _phongMaterial->ka);

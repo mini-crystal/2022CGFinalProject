@@ -76,7 +76,7 @@ enum class ShaderRenderMode {
 };
 
 enum class CameraMode {
-    Pan, Orbit, ZoomToFit
+    Pan, Orbit, FreeRotation
 };
 
 enum class ShapeType {
@@ -187,6 +187,7 @@ private:
     float _AxisX=0.0f;
     float _AxisY=0.0f;
     float _AxisZ=0.47f;
+    float _orbitAngle=0.0f;
     
     //capture count
 	int count = 0;
