@@ -174,6 +174,7 @@ private:
 	bool flag_O_release = 0;
 	float dx = 0.0f;
 	bool doorOpen = 0;
+	bool _shadow = false;
     
     //animation frame count
 	int animationSwitch = 1;
@@ -211,6 +212,7 @@ private:
     std::shared_ptr<Texture2D> earthTexture = std::make_shared<Texture2D>(earthTexturePath);
     std::shared_ptr<Texture2D> woodTexture = std::make_shared<Texture2D>(woodTexturePath);
     std::shared_ptr<Texture2D> wallTexture = std::make_shared<Texture2D>(wallTexturePath);
+	std::shared_ptr<DepthMap> depthMap = std::make_shared<DepthMap>();
     
 	// ptr to materials
 	std::unique_ptr<AmbientMaterial> _ambientMaterial;
@@ -226,7 +228,11 @@ private:
 	std::unique_ptr<GLSLProgram> _ambientShader;
 	std::unique_ptr<GLSLProgram> _lambertShader;
 	std::unique_ptr<GLSLProgram> _phongShader;
-    
+
+	//shader for DepthMap
+	std::unique_ptr<GLSLProgram> _depthmapShader;
+	std::unique_ptr<GLSLProgram> _shadowShader;
+
     //shaders for objects
     std::unique_ptr<GLSLProgram> _groundShader;
     std::unique_ptr<GLSLProgram> _wallShader;
@@ -246,6 +252,7 @@ private:
 	std::unique_ptr<DirectionalLight> _directionalLight;
 	std::unique_ptr<SpotLight> _spotLight;
     std::unique_ptr<DirectionalLight> _light;
+	std::unique_ptr<DirectionalLight> _shadowLight;
 
 	// camera
 	std::unique_ptr<PerspectiveCamera> _camera;
@@ -272,6 +279,8 @@ private:
     void initCheckerShader();
     void initDisplayShader();
     void initWallShader();
+	void initDepthMapShader();
+	void initShadowShader();
     void initAnimationShader();
     void initDoorShader();
     void initLineShader();
@@ -284,4 +293,5 @@ private:
     bool CheckBoundingBox(BoundingBox box,glm::mat4 ModelMatrix);
 	void handleInput() override;
 	void renderFrame() override;
+	void renderDepthMap();
 };

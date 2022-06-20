@@ -71,3 +71,22 @@ public:
 
 	virtual void unbind() const;
 };
+
+class DepthMap : public Texture {
+public:
+	DepthMap();
+
+	~DepthMap() = default;
+
+	void bindFrameBuffer();
+
+	void unbindFrameBuffer();
+
+	void bind() const override;
+
+	virtual void unbind() const;
+private:
+	const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+	GLuint depthMapFBO = 0;
+	GLuint depthMap = 0;
+};

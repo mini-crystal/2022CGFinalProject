@@ -104,6 +104,10 @@ void TextureMapping::InitLight(){
     
     _light.reset(new DirectionalLight());
     _light->rotation = glm::angleAxis(glm::radians(45.0f), -glm::vec3(1.0f, 1.0f, 1.0f));
+
+	_shadowLight.reset(new DirectionalLight);
+	_shadowLight->position = glm::vec3(20.0f, 20.0f, 20.0f);
+	_shadowLight->rotation = glm::angleAxis(glm::radians(45.0f), -glm::vec3(1.0f, 1.0f, 1.0f));
 }
 
 void TextureMapping::InitTexture(){
@@ -163,6 +167,9 @@ void TextureMapping::InitAllShader(){
     initSimpleShader();
     initBlendShader();
     initCheckerShader();
+
+	initDepthMapShader();
+	initShadowShader();
 }
 
 void TextureMapping::InitImGui(){
@@ -465,6 +472,7 @@ void TextureMapping::drawUI(){
         //wireframe mode
         ImGui::Checkbox("wireframe", &_wireframe);
         ImGui::Checkbox("boundingBox", &_showBoundingBox);
+		ImGui::Checkbox("shadow", &_shadow);
 
         ImGui::NewLine();
         ImGui::NewLine();
@@ -542,115 +550,121 @@ void TextureMapping::renderFrame() {
         _door->drawBoundingBox();
     }
     
-    
-	//universal shader
-    glm::mat4 floorModel = _sphere->getModelMatrix();
-    floorModel = glm::translate(floorModel, glm::vec3(0.005f,0.005f, 0.005f));
-    _phongShader->use();
-    _phongShader->setMat4("projection", _camera->getProjectionMatrix());
-    _phongShader->setMat4("view", view);
-    _phongShader->setMat4("model", floorModel);
-    _phongShader->setVec3("viewPos", _camera->position);
-    _phongShader->setVec3("material.ka", _phongMaterial->ka);
-    _phongShader->setVec3("material.kd", _phongMaterial->kd);
-    _phongShader->setVec3("material.ks", _phongMaterial->ks);
-    _phongShader->setFloat("material.ns", _phongMaterial->ns);
-    _phongShader->setVec3("ambientLight.color", _ambientLight->color);
-    _phongShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
-    _phongShader->setVec3("spotLight.position", _spotLight->position);
-    _phongShader->setVec3("spotLight.direction", _spotLight->getFront());
-    _phongShader->setFloat("spotLight.intensity", _spotLight->intensity);
-    _phongShader->setVec3("spotLight.color", _spotLight->color);
-    _phongShader->setFloat("spotLight.angle", _spotLight->angle);
-    _phongShader->setFloat("spotLight.kc", _spotLight->kc);
-    _phongShader->setFloat("spotLight.kl", _spotLight->kl);
-    _phongShader->setFloat("spotLight.kq", _spotLight->kq);
-    _phongShader->setVec3("directionalLight.direction", _directionalLight->getFront());
-    _phongShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
-    _phongShader->setVec3("directionalLight.color", _directionalLight->color);
+	if (!_shadow)
+	{
+		//universal shader
+		glm::mat4 floorModel = _sphere->getModelMatrix();
+		floorModel = glm::translate(floorModel, glm::vec3(0.005f, 0.005f, 0.005f));
+		_phongShader->use();
+		_phongShader->setMat4("projection", _camera->getProjectionMatrix());
+		_phongShader->setMat4("view", view);
+		_phongShader->setMat4("model", floorModel);
+		_phongShader->setVec3("viewPos", _camera->position);
+		_phongShader->setVec3("material.ka", _phongMaterial->ka);
+		_phongShader->setVec3("material.kd", _phongMaterial->kd);
+		_phongShader->setVec3("material.ks", _phongMaterial->ks);
+		_phongShader->setFloat("material.ns", _phongMaterial->ns);
+		_phongShader->setVec3("ambientLight.color", _ambientLight->color);
+		_phongShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
+		_phongShader->setVec3("spotLight.position", _spotLight->position);
+		_phongShader->setVec3("spotLight.direction", _spotLight->getFront());
+		_phongShader->setFloat("spotLight.intensity", _spotLight->intensity);
+		_phongShader->setVec3("spotLight.color", _spotLight->color);
+		_phongShader->setFloat("spotLight.angle", _spotLight->angle);
+		_phongShader->setFloat("spotLight.kc", _spotLight->kc);
+		_phongShader->setFloat("spotLight.kl", _spotLight->kl);
+		_phongShader->setFloat("spotLight.kq", _spotLight->kq);
+		_phongShader->setVec3("directionalLight.direction", _directionalLight->getFront());
+		_phongShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
+		_phongShader->setVec3("directionalLight.color", _directionalLight->color);
 
-    _firstcard->draw();
-    _firstmenu->draw();
-    _secondfloor->draw();
-    _secondsofa->draw();
-    _secondscreen->draw();
-    _unotitle->draw();
+		_firstcard->draw();
+		_firstmenu->draw();
+		_secondfloor->draw();
+		_secondsofa->draw();
+		_secondscreen->draw();
+		_unotitle->draw();
 
-    
-    //draw display bar
-    _displayShader->use();
-    _displayShader->setMat4("projection", _camera->getProjectionMatrix());
-    _displayShader->setMat4("view", view);
-    _displayShader->setMat4("model", _sphere->getModelMatrix());
-    _displayShader->setVec3("viewPos", _camera->position);
-    _displayShader->setVec3("material.ka", glm::vec3(0.07f,0.12f,0.31f));
-    _displayShader->setVec3("material.kd", glm::vec3(0.12f,0.24f,0.41f));
-    _displayShader->setVec3("material.ks", _phongMaterial->ks);
-    _displayShader->setFloat("material.ns", _phongMaterial->ns);
-    _displayShader->setVec3("ambientLight.color", _ambientLight->color);
-    _displayShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
-    _displayShader->setVec3("spotLight.position", _spotLight->position);
-    _displayShader->setVec3("spotLight.direction", _spotLight->getFront());
-    _displayShader->setFloat("spotLight.intensity", _spotLight->intensity);
-    _displayShader->setVec3("spotLight.color", _spotLight->color);
-    _displayShader->setFloat("spotLight.angle", _spotLight->angle);
-    _displayShader->setFloat("spotLight.kc", _spotLight->kc);
-    _displayShader->setFloat("spotLight.kl", _spotLight->kl);
-    _displayShader->setFloat("spotLight.kq", _spotLight->kq);
-    _displayShader->setVec3("directionalLight.direction", _directionalLight->getFront());
-    _displayShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
-    _displayShader->setVec3("directionalLight.color", _directionalLight->color);
-    _firstdisplaybottom->draw();
-    
-    
-    //draw desks
-    _blendShader->use();
-    _blendShader->setMat4("projection", projection);
-    _blendShader->setMat4("view", view);
-    _blendShader->setMat4("model", _sphere->getModelMatrix());
-    _blendShader->setVec3("light.direction", _directionalLight->getFront());
-    _blendShader->setVec3("light.color", _directionalLight->color);
-    _blendShader->setFloat("light.intensity", _directionalLight->intensity);
-    _blendShader->setVec3("material.kds[0]", _blendMaterial->kds[0]);
-    _blendShader->setVec3("material.kds[1]", _blendMaterial->kds[1]);
-    _blendShader->setFloat("material.blend", _blendMaterial->blend);
-    _blendShader->setInt("mapKds[1]", 1);
-    glActiveTexture(GL_TEXTURE0);
-    _blendMaterial->mapKds[0]->bind();
-    glActiveTexture(GL_TEXTURE1);
-    _blendMaterial->mapKds[1]->bind();
-	_firstdesk->draw();
-    _firstdeng->draw();
-    _seconddesk->draw();
-    _secondchair->draw();
-    _seconddeskbottom->draw();
-    
-    //draw floor and stairs
-    _wallShader->use();
-    _wallShader->setMat4("projection", _camera->getProjectionMatrix());
-    _wallShader->setMat4("view", view);
-    _wallShader->setMat4("model", _sphere->getModelMatrix());
-    _wallShader->setVec3("viewPos", _camera->position);
-    _wallShader->setVec3("material.ka", glm::vec3(0.21f,0.21f,0.21f));
-    _wallShader->setVec3("material.kd", glm::vec3(0.75f,0.70f,0.44f));
-    _wallShader->setVec3("material.ks", glm::vec3(0.76f,0.69f,0.55f));
-    _wallShader->setFloat("material.ns", _phongMaterial->ns);
-    _wallShader->setVec3("ambientLight.color", _ambientLight->color);
-    _wallShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
-    _wallShader->setVec3("spotLight.position", _spotLight->position);
-    _wallShader->setVec3("spotLight.direction", _spotLight->getFront());
-    _wallShader->setFloat("spotLight.intensity", _spotLight->intensity);
-    _wallShader->setVec3("spotLight.color", _spotLight->color);
-    _wallShader->setFloat("spotLight.angle", _spotLight->angle);
-    _wallShader->setFloat("spotLight.kc", _spotLight->kc);
-    _wallShader->setFloat("spotLight.kl", _spotLight->kl);
-    _wallShader->setFloat("spotLight.kq", _spotLight->kq);
-    _wallShader->setVec3("directionalLight.direction", _directionalLight->getFront());
-    _wallShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
-    _wallShader->setVec3("directionalLight.color", _directionalLight->color);
-    
-    _firstfloor->draw();
-    _firstupstairs->draw();
+
+		//draw display bar
+		_displayShader->use();
+		_displayShader->setMat4("projection", _camera->getProjectionMatrix());
+		_displayShader->setMat4("view", view);
+		_displayShader->setMat4("model", _sphere->getModelMatrix());
+		_displayShader->setVec3("viewPos", _camera->position);
+		_displayShader->setVec3("material.ka", glm::vec3(0.07f, 0.12f, 0.31f));
+		_displayShader->setVec3("material.kd", glm::vec3(0.12f, 0.24f, 0.41f));
+		_displayShader->setVec3("material.ks", _phongMaterial->ks);
+		_displayShader->setFloat("material.ns", _phongMaterial->ns);
+		_displayShader->setVec3("ambientLight.color", _ambientLight->color);
+		_displayShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
+		_displayShader->setVec3("spotLight.position", _spotLight->position);
+		_displayShader->setVec3("spotLight.direction", _spotLight->getFront());
+		_displayShader->setFloat("spotLight.intensity", _spotLight->intensity);
+		_displayShader->setVec3("spotLight.color", _spotLight->color);
+		_displayShader->setFloat("spotLight.angle", _spotLight->angle);
+		_displayShader->setFloat("spotLight.kc", _spotLight->kc);
+		_displayShader->setFloat("spotLight.kl", _spotLight->kl);
+		_displayShader->setFloat("spotLight.kq", _spotLight->kq);
+		_displayShader->setVec3("directionalLight.direction", _directionalLight->getFront());
+		_displayShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
+		_displayShader->setVec3("directionalLight.color", _directionalLight->color);
+		_firstdisplaybottom->draw();
+
+
+		//draw desks
+		_blendShader->use();
+		_blendShader->setMat4("projection", projection);
+		_blendShader->setMat4("view", view);
+		_blendShader->setMat4("model", _sphere->getModelMatrix());
+		_blendShader->setVec3("light.direction", _directionalLight->getFront());
+		_blendShader->setVec3("light.color", _directionalLight->color);
+		_blendShader->setFloat("light.intensity", _directionalLight->intensity);
+		_blendShader->setVec3("material.kds[0]", _blendMaterial->kds[0]);
+		_blendShader->setVec3("material.kds[1]", _blendMaterial->kds[1]);
+		_blendShader->setFloat("material.blend", _blendMaterial->blend);
+		_blendShader->setInt("mapKds[1]", 1);
+		glActiveTexture(GL_TEXTURE0);
+		_blendMaterial->mapKds[0]->bind();
+		glActiveTexture(GL_TEXTURE1);
+		_blendMaterial->mapKds[1]->bind();
+		_firstdesk->draw();
+		_firstdeng->draw();
+		_seconddesk->draw();
+		_secondchair->draw();
+		_seconddeskbottom->draw();
+
+		//draw floor and stairs
+		_wallShader->use();
+		_wallShader->setMat4("projection", _camera->getProjectionMatrix());
+		_wallShader->setMat4("view", view);
+		_wallShader->setMat4("model", _sphere->getModelMatrix());
+		_wallShader->setVec3("viewPos", _camera->position);
+		_wallShader->setVec3("material.ka", glm::vec3(0.21f, 0.21f, 0.21f));
+		_wallShader->setVec3("material.kd", glm::vec3(0.75f, 0.70f, 0.44f));
+		_wallShader->setVec3("material.ks", glm::vec3(0.76f, 0.69f, 0.55f));
+		_wallShader->setFloat("material.ns", _phongMaterial->ns);
+		_wallShader->setVec3("ambientLight.color", _ambientLight->color);
+		_wallShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
+		_wallShader->setVec3("spotLight.position", _spotLight->position);
+		_wallShader->setVec3("spotLight.direction", _spotLight->getFront());
+		_wallShader->setFloat("spotLight.intensity", _spotLight->intensity);
+		_wallShader->setVec3("spotLight.color", _spotLight->color);
+		_wallShader->setFloat("spotLight.angle", _spotLight->angle);
+		_wallShader->setFloat("spotLight.kc", _spotLight->kc);
+		_wallShader->setFloat("spotLight.kl", _spotLight->kl);
+		_wallShader->setFloat("spotLight.kq", _spotLight->kq);
+		_wallShader->setVec3("directionalLight.direction", _directionalLight->getFront());
+		_wallShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
+		_wallShader->setVec3("directionalLight.color", _directionalLight->color);
+
+		_firstfloor->draw();
+		_firstupstairs->draw();
+	}
+	else
+	{
+		renderDepthMap();
+	}
     
     
     //draw animation
@@ -775,6 +789,79 @@ void TextureMapping::renderFrame() {
     drawUI();
 
 }
+
+void TextureMapping::renderDepthMap() {
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	_depthmapShader->use();
+	GLfloat near_plane = 0.1f, far_plane = 100.0f;
+	glm::mat4 lightProjection = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, near_plane, far_plane);
+	glm::mat4 lightView = glm::lookAt(_shadowLight->position, glm::vec3(0.0), glm::vec3(-1.0, -1.0, 1.0));
+	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+	_depthmapShader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
+	_depthmapShader->setMat4("model", _sphere->getModelMatrix());
+
+	//glViewport(0, 0, 1920, 1920);
+	depthMap->bindFrameBuffer();
+
+	_firstcard->draw();
+	_firstmenu->draw();
+	_secondfloor->draw();
+	_secondsofa->draw();
+	_secondscreen->draw();
+	_unotitle->draw();
+
+	_firstdisplaybottom->draw();
+
+	_firstdesk->draw();
+	_firstdeng->draw();
+	_seconddesk->draw();
+	_secondchair->draw();
+	_seconddeskbottom->draw();
+
+	_firstfloor->draw();
+	_firstupstairs->draw();
+
+	depthMap->unbindFrameBuffer();
+
+	glViewport(0, 0, 1280, 720);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	_shadowShader->use();
+	_shadowShader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
+	_shadowShader->setMat4("projection", _camera->getProjectionMatrix());
+	_shadowShader->setMat4("view", _camera->getViewMatrix());
+	_shadowShader->setMat4("model", _sphere->getModelMatrix());
+	_shadowShader->setVec3("lightPos", _shadowLight->position);
+	_shadowShader->setVec3("viewPos", _camera->position);
+
+	glActiveTexture(GL_TEXTURE0);
+	depthMap->bind();
+	glActiveTexture(GL_TEXTURE1);
+	woodTexture->bind();
+	//_shadowShader->setInt("shadowMap", 0);
+
+	_firstcard->draw();
+	_firstmenu->draw();
+	_secondfloor->draw();
+	_secondsofa->draw();
+	_secondscreen->draw();
+	_unotitle->draw();
+
+	_firstdisplaybottom->draw();
+
+	_firstdesk->draw();
+	_firstdeng->draw();
+	_seconddesk->draw();
+	_secondchair->draw();
+	_seconddeskbottom->draw();
+
+	_firstfloor->draw();
+	_firstupstairs->draw();
+
+	depthMap->unbind();
+}
+
 
 void TextureMapping::capture() {
     FILE* pDummyFile;

@@ -499,3 +499,131 @@ void TextureMapping::initLineShader(){
     _lineShader->attachFragmentShader(lineFsCode);
     _lineShader->link();
 }
+
+
+void TextureMapping::initDepthMapShader() {
+	const char* vsCode =
+		"#version 330 core\n"
+		"layout(location = 0) in vec3 position;\n"
+
+		"uniform mat4 lightSpaceMatrix;\n"
+		"uniform mat4 model;\n"
+
+		"void main()\n"
+		"{\n"
+		"	gl_Position = lightSpaceMatrix * model * vec4(position, 1.0f);\n"
+		"}\n";
+
+	const char* fsCode =
+		"#version 330 core\n"
+
+		"void main()\n"
+		"{\n"
+		"	// gl_FragDepth = gl_FragCoord.z;\n"
+		"}";
+
+	_depthmapShader.reset(new GLSLProgram);
+	_depthmapShader->attachVertexShader(vsCode);
+	_depthmapShader->attachFragmentShader(fsCode);
+	_depthmapShader->link();
+}
+
+void TextureMapping::initShadowShader() {
+	const char* vsCode =
+		"#version 330 core\n"
+		"layout(location = 0) in vec3 position;\n"
+		"layout(location = 1) in vec3 normal;\n"
+		"layout(location = 2) in vec2 texCoords;\n"
+
+		"out vec2 TexCoords;\n"
+
+		"out VS_OUT{\n"
+		"	vec3 FragPos;\n"
+		"	vec3 Normal;\n"
+		"	vec2 TexCoords;\n"
+		"	vec4 FragPosLightSpace;\n"
+		"} vs_out;\n"
+
+		"uniform mat4 projection;\n"
+		"uniform mat4 view;\n"
+		"uniform mat4 model;\n"
+		"uniform mat4 lightSpaceMatrix;\n"
+
+		"void main()\n"
+		"{\n"
+		"	gl_Position = projection * view * model * vec4(position, 1.0f);\n"
+		"	vs_out.FragPos = vec3(model * vec4(position, 1.0));\n"
+		"	vs_out.Normal = transpose(inverse(mat3(model))) * normal;\n"
+		"	vs_out.TexCoords = texCoords;\n"
+		"	vs_out.FragPosLightSpace = lightSpaceMatrix * vec4(vs_out.FragPos, 1.0);\n"
+		"}\n";
+
+
+	const char* fsCode =
+		"#version 330 core\n"
+		"out vec4 FragColor;\n"
+
+		"in VS_OUT{\n"
+		"	vec3 FragPos;\n"
+		"	vec3 Normal;\n"
+		"	vec2 TexCoords;\n"
+		"	vec4 FragPosLightSpace;\n"
+		"} fs_in;\n"
+
+		"uniform sampler2D shadowMap;\n"
+		"uniform sampler2D diffuseTexture;\n"
+
+		"uniform vec3 lightPos;\n"
+		"uniform vec3 viewPos;\n"
+
+		"float ShadowCalculation(vec4 fragPosLightSpace)\n"
+		"{\n"
+		"	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;\n"
+		"	projCoords = projCoords * 0.5 + 0.5;\n"
+		//"	float closestDepth = texture(shadowMap, projCoords.xy).r;\n"
+		"	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);"
+		"	float currentDepth = projCoords.z;\n"
+		"	float shadow = 0.0f;\n"
+		//"	float shadow = currentDepth - 0.0001 > closestDepth ? 0.8 : 0.0;\n"
+		"	for (int x = -1; x <= 1; ++x)\n"
+		"	{\n"
+		"		for (int y = -1; y <= 1; ++y)\n"
+		"		{\n"
+		"			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;\n"
+		"			shadow += currentDepth - 0.00012 > pcfDepth ? 0.7 : 0.0;\n"
+		"		}\n"
+		"	}\n"
+		"	shadow /= 9.0;\n"
+
+		"	return shadow;\n"
+		"}\n"
+
+		"void main()\n"
+		"{\n"
+		//"	vec3 color = Texture2D(diffuseTexture, TexCoords);\n"
+		"	vec3 color = vec3(1.0);\n"
+		"	vec3 normal = normalize(fs_in.Normal);\n"
+		"	vec3 lightColor = vec3(1.0);\n"
+		"	vec3 ambient = 0.15 * lightColor;\n"
+		"	vec3 lightDir = normalize(lightPos - fs_in.FragPos);\n"
+		"	float diff = max(dot(lightDir, normal), 0.0);\n"
+		"	vec3 diffuse = diff * lightColor;\n"
+		"	vec3 viewDir = normalize(viewPos - fs_in.FragPos);\n"
+		"	vec3 reflectDir = reflect(-lightDir, normal);\n"
+		"	float spec = 0.0;\n"
+		"	vec3 halfwayDir = normalize(lightDir + viewDir);\n"
+		"	spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);\n"
+		"	vec3 specular = spec * lightColor;\n"
+		"	float shadow = ShadowCalculation(fs_in.FragPosLightSpace);\n"
+		"	vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;\n"
+
+		"	FragColor = vec4(lighting, 1.0f);\n"
+		"}\n";
+
+
+	_shadowShader.reset(new GLSLProgram);
+	_shadowShader->attachVertexShader(vsCode);
+	_shadowShader->attachFragmentShader(fsCode);
+	_shadowShader->link();
+}
+
