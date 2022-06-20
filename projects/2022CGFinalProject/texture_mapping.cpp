@@ -5,7 +5,7 @@
 
 TextureMapping::TextureMapping(const Options& options): Application(options) {
     InitializeModel();
-    InitScale();
+    InitObject();
     InitMaterial();
     InitLight();
     InitTexture();
@@ -22,9 +22,8 @@ TextureMapping::~TextureMapping() {
 }
 
 void TextureMapping::InitializeModel(){
-    // ����ģ��
-    _sphere.reset(new Model(spheremodelPath));
-
+    // .obj
+    _world.reset(new Model(firstcardPath));
     _firstcard.reset(new Model(firstcardPath));
     _firstdeng.reset(new Model(firstdengPath));
     _firstdeskbottom.reset(new Model(firstdeskbottomPath));
@@ -39,8 +38,23 @@ void TextureMapping::InitializeModel(){
     _secondscreen.reset(new Model(secondscreenPath));
     _secondsofa.reset(new Model(secondsofaPath));
     _firstdesk.reset(new Model(firstdeskPath));
+    danceMan.frame[1].reset(new Model(animationPath_1));
+    danceMan.frame[2].reset(new Model(animationPath_2));
+    danceMan.frame[3].reset(new Model(animationPath_3));
+    danceMan.frame[4].reset(new Model(animationPath_4));
+    danceMan.frame[5].reset(new Model(animationPath_5));
+    danceMan.frame[6].reset(new Model(animationPath_6));
+    danceMan.frame[7].reset(new Model(animationPath_7));
+    danceMan.frame[8].reset(new Model(animationPath_8));
+    danceMan.frame[9].reset(new Model(animationPath_9));
+    danceMan.frame[10].reset(new Model(animationPath_10));
+    danceMan.frame[11].reset(new Model(animationPath_11));
+    _door.reset(new Model(door));
+
+    //.obj for output
+    _unotitle.reset(new ObjModel(unoPath));
     
-    // ����ģ�ͳ�ʼ��
+    // vertex shape
     _skybox.reset(new SkyBox(skyboxTexturePaths));
     _cube.reset(new Cube());
     _ground.reset(new Ground());
@@ -51,35 +65,21 @@ void TextureMapping::InitializeModel(){
 	_prism.reset(new Prism());
 	_prismatictable.reset(new Prismatictable());
 	_bezierFace.reset(new BezierFace());
-
-    _animation1.reset(new Model(animationPath_1));
-    _animation2.reset(new Model(animationPath_2));
-    _animation3.reset(new Model(animationPath_3));
-    _animation4.reset(new Model(animationPath_4));
-    _animation5.reset(new Model(animationPath_5));
-    _animation6.reset(new Model(animationPath_6));
-    _animation7.reset(new Model(animationPath_7));
-    _animation8.reset(new Model(animationPath_8));
-    _animation9.reset(new Model(animationPath_9));
-    _animation10.reset(new Model(animationPath_10));
-    _animation11.reset(new Model(animationPath_11));
-
-    _door.reset(new Model(door));
-
-    _unotitle.reset(new ObjModel(unoPath));
 }
 
-void TextureMapping::InitScale(){
-    _sphere->scale = glm::vec3(0.3f, 0.3f, 0.3f);
+void TextureMapping::InitObject(){
+    _world->scale = glm::vec3(0.3f, 0.3f, 0.3f);
+    _door->scale = glm::vec3(0.3f,0.3f,0.3f);
+    danceMan.frame[1]->scale=glm::vec3(0.005f, 0.005f, 0.005f);
+    danceMan.frame[1]->position=glm::vec3(1.5f, 0.0f, 1.0f);
+    _firstfloor->scale=glm::vec3(0.3f,0.3f,0.3f);
+    _firstfloor->position=glm::vec3(0.005f, 0.005f, 0.005f);
+    _shapePosition = glm::vec3(0.3f, 0.296f, 0.7f);
+    _shapeRotateAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+    _shapeScale = glm::vec3(1.0f, 1.0f, 1.0f);
 }
 
 void TextureMapping::InitMaterial(){
-    _ambientMaterial.reset(new AmbientMaterial);
-    _ambientMaterial->ka = glm::vec3(0.03f, 0.03f, 0.03f);
-
-    _lambertMaterial.reset(new LambertMaterial);
-    _lambertMaterial->kd = glm::vec3(1.0f, 1.0f, 1.0f);
-
     _phongMaterial.reset(new PhongMaterial);
     _phongMaterial->ka = glm::vec3(0.4f,0.34f,0.21f);
     _phongMaterial->kd = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -111,69 +111,70 @@ void TextureMapping::InitLight(){
 }
 
 void TextureMapping::InitTexture(){
-    // ��ʼ����?
-    _simpleMaterial.reset(new SimpleMaterial);
-    _simpleMaterial->mapKd = wallTexture;
-
-    _blendMaterial.reset(new BlendMaterial);
-    _blendMaterial->kds[0] = glm::vec3(1.0f, 1.0f, 1.0f);
-    _blendMaterial->kds[1] = glm::vec3(1.0f, 1.0f, 1.0f);
-    _blendMaterial->mapKds[0] = woodTexture;
-    _blendMaterial->mapKds[1] = earthTexture;
-    _blendMaterial->blend = 0.0f;
-
-    _checkerMaterial.reset(new CheckerMaterial);
-    _checkerMaterial->repeat = 10;
-    _checkerMaterial->colors[0] = glm::vec3(1.0f, 1.0f, 1.0f);
-    _checkerMaterial->colors[1] = glm::vec3(0.0f, 0.0f, 0.0f);
+    _woodMaterial.reset(new BlendMaterial);
+    _woodMaterial->kds[0] = glm::vec3(1.0f, 1.0f, 1.0f);
+    _woodMaterial->kds[1] = glm::vec3(1.0f, 1.0f, 1.0f);
+    _woodMaterial->mapKds[0] = woodTexture;
+    _woodMaterial->mapKds[1] = earthTexture;
+    _woodMaterial->blend = 0.0f;
 }
 
 void TextureMapping::InitCamera(){
-    _camera.reset(new PerspectiveCamera(
-        glm::radians(45.0f), 1.0f * _windowWidth / _windowHeight, 0.1f, 10000.0f));
+    _camera.reset(new PerspectiveCamera(glm::radians(45.0f), 1.0f * _windowWidth / _windowHeight, 0.1f, 10000.0f));
     _camera->position.y = 0.3f;
     _camera->position.z = 3.0f;
 }
 
 void TextureMapping::HandleMouse(){
     //set input mode
-    // �����ǰ��������뵱�����ӽǵĸı䣬���Բ�����ָ�����
-    //glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     _mouseInput.move.xOld = _mouseInput.move.xCurrent = 0.5 * _windowWidth;
     _mouseInput.move.yOld = _mouseInput.move.yCurrent = 0.5 * _windowHeight;
     glfwSetCursorPos(_window, _mouseInput.move.xCurrent, _mouseInput.move.yCurrent);
 }
 
 void TextureMapping::InitAllShader(){
-    //��ʼ��3���������shader   ����+����+�ı��С
-    //���α任shader
-    initTransformShader();
+    //init shader for vertex shape
+    initShapeShader();
 
-    //����shader
-    initAmbientShader();
-    initLambertShader();
+    //init shader for mode
     initPhongShader();
-    
-    //init shader for objects
-    initDisplayShader();
-    initWallShader();
-    initAnimationShader();
-    initDoorShader();
     
     //init shader for boundingBox
     initLineShader();
     
-    //init shader
-    initSimpleShader();
-    initBlendShader();
-    initCheckerShader();
+    //init shader for texture
+    initTextureShader();
 
+    //init shader for shadow
 	initDepthMapShader();
 	initShadowShader();
 }
 
+void TextureMapping::resetPhongShader(){
+    _universalPhongShader->setMat4("projection", _projection);
+    _universalPhongShader->setMat4("view", _view);
+    _universalPhongShader->setMat4("model", _model);
+    _universalPhongShader->setVec3("viewPos", _camera->position);
+    _universalPhongShader->setVec3("material.ka", _phongMaterial->ka);
+    _universalPhongShader->setVec3("material.kd", _phongMaterial->kd);
+    _universalPhongShader->setVec3("material.ks", _phongMaterial->ks);
+    _universalPhongShader->setFloat("material.ns", _phongMaterial->ns);
+    _universalPhongShader->setVec3("ambientLight.color", _ambientLight->color);
+    _universalPhongShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
+    _universalPhongShader->setVec3("spotLight.position", _spotLight->position);
+    _universalPhongShader->setVec3("spotLight.direction", _spotLight->getFront());
+    _universalPhongShader->setFloat("spotLight.intensity", _spotLight->intensity);
+    _universalPhongShader->setVec3("spotLight.color", _spotLight->color);
+    _universalPhongShader->setFloat("spotLight.angle", _spotLight->angle);
+    _universalPhongShader->setFloat("spotLight.kc", _spotLight->kc);
+    _universalPhongShader->setFloat("spotLight.kl", _spotLight->kl);
+    _universalPhongShader->setFloat("spotLight.kq", _spotLight->kq);
+    _universalPhongShader->setVec3("directionalLight.direction", _directionalLight->getFront());
+    _universalPhongShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
+    _universalPhongShader->setVec3("directionalLight.color", _directionalLight->color);
+}
+
 void TextureMapping::InitImGui(){
-    //��ʼ��imgui���
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
@@ -192,14 +193,12 @@ bool TextureMapping::CheckBoundingBox(BoundingBox box,glm::mat4 ModelMatrix){
 }
 
 void TextureMapping::handleInput() {
-    
     constexpr float cameraMoveSpeed = 0.5f;
     constexpr float cameraRotateSpeed = 0.2f;
     constexpr float cameraOrbitSpeed = 20.0f;
     constexpr float gravityFactor = 0.003f;
     constexpr float cameraFovySpeed = 0.01f;
     constexpr float orbitRadius = 4.0f;
-    
     static int onAirFrame=0;
     static float upSpeed=0;
     static float orbitAngle=0.0f;
@@ -265,27 +264,30 @@ void TextureMapping::handleInput() {
                 if (_keyboardInput.keyStates[GLFW_KEY_D] != GLFW_RELEASE) camera->position += cameraMoveSpeed * camera->getRight() *_deltaTime;
                 
                 //keyboard: open door
-                if (_keyboardInput.keyStates[GLFW_KEY_O] == GLFW_PRESS) flag_O_press = true;
-                if (_keyboardInput.keyStates[GLFW_KEY_O] == GLFW_RELEASE) flag_O_release = true;
-                if (flag_O_press && flag_O_release) {
-                    if (!doorOpen) {
-                        dx += 0.1f;
-                        doorPosition.x = dx;
-                        if (dx >= 5.0f) {
-                            flag_O_press = flag_O_release = false;
-                            dx = 5.0f;
-                            doorOpen = true;
-                        }
+                const float openSpeed=0.05f;
+                static bool isOpening = false;
+                static bool OpenState = false;
+                if (_keyboardInput.keyStates[GLFW_KEY_O] == GLFW_PRESS) {
+                    _keyboardInput.keyStates[GLFW_KEY_O] = GLFW_RELEASE;
+                    isOpening= true;
+                }
+                if(isOpening){
+                    if (!OpenState) {
+                        _door->position.x += openSpeed;
                     }
                     else {
-                        dx -= 0.1f;
-                        doorPosition.x = dx;
-                        if (dx <= 0.0f) {
-                            flag_O_press = flag_O_release = false;
-                            dx = 0.0f;
-                            doorOpen = false;
-                        }
+                        _door->position.x -= openSpeed;
                     }
+                }
+                if (_door->position.x >= 2.0f) {
+                    _door->position.x = 2.0f;
+                    isOpening= false;
+                    OpenState = true;
+                }
+                if (_door->position.x <= 0.0f) {
+                    _door->position.x = 0.0f;
+                    isOpening= false;
+                    OpenState = false;
                 }
 
                 //gravity
@@ -295,8 +297,8 @@ void TextureMapping::handleInput() {
                     (upSpeed * (onAirFrame-1) - (onAirFrame-1) * (onAirFrame-1) * gravityFactor);
                 
                 //check if in boundingBox
-                if (CheckBoundingBox(_door->getBoundingBox(), _sphere->getModelMatrix())) {
-                    if (doorOpen == 0) {
+                if (CheckBoundingBox(_door->getBoundingBox(), _model)) {
+                    if (OpenState == 0) {
                         camera->position = oldPosition;
                         onAirFrame = 0;
                         upSpeed = 0;
@@ -346,7 +348,6 @@ void TextureMapping::handleInput() {
                     camera->position.y=2.5f;
                     _camera->fovy=glm::radians(45.0f);
                 }
-                
                 camera->position.x=orbitRadius * cos(glm::radians(_orbitAngle));
                 camera->position.z=orbitRadius * sin(glm::radians(_orbitAngle));
                 
@@ -371,7 +372,6 @@ void TextureMapping::handleInput() {
                     _AxisY=0.0f;
                     _AxisZ=0.47f;
                 }
-
                 glm::vec3 RotationAxis= glm::vec3(_AxisX,_AxisY,_AxisZ);
                 float x = RotationAxis.x * sin(glm::radians(_cameraRotateAngles / 2));
                 float y = RotationAxis.y * sin(glm::radians(_cameraRotateAngles / 2));
@@ -390,14 +390,12 @@ void TextureMapping::drawUI(){
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-
     const auto flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings;
-
+    
     if (!ImGui::Begin("Light Control Panel", nullptr, flags)) {
         ImGui::End();
     }
     else {
-        
         //camera mode
         ImGui::Text("Camera Mode:");
         ImGui::Separator();
@@ -456,17 +454,17 @@ void TextureMapping::drawUI(){
 		ImGui::RadioButton("Prismatictable", (int*)&_shapeType, (int)(ShapeType::Prismatictable));
 		ImGui::RadioButton("BezierFace", (int*)&_shapeType, (int)(ShapeType::BezierFace));
         ImGui::Text("Scale");
-        ImGui::SliderFloat("transformX", &_scale.x, 0.0, 2.0);
-        ImGui::SliderFloat("transformY", &_scale.y, 0.0, 2.0);
-        ImGui::SliderFloat("transformZ", &_scale.z, 0.0, 2.0);
+        ImGui::SliderFloat("transformX", &_shapeScale.x, 0.0, 2.0);
+        ImGui::SliderFloat("transformY", &_shapeScale.y, 0.0, 2.0);
+        ImGui::SliderFloat("transformZ", &_shapeScale.z, 0.0, 2.0);
         ImGui::Text("Position");
-        ImGui::SliderFloat("positionX", &_position.x, -1.0, 1.0);
-        ImGui::SliderFloat("positionY", &_position.y, -1.0, 2.0);
-        ImGui::SliderFloat("positionZ", &_position.z, -1.0, 1.0);
+        ImGui::SliderFloat("positionX", &_shapePosition.x, -1.0, 1.0);
+        ImGui::SliderFloat("positionY", &_shapePosition.y, -1.0, 2.0);
+        ImGui::SliderFloat("positionZ", &_shapePosition.z, -1.0, 1.0);
 		ImGui::Text("Rotation");
-		ImGui::SliderFloat("rotationX", &_rotateAxis.x, 0.0, 180.0f);
-		ImGui::SliderFloat("rotationY", &_rotateAxis.y, 0.0, 180.0f);
-		ImGui::SliderFloat("rotationZ", &_rotateAxis.z, 0.0, 180.0f);
+		ImGui::SliderFloat("rotationX", &_shapeRotateAxis.x, 0.0, 180.0f);
+		ImGui::SliderFloat("rotationY", &_shapeRotateAxis.y, 0.0, 180.0f);
+		ImGui::SliderFloat("rotationZ", &_shapeRotateAxis.z, 0.0, 180.0f);
         ImGui::NewLine();
         
         //wireframe mode
@@ -477,9 +475,6 @@ void TextureMapping::drawUI(){
         ImGui::NewLine();
         ImGui::NewLine();
         ImGui::NewLine();
-        ImGui::NewLine();
-        ImGui::NewLine();
-        
         ImGui::End();
     }
     ImGui::Render();
@@ -488,50 +483,40 @@ void TextureMapping::drawUI(){
 
 void TextureMapping::renderFrame() {
 
+    //window setup
 	showFpsInWindowTitle();
 	glClearColor(_clearColor.r, _clearColor.g, _clearColor.b, _clearColor.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
+    
+    //wireframe mode
 	if (_wireframe) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	} else {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-
-    const glm::mat4 projection = _camera->getProjectionMatrix();
-    glm::mat4 view;
-    
+    //get projection/view/model matrix
+    _projection = _camera->getProjectionMatrix();
+    _model= _world->getModelMatrix();
     switch (_cameraMode) {
         case CameraMode::Pan:
-            view = _camera->getViewMatrix();
+            _view = _camera->getViewMatrix();
             break;
-            
         case CameraMode::Orbit:
-            view = glm::lookAt(_camera->position, glm::vec3(0.0f,0.5f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
+            _view = glm::lookAt(_camera->position, glm::vec3(0.0f,0.5f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
             break;
-            
         case CameraMode::FreeRotation:
-            view = _camera->getViewMatrix();
+            _view = _camera->getViewMatrix();
             break;
     }
-
-    static float scaleDivide=40.0f;
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(_position.x, _position.y, _position.z));
-    model = glm::rotate(model, glm::radians(_rotateAxis.x), glm::vec3(1.0, 0.0, 0.0));
-	model = glm::rotate(model, glm::radians(_rotateAxis.y), glm::vec3(0.0, 1.0, 0.0));
-	model = glm::rotate(model, glm::radians(_rotateAxis.z), glm::vec3(0.0, 0.0, 1.0));
-    model = glm::scale(model, glm::vec3(_scale.x/scaleDivide, _scale.y/scaleDivide, _scale.z/scaleDivide));
-
-	//draw .obj or Vertex models, but their methods are the same: 1.use shader  2.draw objects
     
     //draw BoundingBox
     if (_showBoundingBox) {
         _lineShader->use();
-        _lineShader->setMat4("projection", projection);
-        _lineShader->setMat4("view", view);
-        _lineShader->setMat4("model", _sphere->getModelMatrix());
+        _lineShader->setMat4("projection", _projection);
+        _lineShader->setMat4("view", _view);
+        _lineShader->setMat4("model", _model);
         _lineShader->setVec3("material.color", _lineMaterial->color);
         glLineWidth(_lineMaterial->width);
         
@@ -550,318 +535,147 @@ void TextureMapping::renderFrame() {
         _door->drawBoundingBox();
     }
     
-	if (!_shadow)
-	{
-		//universal shader
-		glm::mat4 floorModel = _sphere->getModelMatrix();
-		floorModel = glm::translate(floorModel, glm::vec3(0.005f, 0.005f, 0.005f));
-		_phongShader->use();
-		_phongShader->setMat4("projection", _camera->getProjectionMatrix());
-		_phongShader->setMat4("view", view);
-		_phongShader->setMat4("model", floorModel);
-		_phongShader->setVec3("viewPos", _camera->position);
-		_phongShader->setVec3("material.ka", _phongMaterial->ka);
-		_phongShader->setVec3("material.kd", _phongMaterial->kd);
-		_phongShader->setVec3("material.ks", _phongMaterial->ks);
-		_phongShader->setFloat("material.ns", _phongMaterial->ns);
-		_phongShader->setVec3("ambientLight.color", _ambientLight->color);
-		_phongShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
-		_phongShader->setVec3("spotLight.position", _spotLight->position);
-		_phongShader->setVec3("spotLight.direction", _spotLight->getFront());
-		_phongShader->setFloat("spotLight.intensity", _spotLight->intensity);
-		_phongShader->setVec3("spotLight.color", _spotLight->color);
-		_phongShader->setFloat("spotLight.angle", _spotLight->angle);
-		_phongShader->setFloat("spotLight.kc", _spotLight->kc);
-		_phongShader->setFloat("spotLight.kl", _spotLight->kl);
-		_phongShader->setFloat("spotLight.kq", _spotLight->kq);
-		_phongShader->setVec3("directionalLight.direction", _directionalLight->getFront());
-		_phongShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
-		_phongShader->setVec3("directionalLight.color", _directionalLight->color);
-
-		_firstcard->draw();
-		_firstmenu->draw();
-		_secondfloor->draw();
-		_secondsofa->draw();
-		_secondscreen->draw();
-		_unotitle->draw();
-
-
-		//draw display bar
-		_displayShader->use();
-		_displayShader->setMat4("projection", _camera->getProjectionMatrix());
-		_displayShader->setMat4("view", view);
-		_displayShader->setMat4("model", _sphere->getModelMatrix());
-		_displayShader->setVec3("viewPos", _camera->position);
-		_displayShader->setVec3("material.ka", glm::vec3(0.07f, 0.12f, 0.31f));
-		_displayShader->setVec3("material.kd", glm::vec3(0.12f, 0.24f, 0.41f));
-		_displayShader->setVec3("material.ks", _phongMaterial->ks);
-		_displayShader->setFloat("material.ns", _phongMaterial->ns);
-		_displayShader->setVec3("ambientLight.color", _ambientLight->color);
-		_displayShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
-		_displayShader->setVec3("spotLight.position", _spotLight->position);
-		_displayShader->setVec3("spotLight.direction", _spotLight->getFront());
-		_displayShader->setFloat("spotLight.intensity", _spotLight->intensity);
-		_displayShader->setVec3("spotLight.color", _spotLight->color);
-		_displayShader->setFloat("spotLight.angle", _spotLight->angle);
-		_displayShader->setFloat("spotLight.kc", _spotLight->kc);
-		_displayShader->setFloat("spotLight.kl", _spotLight->kl);
-		_displayShader->setFloat("spotLight.kq", _spotLight->kq);
-		_displayShader->setVec3("directionalLight.direction", _directionalLight->getFront());
-		_displayShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
-		_displayShader->setVec3("directionalLight.color", _directionalLight->color);
-		_firstdisplaybottom->draw();
-
-
-		//draw desks
-		_blendShader->use();
-		_blendShader->setMat4("projection", projection);
-		_blendShader->setMat4("view", view);
-		_blendShader->setMat4("model", _sphere->getModelMatrix());
-		_blendShader->setVec3("light.direction", _directionalLight->getFront());
-		_blendShader->setVec3("light.color", _directionalLight->color);
-		_blendShader->setFloat("light.intensity", _directionalLight->intensity);
-		_blendShader->setVec3("material.kds[0]", _blendMaterial->kds[0]);
-		_blendShader->setVec3("material.kds[1]", _blendMaterial->kds[1]);
-		_blendShader->setFloat("material.blend", _blendMaterial->blend);
-		_blendShader->setInt("mapKds[1]", 1);
-		glActiveTexture(GL_TEXTURE0);
-		_blendMaterial->mapKds[0]->bind();
-		glActiveTexture(GL_TEXTURE1);
-		_blendMaterial->mapKds[1]->bind();
-		_firstdesk->draw();
-		_firstdeng->draw();
-		_seconddesk->draw();
-		_secondchair->draw();
-		_seconddeskbottom->draw();
-
-		//draw floor and stairs
-		_wallShader->use();
-		_wallShader->setMat4("projection", _camera->getProjectionMatrix());
-		_wallShader->setMat4("view", view);
-		_wallShader->setMat4("model", _sphere->getModelMatrix());
-		_wallShader->setVec3("viewPos", _camera->position);
-		_wallShader->setVec3("material.ka", glm::vec3(0.21f, 0.21f, 0.21f));
-		_wallShader->setVec3("material.kd", glm::vec3(0.75f, 0.70f, 0.44f));
-		_wallShader->setVec3("material.ks", glm::vec3(0.76f, 0.69f, 0.55f));
-		_wallShader->setFloat("material.ns", _phongMaterial->ns);
-		_wallShader->setVec3("ambientLight.color", _ambientLight->color);
-		_wallShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
-		_wallShader->setVec3("spotLight.position", _spotLight->position);
-		_wallShader->setVec3("spotLight.direction", _spotLight->getFront());
-		_wallShader->setFloat("spotLight.intensity", _spotLight->intensity);
-		_wallShader->setVec3("spotLight.color", _spotLight->color);
-		_wallShader->setFloat("spotLight.angle", _spotLight->angle);
-		_wallShader->setFloat("spotLight.kc", _spotLight->kc);
-		_wallShader->setFloat("spotLight.kl", _spotLight->kl);
-		_wallShader->setFloat("spotLight.kq", _spotLight->kq);
-		_wallShader->setVec3("directionalLight.direction", _directionalLight->getFront());
-		_wallShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
-		_wallShader->setVec3("directionalLight.color", _directionalLight->color);
-
-		_firstfloor->draw();
-		_firstupstairs->draw();
-	}
-	else
-	{
-		renderDepthMap();
-	}
+    //draw scene
     
+    //draw UNO object
+    _universalPhongShader->use();
+    resetPhongShader();
+    _universalPhongShader->setMat4("model", _firstfloor->getModelMatrix());
+    _firstcard->draw();
+    _firstmenu->draw();
+    _secondfloor->draw();
+    _secondsofa->draw();
+    _secondscreen->draw();
+    _unotitle->draw();
+
+    //draw display bar
+    resetPhongShader();
+    _universalPhongShader->setVec3("material.ka", glm::vec3(0.07f, 0.12f, 0.31f));
+    _universalPhongShader->setVec3("material.kd", glm::vec3(0.12f, 0.24f, 0.41f));
+    _firstdisplaybottom->draw();
+
+    //draw floor and stairs
+    resetPhongShader();
+    _universalPhongShader->setVec3("material.ka", glm::vec3(0.21f, 0.21f, 0.21f));
+    _universalPhongShader->setVec3("material.kd", glm::vec3(0.75f, 0.70f, 0.44f));
+    _universalPhongShader->setVec3("material.ks", glm::vec3(0.76f, 0.69f, 0.55f));
+    _firstfloor->draw();
+    _firstupstairs->draw();
+    
+    //draw door
+    resetPhongShader();
+    _universalPhongShader->setMat4("model", _door->getModelMatrix());
+    _door->draw();
+    
+    //draw desks
+    _textureShader->use();
+    _textureShader->setMat4("projection", _projection);
+    _textureShader->setMat4("view", _view);
+    _textureShader->setMat4("model", _model);
+    _textureShader->setVec3("light.direction", _directionalLight->getFront());
+    _textureShader->setVec3("light.color", _directionalLight->color);
+    _textureShader->setFloat("light.intensity", _directionalLight->intensity);
+    _textureShader->setVec3("material.kds[0]", _woodMaterial->kds[0]);
+    _textureShader->setVec3("material.kds[1]", _woodMaterial->kds[1]);
+    _textureShader->setFloat("material.blend", _woodMaterial->blend);
+    _textureShader->setInt("mapKds[1]", 1);
+    glActiveTexture(GL_TEXTURE0);
+    _woodMaterial->mapKds[0]->bind();
+    glActiveTexture(GL_TEXTURE1);
+    _woodMaterial->mapKds[1]->bind();
+    _firstdesk->draw();
+    _firstdeng->draw();
+    _seconddesk->draw();
+    _secondchair->draw();
+    _seconddeskbottom->draw();
+    
+    //draw shadow
+	if(_shadow)renderDepthMap();
     
     //draw animation
-
-    glm::mat4 flowerModel = glm::mat4(1.0f);
-    flowerModel = glm::translate(flowerModel, glm::vec3(1.5f, 0.0f, 1.0f));
-    flowerModel = glm::scale(flowerModel, glm::vec3(0.005f, 0.005f, 0.005f));
-
-    _animationShader->use();
-    _animationShader->setMat4("projection", _camera->getProjectionMatrix());
-    _animationShader->setMat4("view", view);
-    _animationShader->setMat4("model", flowerModel);
-    _animationShader->setVec3("viewPos", _camera->position);
-    _animationShader->setVec3("material.ka", _phongMaterial->ka);
-    _animationShader->setVec3("material.kd", _phongMaterial->kd);
-    _animationShader->setVec3("material.ks", _phongMaterial->ks);
-    _animationShader->setFloat("material.ns", _phongMaterial->ns);
-    _animationShader->setVec3("ambientLight.color", _ambientLight->color);
-    _animationShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
-    _animationShader->setVec3("spotLight.position", _spotLight->position);
-    _animationShader->setVec3("spotLight.direction", _spotLight->getFront());
-    _animationShader->setFloat("spotLight.intensity", _spotLight->intensity);
-    _animationShader->setVec3("spotLight.color", _spotLight->color);
-    _animationShader->setFloat("spotLight.angle", _spotLight->angle);
-    _animationShader->setFloat("spotLight.kc", _spotLight->kc);
-    _animationShader->setFloat("spotLight.kl", _spotLight->kl);
-    _animationShader->setFloat("spotLight.kq", _spotLight->kq);
-    _animationShader->setVec3("directionalLight.direction", _directionalLight->getFront());
-    _animationShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
-    _animationShader->setVec3("directionalLight.color", _directionalLight->color);
-
-    //animation
-    if (animationSwitch > 0) {
-        //printf("%d\n", animationSwitch);
-        if (animationSwitch == 120)
-            animationSwitch = 1;
-        if (animationSwitch >= 1 && animationSwitch < 10) _animation1->draw();
-        if (animationSwitch >= 10 && animationSwitch < 20) _animation2->draw();
-        if (animationSwitch >= 30 && animationSwitch < 40) _animation3->draw();
-        if (animationSwitch >= 40 && animationSwitch < 50) _animation4->draw();
-        if (animationSwitch >= 50 && animationSwitch < 60) _animation5->draw();
-        if (animationSwitch >= 60 && animationSwitch < 70) _animation6->draw();
-        if (animationSwitch >= 70 && animationSwitch < 80) _animation7->draw();
-        if (animationSwitch >= 80 && animationSwitch < 90) _animation8->draw();
-        if (animationSwitch >= 90 && animationSwitch < 100) _animation9->draw();
-        if (animationSwitch >= 100 && animationSwitch < 110) _animation10->draw();
-        if (animationSwitch >= 110) _animation11->draw();
-        animationSwitch++;
-    }
-
-    //draw door
-    glm::mat4 doorModel = _sphere->getModelMatrix();
-    doorModel = glm::translate(doorModel, glm::vec3(doorPosition.x, doorPosition.y, doorPosition.z));
-    //doorModel = glm::scale(doorModel, glm::vec3(1.0f, 1.0f, 1.0f));
-    _door->position.x = doorPosition.x;
-    _doorShader->use();
-    _doorShader->setMat4("projection", _camera->getProjectionMatrix());
-    _doorShader->setMat4("view", view);
-    _doorShader->setMat4("model", doorModel);
-    _doorShader->setVec3("viewPos", _camera->position);
-    _doorShader->setVec3("material.ka", _phongMaterial->ka);
-    _doorShader->setVec3("material.kd", _phongMaterial->kd);
-    _doorShader->setVec3("material.ks", _phongMaterial->ks);
-    _doorShader->setFloat("material.ns", _phongMaterial->ns);
-    _doorShader->setVec3("ambientLight.color", _ambientLight->color);
-    _doorShader->setFloat("ambientLight.intensity", _ambientLight->intensity);
-    _doorShader->setVec3("spotLight.position", _spotLight->position);
-    _doorShader->setVec3("spotLight.direction", _spotLight->getFront());
-    _doorShader->setFloat("spotLight.intensity", _spotLight->intensity);
-    _doorShader->setVec3("spotLight.color", _spotLight->color);
-    _doorShader->setFloat("spotLight.angle", _spotLight->angle);
-    _doorShader->setFloat("spotLight.kc", _spotLight->kc);
-    _doorShader->setFloat("spotLight.kl", _spotLight->kl);
-    _doorShader->setFloat("spotLight.kq", _spotLight->kq);
-    _doorShader->setVec3("directionalLight.direction", _directionalLight->getFront());
-    _doorShader->setFloat("directionalLight.intensity", _directionalLight->intensity);
-    _doorShader->setVec3("directionalLight.color", _directionalLight->color);
-    _door->draw();
+    _universalPhongShader->use();
+    resetPhongShader();
+    _universalPhongShader->setMat4("model", danceMan.frame[1]->getModelMatrix());
+    danceMan.frame[(animationSwitch++ % 110)/10 + 1]->draw();
 
     // draw sky box
-	_skybox->draw(projection, view);
+	_skybox->draw(_projection, _view);
     
-    //draw ground
-    _ground->draw(projection, view);
+    // draw ground
+    _ground->draw(_projection, _view);
     
     // draw Vertex Shape
+    static float scaleDivide=25.0f;
+    _cube->position = glm::vec3(_shapePosition.x, _shapePosition.y, _shapePosition.z);
+    _cube->scale = glm::vec3(_shapeScale.x/scaleDivide, _shapeScale.y/scaleDivide, _shapeScale.z/scaleDivide);
+    _cube->rotation = glm::rotate(glm::mat4(1.0f), glm::radians(_shapeRotateAxis.x), glm::vec3(1.0, 0.0, 0.0));
+    _cube->rotation = glm::rotate(_cube->rotation, glm::radians(_shapeRotateAxis.y), glm::vec3(0.0, 1.0, 0.0));
+    _cube->rotation = glm::rotate(_cube->rotation, glm::radians(_shapeRotateAxis.z), glm::vec3(0.0, 0.0, 1.0));
+    
     switch (_shapeType){
     case ShapeType::Tetrahedron:
-        scaleDivide=40.0f;
-        _tetrahedron->draw(model, projection, view);
+        _tetrahedron->draw(_cube->getModelMatrix(), _projection, _view);
         break;
     case ShapeType::Cube:
-        scaleDivide=25.0f;
-        _cube->draw(model,projection, view);
+        _cube->draw(_cube->getModelMatrix(),_projection, _view);
         break;
 	case ShapeType::Ball:
-		scaleDivide = 25.0f;
-		_ball->draw(model, projection, view);
+		_ball->draw(_cube->getModelMatrix(), _projection, _view);
 		break;
 	case ShapeType::Cone:
-		scaleDivide = 25.0f;
-		_cone->draw(model, projection, view);
+		_cone->draw(_cube->getModelMatrix(), _projection, _view);
 		break;
 	case ShapeType::Cylinder:
-		scaleDivide = 25.0f;
-		_cylinder->draw(model, projection, view);
+		_cylinder->draw(_cube->getModelMatrix(), _projection, _view);
 		break;
 	case ShapeType::Prism:
-		scaleDivide = 25.0f;
-		_prism->draw(model, projection, view);
+		_prism->draw(_cube->getModelMatrix(), _projection, _view);
 		break;
 	case ShapeType::Prismatictable:
-		scaleDivide = 25.0f;
-		_prismatictable->draw(model, projection, view);
+		_prismatictable->draw(_cube->getModelMatrix(), _projection, _view);
 		break;
 	case ShapeType::BezierFace:
-		scaleDivide = 25.0f;
-		_bezierFace->draw(model, projection, view);
+		_bezierFace->draw(_cube->getModelMatrix(), _projection, _view);
 		break;
     }
 
     drawUI();
-
 }
 
 void TextureMapping::renderDepthMap() {
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    
+    //light calculation
+    GLfloat near_plane = 0.1f, far_plane = 100.0f;
+    glm::mat4 lightProjection = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, near_plane, far_plane);
+    glm::mat4 lightView = glm::lookAt(_shadowLight->position, glm::vec3(0.0), glm::vec3(-1.0, -1.0, 1.0));
+    glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+    
+    //depth writing
 	_depthmapShader->use();
-	GLfloat near_plane = 0.1f, far_plane = 100.0f;
-	glm::mat4 lightProjection = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, near_plane, far_plane);
-	glm::mat4 lightView = glm::lookAt(_shadowLight->position, glm::vec3(0.0), glm::vec3(-1.0, -1.0, 1.0));
-	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 	_depthmapShader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
-	_depthmapShader->setMat4("model", _sphere->getModelMatrix());
-
-	//glViewport(0, 0, 1920, 1920);
+	_depthmapShader->setMat4("model", _model);
 	depthMap->bindFrameBuffer();
-
-	_firstcard->draw();
-	_firstmenu->draw();
-	_secondfloor->draw();
-	_secondsofa->draw();
-	_secondscreen->draw();
-	_unotitle->draw();
-
-	_firstdisplaybottom->draw();
-
-	_firstdesk->draw();
-	_firstdeng->draw();
-	_seconddesk->draw();
-	_secondchair->draw();
-	_seconddeskbottom->draw();
-
-	_firstfloor->draw();
-	_firstupstairs->draw();
-
+    drawAllObject();
 	depthMap->unbindFrameBuffer();
 
-	glViewport(0, 0, 1280, 720);
+    //shadow writing
+	glViewport(0, 0, _windowWidth, _windowHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	_shadowShader->use();
 	_shadowShader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
-	_shadowShader->setMat4("projection", _camera->getProjectionMatrix());
-	_shadowShader->setMat4("view", _camera->getViewMatrix());
-	_shadowShader->setMat4("model", _sphere->getModelMatrix());
+	_shadowShader->setMat4("projection", _projection);
+	_shadowShader->setMat4("view", _view);
+	_shadowShader->setMat4("model", _model);
 	_shadowShader->setVec3("lightPos", _shadowLight->position);
 	_shadowShader->setVec3("viewPos", _camera->position);
-
 	glActiveTexture(GL_TEXTURE0);
 	depthMap->bind();
 	glActiveTexture(GL_TEXTURE1);
 	woodTexture->bind();
-	//_shadowShader->setInt("shadowMap", 0);
-
-	_firstcard->draw();
-	_firstmenu->draw();
-	_secondfloor->draw();
-	_secondsofa->draw();
-	_secondscreen->draw();
-	_unotitle->draw();
-
-	_firstdisplaybottom->draw();
-
-	_firstdesk->draw();
-	_firstdeng->draw();
-	_seconddesk->draw();
-	_secondchair->draw();
-	_seconddeskbottom->draw();
-
-	_firstfloor->draw();
-	_firstupstairs->draw();
-
+    drawAllObject();
 	depthMap->unbind();
 }
-
 
 void TextureMapping::capture() {
     FILE* pDummyFile;
@@ -873,12 +687,12 @@ void TextureMapping::capture() {
 
     // data align
     width = _windowWidth * 3;
-    while (width % 4 != 0)++width;
+    while (width % 4)++width;
     PixelDataLength = width * _windowHeight;
 
     //malloc space
     pPixelData = (GLubyte*)malloc(PixelDataLength);
-    if (pPixelData == 0){
+    if (!pPixelData){
         std::cout<<"Data initialied failed"<<std::endl;
         return;
     };
@@ -886,13 +700,13 @@ void TextureMapping::capture() {
     //load file
     std::string filename = "../../output/uno" + std::to_string(count++) + ".bmp";
     pDummyFile = fopen("../../media/uno1111.bmp", "rb");
-    if (pDummyFile == 0){
+    if (!pDummyFile){
         std::cout<<"path found failed"<<std::endl;
         return;
     };
     char* file = (char*)filename.data();
     pWritingFile = fopen(file, "wb");
-    if (pWritingFile == 0) {
+    if (!pWritingFile) {
         std::cout<<"path found failed"<<std::endl;
         return;
     };

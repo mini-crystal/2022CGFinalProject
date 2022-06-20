@@ -23,8 +23,6 @@
 #include "../base/bezier_face.h"
 #include "../base/ground.h"
 
-const std::string spheremodelPath = "../../media/sphere.obj";
-const std::string bunnymodelpath = "../../media/bunny.obj";
 const std::string firstcardPath = "../../media/firstcard.obj";
 const std::string firstdengPath = "../../media/firstdeng.obj";
 const std::string firstdeskPath = "../../media/firstdesk.obj";
@@ -39,6 +37,8 @@ const std::string secondfloorPath = "../../media/secondfloor.obj";
 const std::string secondscreenPath = "../../media/secondscreen.obj";
 const std::string secondsofaPath = "../../media/secondsofa.obj";
 const std::string secondchairPath = "../../media/secondchair.obj";
+const std::string door = "../../media/door.obj";
+const std::string unoPath = "../../media/UNOtitle.obj";
 
 const std::string animationPath_1 = "../../media/Moonwalk_0000.obj";
 const std::string animationPath_2 = "../../media/Moonwalk_0003.obj";
@@ -52,15 +52,8 @@ const std::string animationPath_9 = "../../media/Moonwalk_0024.obj";
 const std::string animationPath_10 = "../../media/Moonwalk_0027.obj";
 const std::string animationPath_11 = "../../media/Moonwalk_0030.obj";
 
-const std::string door = "../../media/door.obj";
-
-//自建加载库加载UNO COFFEE
-const std::string unoPath = "../../media/UNOtitle.obj";
-
 const std::string earthTexturePath = "../../media/earthmap.jpg";
 const std::string woodTexturePath = "../../media/wood.jpg";
-const std::string planetTexturePath = "../../media/planet_Quom1200.png";
-const std::string wallTexturePath="../../media/wall.png";
 
 const std::vector<std::string> skyboxTexturePaths = {
     "../../media/starfield/Right_Tex.jpg",
@@ -81,14 +74,6 @@ enum class CameraMode {
 
 enum class ShapeType {
     Tetrahedron, Cube, Ball, Cone, Cylinder, Prism, Prismatictable, BezierFace
-};
-
-struct AmbientMaterial {
-	glm::vec3 ka;
-};
-
-struct LambertMaterial {
-	glm::vec3 kd;
 };
 
 struct PhongMaterial {
@@ -117,11 +102,6 @@ struct BlendMaterial {
 	float blend;
 };
 
-struct CheckerMaterial {
-	int repeat;
-	glm::vec3 colors[2];
-};
-
 class TextureMapping : public Application {
 public:
 	TextureMapping(const Options& options);
@@ -129,9 +109,7 @@ public:
 
 private:
     //UNO Model Objects
-    std::unique_ptr<Model> _sphere;
-    std::unique_ptr<Model> _bunny;
-    std::unique_ptr<Model> _bunnycopy;
+    std::unique_ptr<Model> _world;
     std::unique_ptr<Model> _firstcard;
     std::unique_ptr<Model> _firstdeng;
     std::unique_ptr<Model> _firstdesk;
@@ -146,35 +124,19 @@ private:
     std::unique_ptr<Model> _secondfloor;
     std::unique_ptr<Model> _secondscreen;
     std::unique_ptr<Model> _secondsofa;
-	std::unique_ptr<Model> _animation1;
-	std::unique_ptr<Model> _animation2;
-	std::unique_ptr<Model> _animation3;
-	std::unique_ptr<Model> _animation4;
-	std::unique_ptr<Model> _animation5;
-	std::unique_ptr<Model> _animation6;
-	std::unique_ptr<Model> _animation7;
-	std::unique_ptr<Model> _animation8;
-	std::unique_ptr<Model> _animation9;
-	std::unique_ptr<Model> _animation10;
-	std::unique_ptr<Model> _animation11;
-	std::unique_ptr<Model> _door;
+    std::unique_ptr<Model> _door;
+    
+    struct animation{
+        std::unique_ptr<Model> frame[12];
+    }danceMan;
 
     //Obj for output
 	std::unique_ptr<ObjModel> _unotitle;
 
-    //position of Vertex Shape
-	glm::vec3 _position = glm::vec3(0.3f, 0.296f, 0.7f);
-	glm::vec3 _rotateAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::vec3 _scale = glm::vec3(1.0f, 1.0f, 1.0f);
-    float _rotateAngles = 0.0f;
-    
-	//door
-	glm::vec3 doorPosition = glm::vec3(0.0f, 0.0f, 0.05f);
-	bool flag_O_press = 0;
-	bool flag_O_release = 0;
-	float dx = 0.0f;
-	bool doorOpen = 0;
-	bool _shadow = false;
+    //properties of Vertex Shape
+	glm::vec3 _shapePosition;
+	glm::vec3 _shapeRotateAxis;
+	glm::vec3 _shapeScale;
     
     //animation frame count
 	int animationSwitch = 1;
@@ -182,8 +144,12 @@ private:
     //draw mode
     bool _wireframe = false;
     bool _showBoundingBox = false;
+    bool _shadow = false;
     
     //camera orbit
+    glm::mat4 _projection;
+    glm::mat4 _view;
+    glm::mat4 _model;
     float _cameraRotateAngles = 155.0f;
     float _AxisX=0.0f;
     float _AxisY=0.0f;
@@ -211,39 +177,23 @@ private:
     // ptr to texture
     std::shared_ptr<Texture2D> earthTexture = std::make_shared<Texture2D>(earthTexturePath);
     std::shared_ptr<Texture2D> woodTexture = std::make_shared<Texture2D>(woodTexturePath);
-    std::shared_ptr<Texture2D> wallTexture = std::make_shared<Texture2D>(wallTexturePath);
 	std::shared_ptr<DepthMap> depthMap = std::make_shared<DepthMap>();
     
 	// ptr to materials
-	std::unique_ptr<AmbientMaterial> _ambientMaterial;
-	std::unique_ptr<LambertMaterial> _lambertMaterial;
 	std::unique_ptr<PhongMaterial> _phongMaterial;
     std::unique_ptr<LineMaterial> _lineMaterial;
-    std::unique_ptr<SimpleMaterial> _simpleMaterial;
-    std::unique_ptr<BlendMaterial> _blendMaterial;
-    std::unique_ptr<CheckerMaterial> _checkerMaterial;
+    std::unique_ptr<BlendMaterial> _woodMaterial;
     std::unique_ptr<SimpleMaterial> _groundMaterial;
 
 	//shaders for mode
-	std::unique_ptr<GLSLProgram> _ambientShader;
-	std::unique_ptr<GLSLProgram> _lambertShader;
-	std::unique_ptr<GLSLProgram> _phongShader;
+	std::unique_ptr<GLSLProgram> _universalPhongShader;
 
 	//shader for DepthMap
 	std::unique_ptr<GLSLProgram> _depthmapShader;
 	std::unique_ptr<GLSLProgram> _shadowShader;
-
-    //shaders for objects
-    std::unique_ptr<GLSLProgram> _groundShader;
-    std::unique_ptr<GLSLProgram> _wallShader;
-	std::unique_ptr<GLSLProgram> _animationShader;
-    std::unique_ptr<GLSLProgram> _displayShader;
-	std::unique_ptr<GLSLProgram> _doorShader;
     
     //shaders for mode
-    std::unique_ptr<GLSLProgram> _simpleShader;
-    std::unique_ptr<GLSLProgram> _blendShader;
-    std::unique_ptr<GLSLProgram> _checkerShader;
+    std::unique_ptr<GLSLProgram> _textureShader;
     std::unique_ptr<GLSLProgram> _transformShader;
     std::unique_ptr<GLSLProgram> _lineShader;
     
@@ -265,17 +215,17 @@ private:
 
     //initial function
     void InitializeModel();
-    void InitScale();
+    void InitObject();
     void InitMaterial();
     void InitLight();
     void InitTexture();
     void InitCamera();
-    void initTransformShader();
+    void initShapeShader();
     void initAmbientShader();
     void initLambertShader();
     void initPhongShader();
     void initSimpleShader();
-    void initBlendShader();
+    void initTextureShader();
     void initCheckerShader();
     void initDisplayShader();
     void initWallShader();
@@ -287,6 +237,7 @@ private:
     void InitAllShader();
     void InitImGui();
     
+    void drawAllObject();
     void HandleMouse();
     void drawUI();
     void capture();
@@ -294,4 +245,23 @@ private:
 	void handleInput() override;
 	void renderFrame() override;
 	void renderDepthMap();
+    void resetPhongShader();
 };
+
+inline void TextureMapping::drawAllObject(){
+    _firstcard->draw();
+    _firstmenu->draw();
+    _secondfloor->draw();
+    _secondsofa->draw();
+    _secondscreen->draw();
+    _unotitle->draw();
+    _firstdisplaybottom->draw();
+    _firstdesk->draw();
+    _firstdeng->draw();
+    _seconddesk->draw();
+    _secondchair->draw();
+    _seconddeskbottom->draw();
+    _firstfloor->draw();
+    _firstupstairs->draw();
+    _door->draw();
+}

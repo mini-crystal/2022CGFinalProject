@@ -146,3 +146,9 @@ void Cube::cleanup() {
         _vao = 0;
     }
 }
+
+glm::mat4 Cube::getModelMatrix() const {
+    return glm::translate(glm::mat4(1.0f), position) *
+        glm::mat4_cast(rotation) *
+        glm::scale(glm::mat4(1.0f), scale);
+}

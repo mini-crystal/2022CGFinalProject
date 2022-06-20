@@ -8,6 +8,7 @@
 #include <glad/glad.h>
 
 #include <glm/glm.hpp>
+#include <glm/ext.hpp>
 
 #include "glsl_program.h"
 #include "texture.h"
@@ -15,14 +16,14 @@
 class Cube {
 public:
 	Cube();
-
 	Cube(Cube&& rhs) noexcept;
-
-	//释放借来的所有资源
 	~Cube();
 
+    glm::vec3 position = { 0.0f, 0.0f, 0.0f };
+    glm::quat rotation = { 1.0f, 0.0f, 0.0f, 0.0f };
+    glm::vec3 scale = { 1.0f, 1.0f, 1.0f };
 	void draw(const glm::mat4& model, const glm::mat4& projection, const glm::mat4& view);
-
+    glm::mat4 getModelMatrix()const;
 
 
 private:
@@ -35,4 +36,6 @@ private:
 	std::unique_ptr<GLSLProgram> _shader;
 
 	void cleanup();
+    
+
 };

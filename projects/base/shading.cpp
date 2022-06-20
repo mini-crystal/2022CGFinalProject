@@ -122,7 +122,7 @@ const char* fsCodeBase =
     "}\n";
 
 //几何变换shader
-void TextureMapping::initTransformShader() {
+void TextureMapping::initShapeShader() {
 	const char* vsCode =
 		"#version 330 core\n"
 		"layout(location = 0) in vec3 aPosition;\n"
@@ -146,177 +146,16 @@ void TextureMapping::initTransformShader() {
 	_transformShader->link();
 }
 
-//3种材质shader
-
-void TextureMapping::initAmbientShader() {
-	const char* vsCode =
-		"#version 330 core\n"
-		"layout(location = 0) in vec3 aPosition;\n"
-		"layout(location = 1) in vec3 aNormal;\n"
-		"layout(location = 2) in vec2 aTexCoord;\n"
-		"uniform mat4 model;\n"
-		"uniform mat4 view;\n"
-		"uniform mat4 projection;\n"
-		"void main() {\n"
-		"	gl_Position = projection * view * model * vec4(aPosition, 1.0f);\n"
-		"}\n";
-
-	const char* fsCode =
-		"#version 330 core\n"
-		"out vec4 color;\n"
-
-		"// material data structure declaration\n"
-		"struct Material {\n"
-		"	vec3 ka;\n"
-		"};\n"
-
-		"// ambient light data structure declaration\n"
-		"struct AmbientLight {\n"
-		"	vec3 color;\n"
-		"	float intensity;\n"
-		"};\n"
-
-		"// uniform variables\n"
-		"uniform Material material;\n"
-		"uniform AmbientLight ambientLight;\n"
-
-		"void main() {\n"
-		"	vec3 ambient = material.ka * ambientLight.color * ambientLight.intensity;\n"
-		"	color = vec4(ambient, 1.0f);\n"
-		"}\n";
-
-	_ambientShader.reset(new GLSLProgram);
-	_ambientShader->attachVertexShader(vsCode);
-	_ambientShader->attachFragmentShader(fsCode);
-	_ambientShader->link();
-}
-
-void TextureMapping::initLambertShader() {
-	const char* vsCode =
-		"#version 330 core\n"
-		"layout(location = 0) in vec3 aPosition;\n"
-		"layout(location = 1) in vec3 aNormal;\n"
-		"layout(location = 2) in vec2 aTexCoord;\n"
-
-		"out vec3 fPosition;\n"
-		"out vec3 fNormal;\n"
-
-		"uniform mat4 model;\n"
-		"uniform mat4 view;\n"
-		"uniform mat4 projection;\n"
-
-		"void main() {\n"
-		"	fPosition = vec3(model * vec4(aPosition, 1.0f));\n"
-		"	fNormal = mat3(transpose(inverse(model))) * aNormal;\n"
-		"	gl_Position = projection * view * model * vec4(aPosition, 1.0f);\n"
-		"}\n";
-
-	const char* fsCode =
-		"#version 330 core\n"
-		"in vec3 fPosition;\n"
-		"in vec3 fNormal;\n"
-		"out vec4 color;\n"
-
-		"// material data structure declaration\n"
-		"struct Material {\n"
-		"	vec3 kd;\n"
-		"};\n"
-
-		"// directional light data structure declaration\n"
-		"struct DirectionalLight {\n"
-		"	vec3 direction;\n"
-		"	float intensity;\n"
-		"	vec3 color;\n"
-		"};\n"
-
-		"// spot light data structure declaration\n"
-		"struct SpotLight {\n"
-		"	vec3 position;\n"
-		"	vec3 direction;\n"
-		"	float intensity;\n"
-		"	vec3 color;\n"
-		"	float angle;\n"
-		"	float kc;\n"
-		"	float kl;\n"
-		"	float kq;\n"
-		"};\n"
-
-		"// uniform variables\n"
-		"uniform Material material;\n"
-		"uniform DirectionalLight directionalLight;\n"
-		"uniform SpotLight spotLight;\n"
-
-		"vec3 calcDirectionalLight(vec3 normal) {\n"
-		"	vec3 lightDir = normalize(-directionalLight.direction);\n"
-		"	vec3 diffuse = directionalLight.color * max(dot(lightDir, normal), 0.0f) * material.kd;\n"
-		"	return directionalLight.intensity * diffuse ;\n"
-		"}\n"
-
-		"vec3 calcSpotLight(vec3 normal) {\n"
-		"	vec3 lightDir = normalize(spotLight.position - fPosition);\n"
-		"	float theta = acos(-dot(lightDir, normalize(spotLight.direction)));\n"
-		"	if (theta > spotLight.angle) {\n"
-		"		return vec3(0.0f, 0.0f, 0.0f);\n"
-		"	}\n"
-		"	vec3 diffuse = spotLight.color * max(dot(lightDir, normal), 0.0f) * material.kd;\n"
-		"	float distance = length(spotLight.position - fPosition);\n"
-		"	float attenuation = 1.0f / (spotLight.kc + spotLight.kl * distance + spotLight.kq * distance * distance);\n"
-		"	return spotLight.intensity * attenuation * diffuse;\n"
-		"}\n"
-
-		"void main() {\n"
-		"	vec3 normal = normalize(fNormal);\n"
-		"	vec3 diffuse = calcDirectionalLight(normal) + calcSpotLight(normal);\n"
-		"	color = vec4(diffuse, 1.0f);\n"
-		"}\n";
-
-	_lambertShader.reset(new GLSLProgram);
-	_lambertShader->attachVertexShader(vsCode);
-	_lambertShader->attachFragmentShader(fsCode);
-	_lambertShader->link();
-}
 
 void TextureMapping::initPhongShader() {
-	_phongShader.reset(new GLSLProgram);
-	_phongShader->attachVertexShader(vsCodeBase);
-	_phongShader->attachFragmentShader(fsCodeBase);
-	_phongShader->link();
-}
-
-
-void TextureMapping::initSimpleShader() {
-	const char* vsCode =
-		"#version 330 core\n"
-		"layout(location = 0) in vec3 aPosition;\n"
-		"layout(location = 1) in vec3 aNormal;\n"
-		"layout(location = 2) in vec2 aTexCoord;\n"
-		"out vec2 fTexCoord;\n"
-		"uniform mat4 projection;\n"
-		"uniform mat4 view;\n"
-		"uniform mat4 model;\n"
-
-		"void main() {\n"
-		"	fTexCoord = aTexCoord;\n"
-		"	gl_Position = projection * view * model * vec4(aPosition, 1.0f);\n"
-		"}\n";
-
-	const char* fsCode =
-		"#version 330 core\n"
-		"in vec2 fTexCoord;\n"
-		"out vec4 color;\n"
-		"uniform sampler2D mapKd;\n"
-		"void main() {\n"
-		"	color = texture(mapKd, fTexCoord);\n"
-		"}\n";
-
-	_simpleShader.reset(new GLSLProgram);
-	_simpleShader->attachVertexShader(vsCode);
-	_simpleShader->attachFragmentShader(fsCode);
-	_simpleShader->link();
+	_universalPhongShader.reset(new GLSLProgram);
+	_universalPhongShader->attachVertexShader(vsCodeBase);
+	_universalPhongShader->attachFragmentShader(fsCodeBase);
+	_universalPhongShader->link();
 }
 
 //混合材质shader
-void TextureMapping::initBlendShader() {
+void TextureMapping::initTextureShader() {
 	const char* vsCode =
 		"#version 330 core\n"
 		"layout(location = 0) in vec3 aPosition;\n"
@@ -380,96 +219,10 @@ void TextureMapping::initBlendShader() {
 		"	color = mix(texture(mapKds[0], fTexCoord) * vec4(diffuseone, 1.0), texture(mapKds[1], fTexCoord) * vec4(diffusetwo, 1.0), material.blend );\n"
 		"}\n";
 
-	_blendShader.reset(new GLSLProgram);
-	_blendShader->attachVertexShader(vsCode);
-	_blendShader->attachFragmentShader(fsCode);
-	_blendShader->link();
-}
-
-//程序纹理shader
-void TextureMapping::initCheckerShader() {
-	const char* vsCode =
-		"#version 330 core\n"
-		"layout(location = 0) in vec3 aPosition;\n"
-		"layout(location = 1) in vec3 aNormal;\n"
-		"layout(location = 2) in vec2 aTexCoord;\n"
-		"out vec2 fTexCoord;\n"
-		"uniform mat4 projection;\n"
-		"uniform mat4 view;\n"
-		"uniform mat4 model;\n"
-		"void main() {\n"
-		"	fTexCoord = aTexCoord;\n"
-		"	gl_Position = projection * view * model * vec4(aPosition, 1.0f);\n"
-		"}\n";
-
-	const char* fsCode =
-		"#version 330 core\n"
-		"in vec2 fTexCoord;\n"
-		"out vec4 color;\n"
-
-		"struct Material {\n"
-		"	vec3 colors[2];\n"
-		"	int repeat;\n"
-		"};\n"
-
-		"uniform Material material;\n"
-
-		"void main() {\n"
-		"	float intervel = 1.0 / material.repeat;\n"
-		"	int i, j;\n"
-		"	int flag;\n"
-		"	for(i = 0; i<  material.repeat; i++){\n"
-		"		for(j =0; j<  material.repeat; j++){\n"
-		"			if(fTexCoord.x >= i*intervel && fTexCoord.x < (i+1)*intervel && fTexCoord.y >= j*intervel && fTexCoord.y < (j+1)*intervel){\n"
-		"				flag = i + j;}\n"
-		"							}\n"
-		"						}\n"
-
-		"	if(flag % 2 == 0){\n"
-		"		color = vec4(material.colors[1], 1.0f);}\n"
-		"	else{\n"
-		"		color = vec4(material.colors[0], 1.0f);}\n"
-
-
-		"}\n";
-
-
-	_checkerShader.reset(new GLSLProgram);
-	_checkerShader->attachVertexShader(vsCode);
-	_checkerShader->attachFragmentShader(fsCode);
-	_checkerShader->link();
-}
-
-//void TextureMapping::initGroundShader(){
-//    _groundShader.reset(new GLSLProgram);
-//    _groundShader->link();
-//}
-
-void TextureMapping::initWallShader(){
-    _wallShader.reset(new GLSLProgram);
-    _wallShader->attachVertexShader(vsCodeBase);
-    _wallShader->attachFragmentShader(fsCodeBase);
-    _wallShader->link();
-}
-
-void TextureMapping::initAnimationShader() {
-    _animationShader.reset(new GLSLProgram);
-    _animationShader->attachVertexShader(vsCodeBase);
-    _animationShader->attachFragmentShader(fsCodeBase);
-    _animationShader->link();
-}
-void TextureMapping::initDoorShader() {
-	_doorShader.reset(new GLSLProgram);
-	_doorShader->attachVertexShader(vsCodeBase);
-	_doorShader->attachFragmentShader(fsCodeBase);
-	_doorShader->link();
-}
-
-void TextureMapping::initDisplayShader(){
-    _displayShader.reset(new GLSLProgram);
-    _displayShader->attachVertexShader(vsCodeBase);
-    _displayShader->attachFragmentShader(fsCodeBase);
-    _displayShader->link();
+	_textureShader.reset(new GLSLProgram);
+	_textureShader->attachVertexShader(vsCode);
+	_textureShader->attachFragmentShader(fsCode);
+	_textureShader->link();
 }
 
 void TextureMapping::initLineShader(){
